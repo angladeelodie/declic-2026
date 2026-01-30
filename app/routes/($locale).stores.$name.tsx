@@ -1,11 +1,11 @@
 import {useLoaderData} from 'react-router';
-import type {Route} from './+types/_index';
+import type {Route} from './+types/stores.$name';
 
-// @description Add metaobject content imports
+// 1. Add metaobject content imports
 import {ROUTE_CONTENT_QUERY, RouteContent} from '~/sections/RouteContent';
 
 export const meta: Route.MetaFunction = () => {
-  return [{title: 'Hydrogen Metaobject | Home'}];
+  return [{title: 'Hydrogen | Home'}];
 };
 
 export async function loader(args: Route.LoaderArgs) {
@@ -22,15 +22,16 @@ export async function loader(args: Route.LoaderArgs) {
  * Load data necessary for rendering content above the fold. This is the critical data
  * needed to render the page. If it's unavailable, the whole page should 400 or 500 error.
  */
-async function loadCriticalData({context}: Route.LoaderArgs) {
+async function loadCriticalData({context, params}: Route.LoaderArgs) {
   const {storefront} = context;
-
-  // @description Query the home route metaobject
+  const {name} = params;
+  
+  // 2. Query for the route's content metaobject
   const [{route}] = await Promise.all([
     storefront.query(ROUTE_CONTENT_QUERY, {
-      variables: {handle: 'route-home'},
-      cache: storefront.CacheNone(),
+      variables: {handle: `route-${name}`},
     }),
+    // Add other queries here, so that they are loaded in parallel
   ]);
 
   return {route};
@@ -42,14 +43,15 @@ async function loadCriticalData({context}: Route.LoaderArgs) {
  * Make sure to not throw any errors here, as it will cause the page to 500.
  */
 function loadDeferredData({context}: Route.LoaderArgs) {
+  // No deferred data for this route
   return {};
 }
 
-export default function Homepage() {
- const {route} = useLoaderData<typeof loader>();
+export default function Store() {
+  const {route} = useLoaderData<typeof loader>();
   return (
-    <div className="home">
-      {/* @description Render the route's content sections */}
+    <div className="store">
+      {/* 3. Render the route's content sections */}
       <RouteContent route={route} />
     </div>
   );

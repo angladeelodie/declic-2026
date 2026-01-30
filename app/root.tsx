@@ -91,6 +91,8 @@ export async function loader(args: Route.LoaderArgs) {
       country: args.context.storefront.i18n.country,
       language: args.context.storefront.i18n.language,
     },
+    // @description Add public store subdomain for metaobjects
+    publicStoreSubdomain: args.context.env.PUBLIC_STORE_DOMAIN,
   };
 }
 

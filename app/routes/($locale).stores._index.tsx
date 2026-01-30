@@ -1,11 +1,11 @@
 import {useLoaderData} from 'react-router';
-import type {Route} from './+types/_index';
+import type {Route} from './+types/stores._index';
 
-// @description Add metaobject content imports
+// 1. Add metaobject content imports
 import {ROUTE_CONTENT_QUERY, RouteContent} from '~/sections/RouteContent';
 
 export const meta: Route.MetaFunction = () => {
-  return [{title: 'Hydrogen Metaobject | Home'}];
+  return [{title: 'Hydrogen | Home'}];
 };
 
 export async function loader(args: Route.LoaderArgs) {
@@ -25,12 +25,13 @@ export async function loader(args: Route.LoaderArgs) {
 async function loadCriticalData({context}: Route.LoaderArgs) {
   const {storefront} = context;
 
-  // @description Query the home route metaobject
+  // 2. Query for the route's content metaobject
   const [{route}] = await Promise.all([
     storefront.query(ROUTE_CONTENT_QUERY, {
-      variables: {handle: 'route-home'},
+      variables: {handle: 'route-stores'},
       cache: storefront.CacheNone(),
     }),
+    // Add other queries here, so that they are loaded in parallel
   ]);
 
   return {route};
@@ -42,14 +43,16 @@ async function loadCriticalData({context}: Route.LoaderArgs) {
  * Make sure to not throw any errors here, as it will cause the page to 500.
  */
 function loadDeferredData({context}: Route.LoaderArgs) {
+  // No deferred data for this route
   return {};
 }
 
-export default function Homepage() {
- const {route} = useLoaderData<typeof loader>();
+export default function Stores() {
+  const {route} = useLoaderData<typeof loader>();
+
   return (
-    <div className="home">
-      {/* @description Render the route's content sections */}
+    <div className="stores">
+      {/* 3. Render the route's content sections */}
       <RouteContent route={route} />
     </div>
   );
