@@ -2,6 +2,8 @@
 
 import type {ParsedMetafields} from '@shopify/hydrogen';
 import {parseSection} from '~/utils/parseSection';
+import {LinkButton} from '~/components/LinkButton';
+
 import {RichText} from '@shopify/hydrogen';
 
 import {Link} from 'react-router';
@@ -16,6 +18,7 @@ export function SectionEditorial(props: SectionEditorialFragment) {
     }
   >(props);
 
+  console.log('section editorial', props);
   const {heading, description, link} = section;
 
   // Single image from the fragment
@@ -23,37 +26,41 @@ export function SectionEditorial(props: SectionEditorialFragment) {
   const imageUrl = mediaImage?.url;
   const imageAlt = mediaImage?.altText ?? '';
 
+  const isReversed = props.order?.value === 'false';
+
   return (
-    <section className="section-editorial grid grid-cols-12 gap-2">
-      <div className="col-start-2 col-span-5">
+    <section className="section-editorial grid grid-rows-1 grid-cols-12 gap-2 h-[calc(40vh_+_5vw)]">
+      <div
+        className={`col-span-5 self-stretch h-full ${isReversed ? 'col-start-7 order-2' : 'col-start-2 order-1'} h-full`}
+      >
+        {' '}
         {imageUrl && (
           <img
             src={imageUrl}
             alt={imageAlt}
-            className="w-full
+            className="w-full h-full object-cover
             rounded-tl-[240px] rounded-tr-[200px] rounded-br-[480px] rounded-bl-[120px]"
           />
         )}
       </div>
 
-      <div className="col-start-8 col-span-4 flex flex-col justify-center">
+      <div
+        className={`col-span-4 flex flex-col justify-center ${isReversed ? 'col-start-2 order-1' : 'col-start-8 order-2'}`}
+      >
+        {' '}
         {heading?.parsedValue && (
           <h2 className="text-title mb-4">{heading.parsedValue}</h2>
         )}
-
         {props.description?.value && (
-     <RichText data={props.description.value} />
-   )}
+          <RichText data={props.description.value} />
+        )}
         {link?.href?.value && (
-          <Link
+          <LinkButton
+            href={link.href.value}
+            target={link?.target?.value !== 'false' ? '_blank' : undefined}
+            text={link?.text?.value ?? ''}
             className="text-emphasis"
-            to={link.href.value}
-            {...(link?.target?.value !== 'false'
-              ? {target: '_blank', rel: 'noreferrer'}
-              : {})}
-          >
-            {link?.text?.value}
-          </Link>
+          />
         )}
       </div>
     </section>
@@ -98,6 +105,12 @@ export const SECTION_EDITORIAL_FRAGMENT = `#graphql
     type
 
     heading: field(key: "heading") {
+      key
+      type
+      value
+    }
+
+    order: field(key: "order") {
       key
       type
       value

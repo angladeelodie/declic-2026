@@ -1,6 +1,7 @@
 import type {ParsedMetafields} from '@shopify/hydrogen';
 import {parseSection} from '~/utils/parseSection';
-import {Link} from 'react-router';
+import {LinkButton} from '~/components/LinkButton';
+
 import type {SectionHeroFragment} from 'storefrontapi.generated';
 
 export function SectionHero(props: SectionHeroFragment) {
@@ -30,22 +31,19 @@ export function SectionHero(props: SectionHeroFragment) {
         ))}
       </div>
       <div className="col-start-2 col-span-10 grid grid-cols-2 gap-2">
-        {heading && <h1 className='text-title'>{heading.parsedValue}</h1>}
-        </div>
-        <div className="col-start-2 col-span-10 grid grid-cols-2 gap-2">
-
+        {heading && <h1 className="text-title">{heading.parsedValue}</h1>}
+      </div>
+      <div className="col-start-2 col-span-10 grid grid-cols-2 gap-2">
+  
         {link?.href?.value && (
-          <Link
-          className="text-emphasis"
-            to={link.href.value}
-            {...(link?.target?.value !== 'false'
-              ? {target: '_blank', rel: 'noreferrer'}
-              : {})}
-          >
-            {link?.text?.value}
-          </Link>
+          <LinkButton
+            href={link.href.value}
+            target={link?.target?.value !== 'false' ? '_blank' : undefined}
+            text={link?.text?.value ?? ''}
+            className="text-emphasis"
+          />
         )}
-        </div>
+      </div>
     </section>
   );
 }
