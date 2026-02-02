@@ -1,4 +1,6 @@
 import {SECTION_HERO_FRAGMENT, SectionHero} from '~/sections/SectionHero';
+import {SECTION_EDITORIAL_FRAGMENT, SectionEditorial} from '~/sections/SectionEditorial';
+
 import {
   SECTION_FEATURED_PRODUCTS_FRAGMENT,
   SectionFeaturedProducts,
@@ -22,6 +24,8 @@ export function Sections({sections}: {sections: SectionsFragment}) {
         switch (section.type) {
           case 'section_hero':
             return <SectionHero {...section} key={section.id} />;
+          case 'section_editorial':
+            return <SectionEditorial {...section} key={section.id} />;
           case 'section_featured_products':
             return <SectionFeaturedProducts {...section} key={section.id} />;
           case 'section_featured_collections':
@@ -51,6 +55,7 @@ export const SECTIONS_FRAGMENT = `#graphql
             id
             type
             ...SectionHero
+            ...SectionEditorial
             ...SectionFeaturedProducts
             ...SectionFeaturedCollections
             ...SectionStores
@@ -62,6 +67,7 @@ export const SECTIONS_FRAGMENT = `#graphql
   }
   # All section fragments
   ${SECTION_HERO_FRAGMENT}
+  ${SECTION_EDITORIAL_FRAGMENT}
   ${SECTION_FEATURED_PRODUCTS_FRAGMENT}
   ${SECTION_FEATURED_COLLECTIONS_FRAGMENT}
   ${SECTION_STORES_FRAGMENT}

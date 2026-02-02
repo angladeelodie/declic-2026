@@ -57,6 +57,10 @@ function parseMetafieldValue(node: Record<string, any>) {
         node,
       );
 
+    // ELD
+    case 'rich_text_field':
+      return parseMetafield<ParsedMetafields['rich_text_field']>(node);
+
     // NOTE: expand with other field types as needed for your project
     default:
       parsed = node;
