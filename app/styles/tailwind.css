@@ -4,3 +4,65 @@
  */
 
 @import 'tailwindcss';
+
+@font-face {
+    font-family: 'Metalite';
+    src: url('/fonts/Metalite-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Metalite';
+    src: url('/fonts/Metalite-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'SourceSansPro';
+    src: url('/fonts/sourcesanspro-Regular.woff') format('woff');
+    src: url();
+}
+
+@layer components {
+    .text-body {
+        @apply font-normal leading-[1.2] text-base;
+        font-family: 'SourceSansPro', Arial, Helvetica, sans-serif;
+    }
+    
+    .text-emphasis {
+        @apply font-normal leading-[1.2] text-lg;
+        font-family: 'Metalite', sans-serif;
+    }
+    
+    .text-title {
+        @apply uppercase font-bold leading-none text-3xl;
+        font-family: 'Metalite', sans-serif;
+    }
+}
+
+
+/* @layer base {
+
+    p,
+    span {
+        @apply text-body;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        @apply text-title;
+    }
+} */
+
+/* 
+    .prose h1,
+    .prose h2 {
+        @apply text-title;
+    }
+
+    .prose p {
+        @apply text-body;
+    } */

@@ -8,51 +8,36 @@ export function SectionHero(props: SectionHeroFragment) {
     SectionHeroFragment,
     {
       heading?: ParsedMetafields['single_line_text_field'];
-      subheading?: ParsedMetafields['single_line_text_field'];
     }
   >(props);
 
-  const {image, heading, subheading, link} = section;
+  const {images, heading, link} = section;
 
-  const backgroundImage = image?.image?.url
-    ? `url("${image.image.url}")`
-    : undefined;
+  // images.references.nodes is an array of up to 2 MediaImage objects
+  const mediaImages = props.images?.references?.nodes ?? [];
 
   return (
-    <section
-      className="section-hero"
-      style={{
-        backgroundImage,
-        height: '50%',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        backgroundSize: 'cover',
-        position: 'relative',
-        minHeight: '500px',
-      }}
-    >
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          paddingLeft: '2rem',
-          position: 'absolute',
-          top: 0,
-          right: 0,
-          left: 0,
-          bottom: 0,
-        }}
-      >
-        {heading && <h1 style={{marginBottom: 0}}>{heading.parsedValue}</h1>}
-        {subheading && <p>{subheading.value}</p>}
+    <section className="section-hero grid grid-cols-12 gap-2">
+      <div className="col-start-2 col-span-10 grid grid-cols-2 gap-2">
+        {mediaImages.map((mediaImage, index) => (
+          <img
+            key={index}
+            src={mediaImage.image.url}
+            alt={mediaImage.image.altText ?? ''}
+            className="w-full
+            rounded-tl-[240px] rounded-tr-[200px] rounded-br-[480px] rounded-bl-[120px]"
+          />
+        ))}
+      </div>
+      <div className="col-start-2 col-span-10 grid grid-cols-2 gap-2">
+        {heading && <h1 className='text-title'>{heading.parsedValue}</h1>}
+        </div>
+        <div className="col-start-2 col-span-10 grid grid-cols-2 gap-2">
+
         {link?.href?.value && (
           <Link
+          className="text-emphasis"
             to={link.href.value}
-            style={{
-              textDecoration: 'underline',
-              marginTop: '1rem',
-            }}
             {...(link?.target?.value !== 'false'
               ? {target: '_blank', rel: 'noreferrer'}
               : {})}
@@ -60,11 +45,10 @@ export function SectionHero(props: SectionHeroFragment) {
             {link?.text?.value}
           </Link>
         )}
-      </div>
+        </div>
     </section>
   );
 }
-
 const MEDIA_IMAGE_FRAGMENT = `#graphql
   fragment MediaImage on MediaImage {
     image {
@@ -80,7 +64,7 @@ const LINK_FRAGMENT = `#graphql
   fragment Link on MetaobjectField {
     ... on MetaobjectField {
       reference {
-        ...on Metaobject {
+        ... on Metaobject {
           href: field(key: "href") {
             value
           }
@@ -103,18 +87,16 @@ export const SECTION_HERO_FRAGMENT = `#graphql
       key
       value
     }
-    subheading: field(key: "subheading") {
-      key
-      value
-    }
     link: field(key: "link") {
       ...Link
     }
-    image: field(key: "image") {
+    images: field(key: "images") {
       key
-      reference {
-        ... on MediaImage {
-          ...MediaImage
+      references(first: 2) {
+        nodes {
+          ... on MediaImage {
+            ...MediaImage
+          }
         }
       }
     }
