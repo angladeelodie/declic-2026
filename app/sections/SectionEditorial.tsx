@@ -29,41 +29,61 @@ export function SectionEditorial(props: SectionEditorialFragment) {
   const isReversed = props.order?.value === 'false';
 
   return (
-    <section className="section-editorial grid grid-rows-1 grid-cols-12 gap-2 h-[calc(40vh_+_5vw)]">
-      <div
-        className={`col-span-5 self-stretch h-full ${isReversed ? 'col-start-7 order-2' : 'col-start-2 order-1'} h-full`}
-      >
-        {' '}
-        {imageUrl && (
-          <img
-            src={imageUrl}
-            alt={imageAlt}
-            className="w-full h-full object-cover
-            rounded-tl-[240px] rounded-tr-[200px] rounded-br-[480px] rounded-bl-[120px]"
-          />
-        )}
-      </div>
+<section className={`
+  grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-2 
+  h-auto md:h-[calc(40vh_+_5vw)] 
+  items-center px-4 md:px-0
+`}>
+  {/* Image Container */}
+  <div
+    className={`
+      col-span-1 md:col-span-5 self-stretch 
+      ${isReversed ? 'md:col-start-7 md:order-2' : 'md:col-start-2 md:order-1'}
+    `}
+  >
+    {imageUrl && (
+      <img
+        src={imageUrl}
+        alt={imageAlt}
+        className="w-full h-[400px] md:h-full object-cover
+        rounded-tl-[120px] rounded-tr-[100px] rounded-br-[240px] rounded-bl-[60px]
+        md:rounded-tl-[240px] md:rounded-tr-[200px] md:rounded-br-[480px] md:rounded-bl-[120px]"
+      />
+    )}
+  </div>
 
-      <div
-        className={`col-span-4 flex flex-col justify-center ${isReversed ? 'col-start-2 order-1' : 'col-start-8 order-2'}`}
-      >
-        {' '}
-        {heading?.parsedValue && (
-          <h2 className="text-title mb-4">{heading.parsedValue}</h2>
-        )}
-        {props.description?.value && (
-          <RichText data={props.description.value} />
-        )}
-        {link?.href?.value && (
-          <LinkButton
-            href={link.href.value}
-            target={link?.target?.value !== 'false' ? '_blank' : undefined}
-            text={link?.text?.value ?? ''}
-            className="text-emphasis"
-          />
-        )}
+  {/* Text Container */}
+  <div
+    className={`
+      col-span-1 md:col-span-4 flex flex-col justify-center
+      text-center md:text-left
+      ${isReversed ? 'md:col-start-2 md:order-1' : 'md:col-start-8 md:order-2'}
+    `}
+  >
+    {heading?.parsedValue && (
+      <h2 className="text-title mb-4 text-3xl md:text-5xl">
+        {heading.parsedValue}
+      </h2>
+    )}
+    
+    {props.description?.value && (
+      <div className="mb-6">
+        <RichText data={props.description.value} />
       </div>
-    </section>
+    )}
+
+    {link?.href?.value && (
+      <div className="flex justify-center md:justify-start">
+        <LinkButton
+          href={link.href.value}
+          target={link?.target?.value !== 'false' ? '_blank' : undefined}
+          text={link?.text?.value ?? ''}
+          className="text-emphasis"
+        />
+      </div>
+    )}
+  </div>
+</section>
   );
 }
 
