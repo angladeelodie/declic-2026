@@ -14,17 +14,18 @@ const STYLE_MAP: Record<number, string> = {
 };
 
 export function Media({ media, className = '', order }: MediaProps) {
+    console.log('Media component media prop:', media);
   // 1. Extract the deep Shopify reference
-  const actualMediaData = media?.reference?.media?.reference;
+  const actualMediaData = media?.media.reference;
   
   if (!actualMediaData) return null;
 
   const isImage = actualMediaData?.__typename === 'MediaImage';
   const isVideo = actualMediaData?.__typename === 'Video';
-  const isReversed = order?.value === 'false';
 
   // 2. Logic for corner styles
-  const styleIndex = Number(media.reference?.style_index?.value || 0);
+  const styleIndex = Number(media.style_index?.value || 0);
+  console.log(media);
   const cornerClass = STYLE_MAP[styleIndex] || STYLE_MAP[0];
 
 

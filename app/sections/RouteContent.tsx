@@ -1,4 +1,6 @@
 import {SECTIONS_FRAGMENT, Sections} from '~/sections/Sections';
+import {EDITORIAL_MEDIA_METAOBJECT_FRAGMENT} from '~/lib/mediaFragment';
+
 import {EditRoute} from '~/components/EditRoute';
 
 import type {RouteContentQuery} from 'storefrontapi.generated';
@@ -31,4 +33,6 @@ export const ROUTE_CONTENT_QUERY = `#graphql
     }
   }
   ${SECTIONS_FRAGMENT}
+  ${EDITORIAL_MEDIA_METAOBJECT_FRAGMENT} # <-- define fragment once at top level
+
 `;

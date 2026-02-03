@@ -10,6 +10,7 @@ import {Link} from 'react-router';
 import {useRef, useEffect} from 'react';
 import type {SectionEditorialFragment} from 'storefrontapi.generated';
 
+
 export function SectionEditorial(props: SectionEditorialFragment) {
   const section = parseSection<
     SectionEditorialFragment,
@@ -21,6 +22,7 @@ export function SectionEditorial(props: SectionEditorialFragment) {
 
   const {heading, description, link} = section;
   const isReversed = props.order?.value === 'false';
+  // console.log('SectionEditorial props:', props);
 
   return (
     <section
@@ -31,7 +33,7 @@ export function SectionEditorial(props: SectionEditorialFragment) {
      `}
     >
       <Media
-        media={props.media}
+        media={props.media.reference}
         className={`col-start-2 col-span-4 md:col-span-5 ${isReversed ? 'md:col-start-7 md:order-2' : 'md:col-start-2 md:order-1'}`}
       />
 
@@ -69,43 +71,7 @@ export function SectionEditorial(props: SectionEditorialFragment) {
   );
 }
 
-const MEDIA_METAOBJECT_FRAGMENT = `#graphql
-  fragment EditorialMediaMetaobject on Metaobject {
-    # the file field – key "media"
-    media: field(key: "media") {
-    key
-    type
-    reference {
-      __typename  # <--- CRITICAL: Returns "MediaImage" or "Video"
-      ... on MediaImage {
-        image {
-          altText
-          url
-          width
-          height
-        }
-      }
-      ... on Video {
-        id
-        sources {
-          url
-          mimeType
-        }
-        previewImage {
-          url
-        }
-      }
-    }
-  }
 
-    # example integer field to drive styling
-    style_index: field(key: "corner_style") {
-      key
-      type
-      value
-    }
-  }
-`;
 
 const LINK_FRAGMENT = `#graphql
   fragment EditorialLink on MetaobjectField {
@@ -161,8 +127,6 @@ export const SECTION_EDITORIAL_FRAGMENT = `#graphql
         }
       }
     }
-  
   }
   ${LINK_FRAGMENT}
-  ${MEDIA_METAOBJECT_FRAGMENT}
 `;

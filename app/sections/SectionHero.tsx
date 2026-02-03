@@ -1,6 +1,7 @@
 import type {ParsedMetafields} from '@shopify/hydrogen';
 import {parseSection} from '~/utils/parseSection';
 import {LinkButton} from '~/components/LinkButton';
+import {Media} from '~/components/Media';
 
 import type {SectionHeroFragment} from 'storefrontapi.generated';
 
@@ -14,58 +15,49 @@ export function SectionHero(props: SectionHeroFragment) {
 
   const {images, heading, link} = section;
 
+  // console.log('SectionHero props:', props);
   // images.references.nodes is an array of up to 2 MediaImage objects
-  const mediaImages = props.images?.references?.nodes ?? [];
+  const mediaImages = props.medias?.references?.nodes ?? [];
+  // console.log('mediaImages', mediaImages);
 
   return (
-<section className="section-hero grid grid-cols-1 md:grid-cols-12 gap-4 px-4 md:px-0">
-  
+    <section className="section-hero grid grid-cols-1 md:grid-cols-12 gap-4 px-4 md:px-0 h-[80vh] md:grid-rows-[1fr]">
+      <div className="md:col-start-2 md:col-span-10 grid grid-cols-1 md:grid-cols-2 gap-4">
+        {mediaImages.map((mediaItem, index) => (
+          <Media
+            key={index} // Use ID or Index as key
+            media={mediaItem}
+            className="col-span-1 md:col-span-1 w-full object-cover"
+          />
+        ))}
+      </div>
 
-  <div className="md:col-start-2 md:col-span-10 grid grid-cols-1 md:grid-cols-2 gap-4">
-    {mediaImages.map((mediaImage, index) => (
-      <img
-        key={index}
-        src={mediaImage.image.url}
-        alt={mediaImage.image.altText ?? ''}
-        className="w-full object-cover 
-        rounded-tl-[120px] rounded-tr-[100px] rounded-br-[240px] rounded-bl-[60px] 
-        md:rounded-tl-[240px] md:rounded-tr-[200px] md:rounded-br-[480px] md:rounded-bl-[120px]"
-      />
-    ))}
-  </div>
+      {/* Heading Container */}
+      <div className="md:col-start-2 md:col-span-10">
+        {heading && (
+          <h1 className="text-title text-center md:text-left">
+            {heading.parsedValue}
+          </h1>
+        )}
+      </div>
 
-  {/* Heading Container */}
-  <div className="md:col-start-2 md:col-span-10">
-    {heading && <h1 className="text-title text-center md:text-left">{heading.parsedValue}</h1>}
-  </div>
-
-  {/* Button Container */}
-  <div className="md:col-start-2 md:col-span-10 flex justify-center md:justify-start">
-    {link?.href?.value && (
-      <LinkButton
-        href={link.href.value}
-        target={link?.target?.value !== 'false' ? '_blank' : undefined}
-        text={link?.text?.value ?? ''}
-        className="text-emphasis"
-      />
-    )}
-  </div>
-</section>
+      {/* Button Container */}
+      <div className="md:col-start-2 md:col-span-10 flex justify-center md:justify-start">
+        {link?.href?.value && (
+          <LinkButton
+            href={link.href.value}
+            target={link?.target?.value !== 'false' ? '_blank' : undefined}
+            text={link?.text?.value ?? ''}
+            className="text-emphasis"
+          />
+        )}
+      </div>
+    </section>
   );
 }
-const MEDIA_IMAGE_FRAGMENT = `#graphql
-  fragment MediaImage on MediaImage {
-    image {
-      altText
-      url
-      width
-      height
-    }
-  }
-`;
 
-const LINK_FRAGMENT = `#graphql
-  fragment Link on MetaobjectField {
+const HERO_LINK_FRAGMENT = `#graphql
+  fragment HeroLink on MetaobjectField {
     ... on MetaobjectField {
       reference {
         ... on Metaobject {
@@ -87,24 +79,27 @@ const LINK_FRAGMENT = `#graphql
 export const SECTION_HERO_FRAGMENT = `#graphql
   fragment SectionHero on Metaobject {
     type
+
     heading: field(key: "heading") {
       key
       value
     }
+
     link: field(key: "link") {
-      ...Link
+      ...HeroLink
     }
-    images: field(key: "images") {
+
+    medias: field(key: "medias") {
       key
       references(first: 2) {
         nodes {
-          ... on MediaImage {
-            ...MediaImage
+          ... on Metaobject {
+            ...EditorialMediaMetaobject
           }
         }
       }
     }
   }
-  ${LINK_FRAGMENT}
-  ${MEDIA_IMAGE_FRAGMENT}
+  ${HERO_LINK_FRAGMENT}
+  # IMPORTANT: do NOT interpolate EDITORIAL_MEDIA_METAOBJECT_FRAGMENT here
 `;
