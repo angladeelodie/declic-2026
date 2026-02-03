@@ -14,8 +14,9 @@ import {
   SECTION_STORE_PROFILE_FRAGMENT,
   SectionStoreProfile,
 } from '~/sections/SectionStoreProfile';
-
+import{ SECTION_OUTFITS_AND_MEDIA_FRAGMENT } from '~/sections/SectionOutfitsAndMedia';
 import type {SectionsFragment} from 'storefrontapi.generated';
+import { SectionOutfitsAndMedia } from './SectionOutfitsAndMedia';
 
 export function Sections({sections}: {sections: SectionsFragment}) {
   return (
@@ -34,7 +35,9 @@ export function Sections({sections}: {sections: SectionsFragment}) {
             return <SectionStores {...section} key={section.id} />;
           case 'section_store_profile':
             return <SectionStoreProfile {...section} key={section.id} />;
-          // case 'section_another':
+          case 'section_outfits_and_media':
+            return <SectionOutfitsAndMedia {...section} key={section.id} />;
+            // case 'section_another':
           //   return <AnotherSection />;
           default:
             // eslint-disable-next-line no-console
@@ -60,6 +63,7 @@ export const SECTIONS_FRAGMENT = `#graphql
             ...SectionFeaturedCollections
             ...SectionStores
             ...SectionStoreProfile
+            ...SectionOutfitsAndMedia
           }
         }
       }
@@ -72,4 +76,5 @@ export const SECTIONS_FRAGMENT = `#graphql
   ${SECTION_FEATURED_COLLECTIONS_FRAGMENT}
   ${SECTION_STORES_FRAGMENT}
   ${SECTION_STORE_PROFILE_FRAGMENT}
-`;
+  ${SECTION_OUTFITS_AND_MEDIA_FRAGMENT} 
+  `;
