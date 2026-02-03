@@ -19,6 +19,14 @@ export default async function handleRequest(
       checkoutDomain: context.env.PUBLIC_CHECKOUT_DOMAIN,
       storeDomain: context.env.PUBLIC_STORE_DOMAIN,
     },
+    // Explicitly allow video/media from your store domain
+    // ELD fix
+    mediaSrc: [
+      "'self'",
+      'https://cdn.shopify.com',
+      // your store domain; could also use https://*.myshopify.com
+      `https://${context.env.PUBLIC_STORE_DOMAIN}`,
+    ],
   });
 
   const body = await renderToReadableStream(
