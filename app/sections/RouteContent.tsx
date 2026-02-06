@@ -12,7 +12,7 @@ export function RouteContent({route}: {route: RouteContentQuery['route']}) {
 
   return (
     <div>
-      {route?.id && <EditRoute routeId={route.id} />}
+      {/* {route?.id && <EditRoute routeId={route.id} />} */}
       {route?.sections && <Sections sections={route.sections} />}
     </div>
   );

@@ -38,7 +38,7 @@ return (
                 <Image
                   data={product.featuredImage}
                   sizes="(min-width: 768px) 20vw, 40vw"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover bg-[#e5eae8] rounded-[30px]"
                 />
               )}
               {/* <h3 className="text-sm font-medium truncate">{product.title}</h3> */}

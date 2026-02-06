@@ -29,17 +29,22 @@
 
 @layer components {
     .text-body {
-        @apply font-normal leading-[1.2] text-base;
+        @apply font-normal text-base;
         font-family: 'SourceSansPro', Arial, Helvetica, sans-serif;
     }
     
     .text-emphasis {
-        @apply font-normal leading-[1.2] text-lg;
+        @apply font-normal text-lg;
         font-family: 'Metalite', sans-serif;
     }
     
     .text-title {
         @apply uppercase font-bold leading-none text-3xl;
+        font-family: 'Metalite', sans-serif;
+    }
+
+    .text-nav {
+        @apply font-normal text-base;
         font-family: 'Metalite', sans-serif;
     }
 }
