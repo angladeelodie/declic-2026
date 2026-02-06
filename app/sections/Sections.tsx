@@ -17,33 +17,49 @@ import {
 import{ SECTION_OUTFITS_AND_MEDIA_FRAGMENT } from '~/sections/SectionOutfitsAndMedia';
 import type {SectionsFragment} from 'storefrontapi.generated';
 import { SectionOutfitsAndMedia } from './SectionOutfitsAndMedia';
+import {Reveal} from '~/components/Reveal';
+
 
 export function Sections({sections}: {sections: SectionsFragment}) {
   return (
     <div className="sections">
       {sections?.references?.nodes.map((section) => {
+        // We determine WHICH component to show
+        let sectionComponent = null;
+
         switch (section.type) {
           case 'section_hero':
-            return <SectionHero {...section} key={section.id} />;
+            sectionComponent = <SectionHero {...section} />;
+            break;
           case 'section_editorial':
-            return <SectionEditorial {...section} key={section.id} />;
+            sectionComponent = <SectionEditorial {...section} />;
+            break;
           case 'section_featured_products':
-            return <SectionFeaturedProducts {...section} key={section.id} />;
+            sectionComponent = <SectionFeaturedProducts {...section} />;
+            break;
           case 'section_featured_collections':
-            return <SectionFeaturedCollections {...section} key={section.id} />;
+            sectionComponent = <SectionFeaturedCollections {...section} />;
+            break;
           case 'section_stores_grid':
-            return <SectionStores {...section} key={section.id} />;
+            sectionComponent = <SectionStores {...section} />;
+            break;
           case 'section_store_profile':
-            return <SectionStoreProfile {...section} key={section.id} />;
+            sectionComponent = <SectionStoreProfile {...section} />;
+            break;
           case 'section_outfits_and_media':
-            return <SectionOutfitsAndMedia {...section} key={section.id} />;
-            // case 'section_another':
-          //   return <AnotherSection />;
+            sectionComponent = <SectionOutfitsAndMedia {...section} />;
+            break;
           default:
-            // eslint-disable-next-line no-console
             console.log(`Unsupported section type: ${section.type}`);
             return null;
         }
+
+        // 2. We wrap that component in the Reveal logic
+        return (
+          <Reveal key={section.id}>
+            {sectionComponent}
+          </Reveal>
+        );
       })}
     </div>
   );

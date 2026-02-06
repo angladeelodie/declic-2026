@@ -22,7 +22,7 @@ export function SectionHero(props: SectionHeroFragment) {
 
   return (
 /* Swap to [1fr_auto] so images stretch and text fits content */
-<section className="section-hero section-main grid-rows-[1fr_auto] h-[110vh]">
+<section className="section-hero section-main grid-rows-[1fr_auto] h-[120vh]">
   
   {/* ROW 1: Media Images (Stretches) */}
   <div className="row-start-1 grid grid-cols-1 lg:grid-cols-2 gap-4 col-span-full md:col-start-2 md:col-span-4 lg:col-span-10 lg:col-start-2 min-h-0">
