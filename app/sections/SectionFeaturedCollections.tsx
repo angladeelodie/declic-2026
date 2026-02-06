@@ -18,7 +18,7 @@ export function SectionFeaturedCollections(
 
   const {id, heading, collections} = section;
   return (
-    <section className="featured-collection" key={id}>
+    <section className="section-featured-collections section-main" key={id}>
       {heading && <h2>{heading.parsedValue}</h2>}
       {collections?.nodes && (
         <ul className="recommended-products-grid">

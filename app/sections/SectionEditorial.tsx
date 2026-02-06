@@ -27,25 +27,23 @@ export function SectionEditorial(props: SectionEditorialFragment) {
   return (
     <section
       className={`
-        grid grid-cols-6 md:grid-cols-12 gap-8 md:gap-2 
-        h-auto md:h-[80vh]  
-        items-center px-4 md:px-0
+        section-editorial
+        section-main
+        grid-rows-[1fr]
      `}
     >
       <Media
         media={props.media.reference}
-        className={`col-start-2 col-span-4 md:col-span-5 ${isReversed ? 'md:col-start-7 md:order-2' : 'md:col-start-2 md:order-1'}`}
+        className={`order-2 col-span-6 md:col-start-2 md:col-span-4 md:col-start-2 lg:col-span-5 ${isReversed ? 'lg:col-start-7 lg:order-2' : 'lg:col-start-2 lg:order-1'}`}
       />
 
       <div
-        className={`
-          col-start-2 col-span-4 md:col-span-4 flex flex-col justify-center
-          text-center md:text-left
-          ${isReversed ? 'md:col-start-2 md:order-1' : 'md:col-start-8 md:order-2'}
+        className={`order-1 col-span-6 md:col-start-2 md:col-span-4 lg:col-span-4 flex flex-col justify-center text-center lg:text-left
+          ${isReversed ? 'lg:col-start-2 lg:order-1' : 'lg:col-start-8 lg:order-2'}
         `}
       >
         {heading?.parsedValue && (
-          <h2 className="text-title mb-4 text-3xl md:text-5xl">
+          <h2 className="text-title text-3xl lg:text-5xl">
             {heading.parsedValue}
           </h2>
         )}
@@ -57,7 +55,7 @@ export function SectionEditorial(props: SectionEditorialFragment) {
         )}
 
         {link?.href?.value && (
-          <div className="flex justify-center md:justify-start">
+          <div className="flex justify-center lg:justify-start">
             <LinkButton
               href={link.href.value}
               target={link?.target?.value !== 'false' ? '_blank' : undefined}

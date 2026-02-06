@@ -28,7 +28,7 @@ export function LinkButton({
       prefetch="intent"
       onClick={onClick}
       className={`
-        inline-flex items-center gap-2 pt-8 pb-8
+        inline-flex items-center gap-2 pt-0 pb-8
         group
         ${className}
       `}

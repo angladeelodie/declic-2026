@@ -20,25 +20,25 @@ export function SectionOutfitsAndMedia(props: SectionOutfitsAndMediaFragment) {
 
 return (
   <section
-    className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-2 h-auto md:h-[60vh] md:my-30 items-center px-4 md:px-0"
+    className="section-outfits-and-media section-main grid-rows-2 lg:grid-rows-1"
   >
     {/* Collection block */}
     {collection && (
-      <div className="col-span-1 md:col-start-2 md:col-span-6 h-full">
+      <div className="col-span-6 row-span-1 md:col-span-6 lg:col-span-6 lg:col-start-2 md:h-full">
         {/* We create a 3-column sub-grid here */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 h-full">
-          {collection.products?.nodes?.slice(0, 6).map((product) => (
+        <div className="grid auto-rows-fr grid-cols-2  md:grid-cols-3 gap-4 h-full">
+          {collection.products?.nodes?.slice(0, 6).map((product, index ) => (
             <Link
               key={product.id}
               to={`/products/${product.handle}`}
+              className={`block ${index >= 4 ? 'hidden md:block' : ''}`}
               prefetch="intent"
-              className="block"
             >
               {product.featuredImage && (
                 <Image
                   data={product.featuredImage}
                   sizes="(min-width: 768px) 20vw, 40vw"
-                  className="w-full h-full object-cover bg-[#e5eae8] rounded-[30px]"
+                  className="w-full h-full object-contain bg-[#e5eae8] rounded-[30px] aspect-ratio-initial"
                 />
               )}
               {/* <h3 className="text-sm font-medium truncate">{product.title}</h3> */}
@@ -49,10 +49,10 @@ return (
     )}
 
     {/* Media block */}
-    <div className="col-span-1 md:col-start-8 md:col-span-4 self-stretch h-full">
+    <div className="col-span-6 row-span-1 md:col-span-4 md:col-start-2 lg:col-start-8 lg:col-span-4 self-stretch md:h-full">
         <Media
         media={props.media.reference}
-        className="md:col-start-8 md:col-span-4 col-span-6 h-full"
+        className="lg:col-start-8 lg:col-span-4 col-span-6 h-full"
       />
     </div>
   </section>
@@ -80,7 +80,7 @@ export const SECTION_OUTFITS_AND_MEDIA_FRAGMENT = `#graphql
           id
           title
           handle
-          products(first: 4) {
+          products(first: 6) {
             nodes {
               id
               title

@@ -4,20 +4,33 @@ interface MediaProps {
 }
 
 const STYLE_MAP: Record<number, string> = {
-  0: 'rounded-[30px_30px_30px_30px]',
-  1: 'rounded-[30px_400px_400px_400px]',
-  2: 'rounded-[400px_30px_400px_400px]',
-  3: 'rounded-[400px_400px_30px_400px]',
-  4: 'rounded-[400px_400px_400px_30px]',
-  5: 'rounded-[30px_400px_30px_400px]',
-  6: 'rounded-[400px_30px_400px_30px]',
+  // All corners "sharp" (standard rounded)
+  0: 'rounded-[var(--radius-sharp)]',
+  
+  // Top-left sharp, others circular
+  1: 'rounded-[var(--radius-sharp)_var(--radius-round)_var(--radius-round)_var(--radius-round)]',
+  
+  // Top-right sharp, others circular
+  2: 'rounded-[var(--radius-round)_var(--radius-sharp)_var(--radius-round)_var(--radius-round)]',
+  
+  // Bottom-right sharp, others circular
+  3: 'rounded-[var(--radius-round)_var(--radius-round)_var(--radius-sharp)_var(--radius-round)]',
+  
+  // Bottom-left sharp, others circular
+  4: 'rounded-[var(--radius-round)_var(--radius-round)_var(--radius-round)_var(--radius-sharp)]',
+  
+  // Diagonals: Top-left & Bottom-right sharp
+  5: 'rounded-[var(--radius-sharp)_var(--radius-round)_var(--radius-sharp)_var(--radius-round)]',
+  
+  // Diagonals: Top-right & Bottom-left sharp
+  6: 'rounded-[var(--radius-round)_var(--radius-sharp)_var(--radius-round)_var(--radius-sharp)]',
 };
 
-export function Media({ media, className = '', order }: MediaProps) {
-    console.log('Media component media prop:', media);
+export function Media({media, className = '', order}: MediaProps) {
+  console.log('Media component media prop:', media);
   // 1. Extract the deep Shopify reference
   const actualMediaData = media?.media.reference;
-  
+
   if (!actualMediaData) return null;
 
   const isImage = actualMediaData?.__typename === 'MediaImage';
@@ -28,11 +41,10 @@ export function Media({ media, className = '', order }: MediaProps) {
   console.log(media);
   const cornerClass = STYLE_MAP[styleIndex] || STYLE_MAP[0];
 
-
-
   // 4. Combine all classes
   // We combine the fixed logic with the optional className prop
-  const combinedClasses = `overflow-hidden self-stretch md:contain-size ${cornerClass} ${className}`.trim();
+  const combinedClasses =
+    `overflow-hidden self-stretch lg:contain-size ${cornerClass} ${className}`.trim();
 
   // --- Render Image ---
   if (isImage && actualMediaData.image?.url) {
@@ -61,11 +73,7 @@ export function Media({ media, className = '', order }: MediaProps) {
           className="w-full h-full object-cover"
         >
           {actualMediaData.sources.map((source: any) => (
-            <source
-              key={source.url}
-              src={source.url}
-              type={source.mimeType}
-            />
+            <source key={source.url} src={source.url} type={source.mimeType} />
           ))}
         </video>
       </div>
