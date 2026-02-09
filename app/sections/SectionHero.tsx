@@ -21,39 +21,49 @@ export function SectionHero(props: SectionHeroFragment) {
   // console.log('mediaImages', mediaImages);
 
   return (
-/* Swap to [1fr_auto] so images stretch and text fits content */
-<section className="section-hero section-main grid-rows-[1fr_auto] h-[120vh]">
-  
-  {/* ROW 1: Media Images (Stretches) */}
-  <div className="row-start-1 grid grid-cols-1 lg:grid-cols-2 gap-4 col-span-full md:col-start-2 md:col-span-4 lg:col-span-10 lg:col-start-2 min-h-0">
-    {mediaImages.map((mediaItem, index) => (
-      <Media
-        key={index}
-        media={mediaItem}
-        /* aspect-square or h-full is vital here to ensure the Media component has height */
-        className="w-full h-full min-h-0 object-cover aspect-square lg:aspect-auto"
-      />
-    ))}
-  </div>
+    /* Swap to [1fr_auto] so images stretch and text fits content */
+    <section className="section-hero section-main grid-rows-[1fr_auto] h-[100vh]">
+      {/* ROW 1: Media Images (Stretches) */}
+      {/* 1 Image: Spans the full width (col-span-full)
+  2 Images: Centered with gutters (lg:col-span-10 lg:col-start-2)
+*/}
+      <div
+        className={`row-start-1 grid gap-4 min-h-0
+    ${
+      mediaImages.length > 1
+        ? 'grid-cols-1 lg:grid-cols-2 col-span-full md:col-start-2 md:col-span-4 lg:col-span-10 lg:col-start-2'
+        : 'col-start-1 col-span-6 md:col-start-2 md:col-span-4 lg:col-start-4 lg:col-span-6'
+    }
+  `}
+      >
+        {mediaImages.map((mediaItem, index) => (
+          <Media
+            key={index}
+            media={mediaItem}
+            className="w-full h-full min-h-0 object-cover aspect-square lg:aspect-auto"
+          />
+        ))}
+      </div>
+      {/* ROW 2: Heading & Button (Fits Content) */}
+      <div className="row-start-2 col-span-full md:col-span-4 md:col-start-2 flex flex-col items-center lg:items-start pt-8">
+        {heading && (
+          <h1 className="text-title text-center lg:text-left m-0">
+            {heading.parsedValue}
+          </h1>
+        )}
 
-  {/* ROW 2: Heading & Button (Fits Content) */}
-  <div className="row-start-2 col-span-full md:col-span-4 md:col-start-2 flex flex-col items-center lg:items-start">
-    {heading && (
-      <h1 className="text-title text-center lg:text-left m-0">
-        {heading.parsedValue}
-      </h1>
-    )}
-    
-    {link?.href?.value && (
-      <LinkButton
-        href={link.href.value}
-        target={link?.target?.value !== 'false' ? '_blank' : undefined}
-        text={link?.text?.value ?? ''}
-        className="text-emphasis"
-      />
-    )}
-  </div>
-</section>
+        {link?.href?.value && (
+          <div className="mt-6">
+            <LinkButton
+              href={link.href.value}
+              target={link?.target?.value !== 'false' ? '_blank' : undefined}
+              text={link?.text?.value ?? ''}
+              className="text-emphasis"
+            />
+          </div>
+        )}
+      </div>
+    </section>
   );
 }
 

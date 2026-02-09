@@ -68,20 +68,43 @@ export function HeaderMenu({
   publicStoreDomain: HeaderProps['publicStoreDomain'];
 }) {
   const {close} = useAside();
-  
-  const className = viewport === 'desktop' 
-    ? "hidden md:flex items-center gap-6 absolute left-1/2 -translate-x-1/2" 
-    : "flex flex-col gap-4 py-6";
+
+  const className =
+    viewport === 'desktop'
+      ? 'hidden md:flex items-center gap-6 absolute left-1/2 -translate-x-1/2'
+      : 'flex flex-col gap-4 py-6';
 
   return (
     <nav className={className} role="navigation">
       {(menu || FALLBACK_HEADER_MENU).items.map((item) => {
         if (!item.url) return null;
-        const url = item.url.includes('myshopify.com') ||
+
+        // SPECIAL CASE:
+        // If this menu item is the "Shop" item from Shopify,
+        // send it to our Hydrogen /shop route instead of the Shopify URL.
+        if (item.title === 'Shop') {
+          return (
+            <NavLink
+              className="text-nav no-underline uppercase hover:opacity-60 transition-opacity"
+              end
+              key={item.id}
+              onClick={close}
+              prefetch="intent"
+              style={activeLinkStyle}
+              to="/shop"
+            >
+              {item.title}
+            </NavLink>
+          );
+        }
+
+        const url =
+          item.url.includes('myshopify.com') ||
           item.url.includes(publicStoreDomain) ||
           item.url.includes(primaryDomainUrl)
             ? new URL(item.url).pathname
             : item.url;
+
         return (
           <NavLink
             className="text-nav no-underline uppercase hover:opacity-60 transition-opacity"
