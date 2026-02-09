@@ -80,7 +80,7 @@ export const SECTION_OUTFITS_AND_MEDIA_FRAGMENT = `#graphql
           id
           title
           handle
-          products(first: 6) {
+          products(first: 200) {
             nodes {
               id
               title

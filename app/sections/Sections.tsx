@@ -15,8 +15,10 @@ import {
   SectionStoreProfile,
 } from '~/sections/SectionStoreProfile';
 import{ SECTION_OUTFITS_AND_MEDIA_FRAGMENT } from '~/sections/SectionOutfitsAndMedia';
+import {SECTION_ITEMS_GRID_FRAGMENT} from '~/sections/SectionItemsGrid';
 import type {SectionsFragment} from 'storefrontapi.generated';
 import { SectionOutfitsAndMedia } from './SectionOutfitsAndMedia';
+import { SectionItemsGrid } from './SectionItemsGrid';
 import {Reveal} from '~/components/Reveal';
 
 
@@ -49,6 +51,9 @@ export function Sections({sections}: {sections: SectionsFragment}) {
           case 'section_outfits_and_media':
             sectionComponent = <SectionOutfitsAndMedia {...section} />;
             break;
+          case 'section_items_grid':
+            sectionComponent = <SectionItemsGrid {...section} />;
+            break;
           default:
             console.log(`Unsupported section type: ${section.type}`);
             return null;
@@ -80,6 +85,7 @@ export const SECTIONS_FRAGMENT = `#graphql
             ...SectionStores
             ...SectionStoreProfile
             ...SectionOutfitsAndMedia
+            ...SectionItemsGrid
           }
         }
       }
@@ -93,4 +99,5 @@ export const SECTIONS_FRAGMENT = `#graphql
   ${SECTION_STORES_FRAGMENT}
   ${SECTION_STORE_PROFILE_FRAGMENT}
   ${SECTION_OUTFITS_AND_MEDIA_FRAGMENT} 
+  ${SECTION_ITEMS_GRID_FRAGMENT}
   `;
