@@ -75,21 +75,16 @@ function loadDeferredData({context, params}: Route.LoaderArgs) {
 
   return {};
 }
-
 export default function Product() {
   const {product} = useLoaderData<typeof loader>();
 
-  // Optimistically selects a variant with given available variant information
   const selectedVariant = useOptimisticVariant(
     product.selectedOrFirstAvailableVariant,
     getAdjacentAndFirstAvailableVariants(product),
   );
 
-  // Sets the search param to the selected variant without navigation
-  // only when no search params are set in the url
   useSelectedOptionInUrlParam(selectedVariant.selectedOptions);
 
-  // Get the product options array
   const productOptions = getProductOptions({
     ...product,
     selectedOrFirstAvailableVariant: selectedVariant,
@@ -98,28 +93,60 @@ export default function Product() {
   const {title, descriptionHtml} = product;
 
   return (
-    <div className="product">
-      <ProductImage image={selectedVariant?.image} />
-      <div className="product-main">
-        <h1>{title}</h1>
-        <ProductPrice
-          price={selectedVariant?.price}
-          compareAtPrice={selectedVariant?.compareAtPrice}
-        />
-        <br />
-        <ProductForm
-          productOptions={productOptions}
-          selectedVariant={selectedVariant}
-        />
-        <br />
-        <br />
-        <p>
-          <strong>Description</strong>
-        </p>
-        <br />
-        <div dangerouslySetInnerHTML={{__html: descriptionHtml}} />
-        <br />
+    <div className="w-full h-full">
+      {/* 12-Column Grid Wrapper */}
+      <div className="grid grid-rows-2 lg:grid-rows-1 grid-cols-6 lg:grid-cols-12 gap-4 lg:max-h-[100vh] overflow-hidden">
+        {/* Left Column: Image (Spans 7 of 12 columns) */}
+        <div className="col-span-6 md:col-span-4 md:col-start-2 lg:col-start-1 lg:col-span-6 h-full min-h-0 relative">
+          {/* 3. The Container: Use absolute to 'break' the image's height dominance */}
+          <div className="absolute inset-0 w-full h-full">
+            {/* 4. The Leaf Shape Wrapper */}
+            <div className="w-full h-full overflow-hidden rounded-tr-[160px] rounded-bl-[160px] bg-[#f3eded]">
+              <ProductImage
+                image={selectedVariant?.image}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column: Info (Spans 5 of 12 columns) */}
+        <div className="col-span-6 md:col-span-4 lg:col-span-4 md:col-start-2 lg:col-start-8  flex flex-col pt-4">
+          <header className="mb-8">
+            <h1 className="text-title">
+              {title}
+            </h1>
+            <div
+              className="text-body"
+              dangerouslySetInnerHTML={{__html: descriptionHtml}}
+            />
+          </header>
+
+          {/* Price and Form Section */}
+          <section className="space-y-8">
+            <ProductForm
+              productOptions={productOptions}
+              selectedVariant={selectedVariant}
+            />
+          </section>
+
+          {/* "Complete your look" Section */}
+          <footer className="mt-16">
+            <h3 className="text-xl text-metalite font-bold mb-6">Complete your look</h3>
+            <div className="grid grid-cols-4 gap-3">
+              {[1, 2, 3, 4].map((i) => (
+                <div
+                  key={i}
+                  className="aspect-square bg-gray-100 rounded-tr-2xl rounded-bl-2xl overflow-hidden cursor-pointer hover:opacity-80 transition-opacity"
+                >
+                  {/* Logic for related product images would go here */}
+                  <div className="w-full h-full bg-[#dcdcdc] animate-pulse" />
+                </div>
+              ))}
+            </div>
+          </footer>
+        </div>
       </div>
+
       <Analytics.ProductView
         data={{
           products: [

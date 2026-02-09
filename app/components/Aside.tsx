@@ -67,7 +67,7 @@ export function Aside({
         }`}
       >
         <header className="flex items-center justify-between h-[var(--header-height)] px-5 border-b border-gray-100">
-          <h3 className="text-sm font-black uppercase tracking-widest m-0">{heading}</h3>
+          <h3 className="font-metalite font-bold uppercase">{heading}</h3>
           <button 
             className="text-3xl font-light leading-none hover:opacity-50 transition-opacity" 
             onClick={close} 

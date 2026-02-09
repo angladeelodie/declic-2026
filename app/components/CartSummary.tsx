@@ -16,20 +16,44 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
 
   return (
     <div aria-labelledby="cart-summary" className={className}>
-      <h4>Totals</h4>
-      <dl className="cart-subtotal">
-        <dt>Subtotal</dt>
-        <dd>
-          {cart?.cost?.subtotalAmount?.amount ? (
-            <Money data={cart?.cost?.subtotalAmount} />
-          ) : (
-            '-'
-          )}
-        </dd>
-      </dl>
-      <CartDiscounts discountCodes={cart?.discountCodes} />
-      <CartGiftCard giftCardCodes={cart?.appliedGiftCards} />
-      <CartCheckoutActions checkoutUrl={cart?.checkoutUrl} />
+      <div className="flex flex-col gap-4 bg-white max-w-md mx-auto">
+        <h2 className="text-2xl font-bold tracking-tight mb-2">Summary</h2>
+
+        {/* 6-Column Grid for Totals */}
+        <div className="flex flex-col gap-3 border-b border-gray-100 pb-6">
+          {/* Subtotal */}
+          <div className="grid grid-cols-6 items-center">
+            <span className="col-span-3">Subtotal</span>
+            <span className="col-span-3 text-right">
+              {cart?.cost?.subtotalAmount?.amount ? (
+                <Money data={cart?.cost?.subtotalAmount} />
+              ) : (
+                '-'
+              )}
+            </span>
+          </div>
+
+          {/* Unified Minimalist Coupons & Gift Cards */}
+          <div className="flex flex-col gap-3">
+            <CartDiscounts discountCodes={cart?.discountCodes} />
+            <CartGiftCard giftCardCodes={cart?.appliedGiftCards} />
+          </div>
+
+          {/* Total Row */}
+          <div className="grid grid-cols-6 items-center mt-2 pt-4 border-t border-gray-100">
+            <span className="col-span-3 text-metaline">Total</span>
+            <span className="col-span-3 text-right text-lg font-bold">
+              {cart?.cost?.totalAmount ? (
+                <Money data={cart?.cost?.totalAmount} />
+              ) : (
+                '0.00'
+              )}
+            </span>
+          </div>
+        </div>
+
+        <CartCheckoutActions checkoutUrl={cart?.checkoutUrl} />
+      </div>
     </div>
   );
 }
@@ -38,11 +62,28 @@ function CartCheckoutActions({checkoutUrl}: {checkoutUrl?: string}) {
   if (!checkoutUrl) return null;
 
   return (
-    <div>
-      <a href={checkoutUrl} target="_self">
-        <p>Continue to Checkout &rarr;</p>
+    <div className="mt-2 flex justify-center">
+      <a
+        href={checkoutUrl}
+        target="_self"
+        className="bg-[var(--color-accent)] hover:bg-[#34e58b] text-black font-bold py-3 px-10 rounded-full flex items-center justify-center gap-3 transition-transform active:scale-95 text-base w-full md:w-auto min-w-[180px]"
+      >
+        <span>Order</span>
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+          <path d="M3 6h18" />
+          <path d="M16 10a4 4 0 0 1-8 0" />
+        </svg>
       </a>
-      <br />
     </div>
   );
 }
@@ -53,34 +94,44 @@ function CartDiscounts({
   discountCodes?: CartApiQueryFragment['discountCodes'];
 }) {
   const codes: string[] =
-    discountCodes
-      ?.filter((discount) => discount.applicable)
-      ?.map(({code}) => code) || [];
+    discountCodes?.filter((d) => d.applicable)?.map(({code}) => code) || [];
 
   return (
-    <div>
-      {/* Have existing discount, display it with a remove option */}
-      <dl hidden={!codes.length}>
-        <div>
-          <dt>Discount(s)</dt>
-          <UpdateDiscountForm>
-            <div className="cart-discount">
-              <code>{codes?.join(', ')}</code>
-              &nbsp;
-              <button>Remove</button>
-            </div>
-          </UpdateDiscountForm>
-        </div>
-      </dl>
-
-      {/* Show an input to apply a discount */}
+    <div className="w-full">
       <UpdateDiscountForm discountCodes={codes}>
-        <div>
-          <input type="text" name="discountCode" placeholder="Discount code" />
-          &nbsp;
-          <button type="submit">Apply</button>
+        <div className="grid grid-cols-6 gap-2 items-center">
+          <input
+            type="text"
+            name="discountCode"
+            placeholder="Coupon code"
+            className="col-span-4 bg-transparent focus:outline-none"
+          />
+          <button
+            type="submit"
+            className="col-span-2 text-right hover:text-grey-500"
+          >
+            Apply
+          </button>
         </div>
       </UpdateDiscountForm>
+
+      {codes.length > 0 && (
+        <div className="flex flex-wrap gap-2 mt-2">
+          {codes.map((code) => (
+            <div
+              key={code}
+              className="flex items-center gap-1 text-[9px] font-bold uppercase text-gray-500"
+            >
+              <span>{code}</span>
+              <UpdateDiscountForm
+                discountCodes={codes.filter((c) => c !== code)}
+              >
+                <button className="text-gray-300 hover:text-red-500">✕</button>
+              </UpdateDiscountForm>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -154,15 +205,19 @@ function CartGiftCard({
         saveAppliedCode={saveAppliedCode}
         fetcherKey="gift-card-add"
       >
-        <div>
+        <div className="grid grid-cols-6 gap-2 items-center">
           <input
             type="text"
             name="giftCardCode"
             placeholder="Gift card code"
             ref={giftCardCodeInput}
+            className="col-span-4 bg-transparent focus:outline-none"
           />
-          &nbsp;
-          <button type="submit" disabled={giftCardAddFetcher.state !== 'idle'}>
+          <button
+            type="submit"
+            disabled={giftCardAddFetcher.state !== 'idle'}
+            className="col-span-2 text-right hover:text-grey-500"
+          >
             Apply
           </button>
         </div>

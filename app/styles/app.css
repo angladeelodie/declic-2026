@@ -6,6 +6,7 @@
   --header-height: 64px;
   --color-dark: #000;
   --color-light: #fff;
+  --color-accent: #26ff97;
   --radius-sharp: calc(2vw + 2vh);
   --radius-round: calc(12vw + 12vh);
 }
@@ -107,56 +108,6 @@
 * --------------------------------------------------
 * components/Cart
 * --------------------------------------------------
-*/
-.cart-main {
-  height: 100%;
-  max-height: calc(100vh - var(--cart-aside-summary-height));
-  overflow-y: auto;
-  width: auto;
-}
-
-.cart-main.with-discount {
-  max-height: calc(100vh - var(--cart-aside-summary-height-with-discount));
-}
-
-.cart-line {
-  display: flex;
-  padding: 0.75rem 0;
-}
-
-.cart-line img {
-  height: 100%;
-  display: block;
-  margin-right: 0.75rem;
-}
-
-.cart-summary-page {
-  position: relative;
-}
-
-.cart-summary-aside {
-  background: white;
-  border-top: 1px solid var(--color-dark);
-  bottom: 0;
-  padding-top: 0.75rem;
-  position: absolute;
-  width: calc(var(--aside-width) - 40px);
-}
-
-.cart-line-quantity {
-  display: flex;
-}
-
-.cart-discount {
-  align-items: center;
-  display: flex;
-  margin-top: 0.25rem;
-}
-
-.cart-subtotal {
-  align-items: center;
-  display: flex;
-}
 
 /*
 * --------------------------------------------------
@@ -297,7 +248,7 @@
 * routes/products.$handle.tsx
 * --------------------------------------------------
 */
-.product {
+/* .product {
   display: grid;
 
   @media (min-width: 45em) {
@@ -351,7 +302,7 @@
 
 .product-option-label-swatch img {
   width: 100%;
-}
+} */
 
 /*
 * --------------------------------------------------

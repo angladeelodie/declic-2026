@@ -32,12 +32,17 @@
         @apply font-normal text-base;
         font-family: 'SourceSansPro', Arial, Helvetica, sans-serif;
     }
-    
+
+    .text-metalite {
+        @apply font-normal text-base;
+        font-family: 'Metalite', sans-serif;
+    }
+
     .text-emphasis {
         @apply font-normal text-lg;
         font-family: 'Metalite', sans-serif;
     }
-    
+
     .text-title {
         @apply uppercase font-bold leading-none text-3xl pt-8 pb-8;
         font-family: 'Metalite', sans-serif;
@@ -49,7 +54,7 @@
     }
 
     .section-main {
-        @apply w-full grid h-[90vh] md:h-[90vh] grid-cols-6 lg:grid-cols-12 pb-16 gap-4 px-4 md:px-0 ;
+        @apply w-full grid h-[90vh] md:h-[90vh] grid-cols-6 lg:grid-cols-12 pb-16 gap-4 px-4 md:px-0;
     }
 }
 
