@@ -14,11 +14,14 @@ import {
   SECTION_STORE_PROFILE_FRAGMENT,
   SectionStoreProfile,
 } from '~/sections/SectionStoreProfile';
+import { SECTION_LOOKS_SLIDER_FRAGMENT } from './SectionLooksSlider';
+
 import{ SECTION_OUTFITS_AND_MEDIA_FRAGMENT } from '~/sections/SectionOutfitsAndMedia';
 import {SECTION_ITEMS_GRID_FRAGMENT} from '~/sections/SectionItemsGrid';
 import type {SectionsFragment} from 'storefrontapi.generated';
 import { SectionOutfitsAndMedia } from './SectionOutfitsAndMedia';
 import { SectionItemsGrid } from './SectionItemsGrid';
+import { SectionLooksSlider } from './SectionLooksSlider';
 import {Reveal} from '~/components/Reveal';
 
 
@@ -44,6 +47,9 @@ export function Sections({sections}: {sections: SectionsFragment}) {
             break;
           case 'section_stores_grid':
             sectionComponent = <SectionStores {...section} />;
+            break;
+          case 'section_looks_slider':
+            sectionComponent = <SectionLooksSlider {...section} />;
             break;
           case 'section_store_profile':
             sectionComponent = <SectionStoreProfile {...section} />;
@@ -86,6 +92,7 @@ export const SECTIONS_FRAGMENT = `#graphql
             ...SectionStoreProfile
             ...SectionOutfitsAndMedia
             ...SectionItemsGrid
+            ...SectionLooksSlider
           }
         }
       }
@@ -100,4 +107,5 @@ export const SECTIONS_FRAGMENT = `#graphql
   ${SECTION_STORE_PROFILE_FRAGMENT}
   ${SECTION_OUTFITS_AND_MEDIA_FRAGMENT} 
   ${SECTION_ITEMS_GRID_FRAGMENT}
+  ${SECTION_LOOKS_SLIDER_FRAGMENT}
   `;
