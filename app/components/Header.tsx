@@ -25,7 +25,7 @@ export function Header({
 }: HeaderProps) {
   const {shop, menu} = header;
   return (
-    <header className="sticky top-0 flex items-center justify-between w-full px-4 mb-4 md:px-8 bg-white h-[var(--header-height)] border-b border-gray-100">
+    <header className="sticky z-100 top-0 flex items-center justify-between w-full px-4 mb-4 md:px-8 bg-white h-[var(--header-height)] border-b border-gray-100">
       {/* 1. Mobile: Burger Menu (Left) */}
       <div className="flex items-center flex-1 md:hidden">
         <HeaderMenuMobileToggle />
