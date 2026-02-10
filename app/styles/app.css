@@ -1,3 +1,9 @@
+@import 'swiper/css';
+@import 'swiper/css/navigation';
+@import 'swiper/css/pagination';
+@import 'swiper/css/scrollbar';
+
+
 :root {
   --aside-width: 400px;
   --cart-aside-summary-height-with-discount: 300px;
@@ -10,6 +16,8 @@
   --radius-sharp: calc(2vw + 2vh);
   --radius-round: calc(12vw + 12vh);
 }
+
+
 
 
 /*
@@ -243,6 +251,7 @@
   width: 100%;
 }
 
+
 /*
 * --------------------------------------------------
 * routes/products.$handle.tsx
@@ -303,6 +312,38 @@
 .product-option-label-swatch img {
   width: 100%;
 } */
+
+/*
+
+/*
+* --------------------------------------------------
+* sectionLooksSlider
+* --------------------------------------------------
+*/
+
+/* 1. Base width for inactive slides (2 columns of a 12-col grid ≈ 16.6%) */
+.looks-swiper .custom-slide {
+  transition: all 0.7s cubic-bezier(0.21, 0.6, 0.35, 1);
+  transform: scale(0.7);
+  
+  opacity: 0.4;
+}
+
+/* 2. Active slide width (4 columns of a 12-col grid ≈ 33.3%) */
+.looks-swiper .swiper-slide-active {
+  transform: scale(1);
+  opacity: 1;
+}
+
+/* 3. Smooth transition for the content */
+.custom-slide .slide-content {
+  opacity: 0;
+}
+.swiper-slide-active .slide-content {
+  opacity: 1;
+}
+
+
 
 /*
 * --------------------------------------------------

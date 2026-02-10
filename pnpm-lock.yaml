@@ -41,6 +41,9 @@ importers:
       slate-react:
         specifier: ^0.101.3
         version: 0.101.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(slate@0.101.5)
+      swiper:
+        specifier: ^12.1.0
+        version: 12.1.0
       tailwindcss:
         specifier: ^4.1.6
         version: 4.1.18
@@ -3768,6 +3771,10 @@ packages:
 
   swap-case@2.0.2:
     resolution: {integrity: sha512-kc6S2YS/2yXbtkSMunBtKdah4VFETZ8Oh6ONSmSd9bRxhqTrtARUCBUiWXH3xVPpvR7tz2CSnkuXVE42EcGnMw==}
+
+  swiper@12.1.0:
+    resolution: {integrity: sha512-BD4CpAOOyEvZ2f0CDx362ea+vmOwukVcmbsQx+0BhRIaBUz8wvcCd//E7RFmvBZCrfyqXCHUVqmgUwts6ywlxw==}
+    engines: {node: '>= 4.7.0'}
 
   sync-fetch@0.6.0:
     resolution: {integrity: sha512-IELLEvzHuCfc1uTsshPK58ViSdNqXxlml1U+fmwJIKLYKOr/rAtBrorE2RYm5IHaMpDNlmC0fr1LAvdXvyheEQ==}
@@ -8138,6 +8145,8 @@ snapshots:
   swap-case@2.0.2:
     dependencies:
       tslib: 2.8.1
+
+  swiper@12.1.0: {}
 
   sync-fetch@0.6.0:
     dependencies:
