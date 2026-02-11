@@ -17,14 +17,12 @@ export function Footer({
     <Suspense>
       <Await resolve={footerPromise}>
         {(footer) => (
-          <footer className="footer">
-            {footer?.menu && header.shop.primaryDomain?.url && (
-              <FooterMenu
-                menu={footer.menu}
-                primaryDomainUrl={header.shop.primaryDomain.url}
-                publicStoreDomain={publicStoreDomain}
-              />
-            )}
+          <footer className="w-full bg-white text-slate-900 py-12 border-t border-slate-100">
+            <FooterMenu
+              menu={footer?.menu}
+              primaryDomainUrl={header.shop.primaryDomain?.url}
+              publicStoreDomain={publicStoreDomain}
+            />
           </footer>
         )}
       </Await>
@@ -37,93 +35,85 @@ function FooterMenu({
   primaryDomainUrl,
   publicStoreDomain,
 }: {
-  menu: FooterQuery['menu'];
-  primaryDomainUrl: FooterProps['header']['shop']['primaryDomain']['url'];
+  menu: FooterQuery['menu'] | undefined;
+  primaryDomainUrl?: string;
   publicStoreDomain: string;
 }) {
   return (
-    <nav className="footer-menu" role="navigation">
-      {(menu || FALLBACK_FOOTER_MENU).items.map((item) => {
-        if (!item.url) return null;
-        // if the url is internal, we strip the domain
-        const url =
-          item.url.includes('myshopify.com') ||
-          item.url.includes(publicStoreDomain) ||
-          item.url.includes(primaryDomainUrl)
-            ? new URL(item.url).pathname
-            : item.url;
-        const isExternal = !url.startsWith('/');
-        return isExternal ? (
-          <a href={url} key={item.id} rel="noopener noreferrer" target="_blank">
-            {item.title}
+    <nav className="grid grid-rows-2 md:grid-rows-1 grid-cols-6 lg:grid-cols-12 gap-4" role="navigation">
+      
+      
+
+      {/* Col 3-4: Pages */}
+      <div className="col-span-3 md:col-span-1 md:col-start-2 lg:col-start-3 lg:col-span-2 flex flex-col gap-4">
+        <h3 className="font-metalite">Pages</h3>
+        <ul className="flex flex-col">
+          {(menu || FALLBACK_FOOTER_MENU).items.map((item) => {
+            if (!item.url) return null;
+            const url = item.url.includes('myshopify.com') || 
+                        item.url.includes(publicStoreDomain) || 
+                        (primaryDomainUrl && item.url.includes(primaryDomainUrl))
+              ? new URL(item.url).pathname
+              : item.url;
+            
+            return (
+              <li key={item.id}>
+                <NavLink 
+                  end 
+                  to={url} 
+                  prefetch="intent" 
+                  className='font-bold'
+                  
+                >
+                  {item.title}
+                </NavLink>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+
+      {/* Col 5-6: Legal */}
+      <div className="col-span-3 md:col-span-1 lg:col-span-2 flex flex-col gap-4">
+        <h3 className="font-metalite">Legal</h3>
+        <ul className="flex flex-col font-bold">
+          <li><NavLink className="hover:text-gray-500" to="/policies/privacy-policy">Privacy Policy</NavLink></li>
+          <li><NavLink className="hover:text-gray-500" to="/policies/terms-of-service">Terms of Service</NavLink></li>
+          <li><NavLink className="hover:text-gray-500" to="/policies/refund-policy">Refund Policy</NavLink></li>
+        </ul>
+      </div>
+
+      {/* Col 7-8: Find Us */}
+      <div className="col-span-3 md:col-span-1 lg:col-span-2 flex flex-col gap-4">
+        <h3 className="font-metalite">Find Us</h3>
+        <ul className="flex flex-col font-bold">
+          <li><a href="https://instagram.com" className="hover:text-gray-500" target="_blank" rel="noreferrer">Instagram</a></li>
+          <li><a href="https://facebook.com" className="hover:text-gray-500" target="_blank" rel="noreferrer">Facebook</a></li>
+          <li><a href="https://twitter.com" className="hover:text-gray-500" target="_blank" rel="noreferrer">X (Twitter)</a></li>
+        </ul>
+      </div>
+
+      {/* Col 9-10: Contact */}
+      <div className="col-span-3 md:col-span-1 lg:col-span-2 flex flex-col gap-4">
+        <h3 className="font-metalite">Contact</h3>
+        <address className="not-italic flex flex-col font-bold">
+          <p>123 Shopify Way</p>
+          <p>Ecommerce City, EC1 2AB</p>
+          <a href="mailto:hello@store.com" className="text-slate-900 font-medium underline underline-offset-4">
+            hello@store.com
           </a>
-        ) : (
-          <NavLink
-            end
-            key={item.id}
-            prefetch="intent"
-            style={activeLinkStyle}
-            to={url}
-          >
-            {item.title}
-          </NavLink>
-        );
-      })}
+        </address>
+      </div>
+
+      
     </nav>
   );
 }
 
 const FALLBACK_FOOTER_MENU = {
-  id: 'gid://shopify/Menu/199655620664',
+  id: 'fallback',
   items: [
-    {
-      id: 'gid://shopify/MenuItem/461633060920',
-      resourceId: 'gid://shopify/ShopPolicy/23358046264',
-      tags: [],
-      title: 'Privacy Policy',
-      type: 'SHOP_POLICY',
-      url: '/policies/privacy-policy',
-      items: [],
-    },
-    {
-      id: 'gid://shopify/MenuItem/461633093688',
-      resourceId: 'gid://shopify/ShopPolicy/23358013496',
-      tags: [],
-      title: 'Refund Policy',
-      type: 'SHOP_POLICY',
-      url: '/policies/refund-policy',
-      items: [],
-    },
-    {
-      id: 'gid://shopify/MenuItem/461633126456',
-      resourceId: 'gid://shopify/ShopPolicy/23358111800',
-      tags: [],
-      title: 'Shipping Policy',
-      type: 'SHOP_POLICY',
-      url: '/policies/shipping-policy',
-      items: [],
-    },
-    {
-      id: 'gid://shopify/MenuItem/461633159224',
-      resourceId: 'gid://shopify/ShopPolicy/23358079032',
-      tags: [],
-      title: 'Terms of Service',
-      type: 'SHOP_POLICY',
-      url: '/policies/terms-of-service',
-      items: [],
-    },
+    { id: '1', title: 'Home', url: '/' },
+    { id: '2', title: 'Shop', url: '/collections/all' },
   ],
 };
-
-function activeLinkStyle({
-  isActive,
-  isPending,
-}: {
-  isActive: boolean;
-  isPending: boolean;
-}) {
-  return {
-    fontWeight: isActive ? 'bold' : undefined,
-    color: isPending ? 'grey' : 'white',
-  };
-}
