@@ -13,7 +13,7 @@
   --color-dark: #000;
   --color-light: #fff;
   --color-accent: #26ff97;
-  --radius-sharp: calc(2vw + 2vh);
+  --radius-sharp: calc(1vw + 1vh);
   --radius-round: calc(12vw + 12vh);
 }
 

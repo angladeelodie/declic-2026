@@ -16,7 +16,7 @@ export function ProductImage({
         data={image}
         key={image.id}
         sizes="(min-width: 45em) 50vw, 100vw"
-        className="w-full h-full object-contain"
+        className="w-full h-full object-cover"
       />
     </div>
   );

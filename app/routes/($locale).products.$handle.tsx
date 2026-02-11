@@ -9,10 +9,12 @@ import {
   useSelectedOptionInUrlParam,
 } from '@shopify/hydrogen';
 import {ProductPrice} from '~/components/ProductPrice';
+import {getPaginationVariables, Image} from '@shopify/hydrogen';
+
 import {ProductImage} from '~/components/ProductImage';
 import {ProductForm} from '~/components/ProductForm';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
-
+import { useState, useEffect } from 'react'; // Add these imports
 export const meta: Route.MetaFunction = ({data}) => {
   return [
     {title: `Hydrogen | ${data?.product.title ?? ''}`},
@@ -76,12 +78,20 @@ function loadDeferredData({context, params}: Route.LoaderArgs) {
   return {};
 }
 export default function Product() {
-  const {product} = useLoaderData<typeof loader>();
+  const { product } = useLoaderData<typeof loader>();
 
   const selectedVariant = useOptimisticVariant(
     product.selectedOrFirstAvailableVariant,
     getAdjacentAndFirstAvailableVariants(product),
   );
+
+  // 1. Initialize state for the featured image
+  const [featuredImage, setFeaturedImage] = useState(selectedVariant?.image);
+
+  // 2. Sync state if the variant changes (e.g., user selects a different color via dropdown)
+  useEffect(() => {
+    setFeaturedImage(selectedVariant?.image);
+  }, [selectedVariant]);
 
   useSelectedOptionInUrlParam(selectedVariant.selectedOptions);
 
@@ -90,34 +100,53 @@ export default function Product() {
     selectedOrFirstAvailableVariant: selectedVariant,
   });
 
-  const {title, descriptionHtml} = product;
+  const { title, descriptionHtml } = product;
 
   return (
     <div className="w-full h-full">
-      {/* 12-Column Grid Wrapper */}
-      <div className="grid grid-rows-2 lg:grid-rows-1 grid-cols-6 lg:grid-cols-12 gap-4 lg:max-h-[100vh] overflow-hidden">
-        {/* Left Column: Image (Spans 7 of 12 columns) */}
-        <div className="col-span-6 md:col-span-4 md:col-start-2 lg:col-start-1 lg:col-span-6 h-full min-h-0 relative">
-          {/* 3. The Container: Use absolute to 'break' the image's height dominance */}
-          <div className="absolute inset-0 w-full h-full">
-            {/* 4. The Leaf Shape Wrapper */}
-            <div className="w-full h-full overflow-hidden rounded-tr-[160px] rounded-bl-[160px] bg-[#f3eded]">
-              <ProductImage
-                image={selectedVariant?.image}
+      <div className="grid grid-rows-2 lg:grid-rows-1 grid-cols-6 lg:grid-cols-12 gap-4 lg:max-h-[80vh] overflow-hidden">
+        
+        {/* Thumbnail Column */}
+        <div className="lg:col-start-1 lg:col-span-1 h-full overflow-y-auto flex flex-col gap-4">
+          {product.media.edges.map((media) => (
+            <button // Changed to a button for accessibility
+              key={media.node.id}
+              onClick={() => setFeaturedImage(media.node.image)} // 3. Update state on click
+              className={`w-full relative rounded-lg border-2 transition-all ${
+                featuredImage?.url === media.node.image.url 
+                  ? 'border-black' 
+                  : 'border-transparent hover:border-gray-300'
+              }`}
+            >
+              <Image
+                src={media.node.image.url}
+                alt={media.node.image.altText || ''}
+                aspectRatio="4/5"
+                className="object-cover rounded-lg"
+                sizes="(min-width: 10rem) 400px, 20vw"
+                loading="lazy"
               />
+            </button>
+          ))}
+        </div>
+
+        {/* Main Image Column */}
+        <div className="col-span-6 md:col-span-4 md:col-start-2 lg:col-start-2 lg:col-span-5 h-full min-h-0 relative">
+          <div className="absolute inset-0 w-full h-full">
+            <div className="w-full h-full overflow-hidden rounded-[var(--radius-sharp)_var(--radius-round)_var(--radius-sharp)_var(--radius-round)] bg-[#f3eded]">
+              {/* 4. Use the state variable here instead of selectedVariant.image */}
+              <ProductImage image={featuredImage} />
             </div>
           </div>
         </div>
 
-        {/* Right Column: Info (Spans 5 of 12 columns) */}
-        <div className="col-span-6 md:col-span-4 lg:col-span-4 md:col-start-2 lg:col-start-8  flex flex-col pt-4">
+        {/* Info Column */}
+        <div className="col-span-6 md:col-span-4 lg:col-span-4 md:col-start-2 lg:col-start-8 flex flex-col pt-4">
           <header className="mb-8">
-            <h1 className="text-title">
-              {title}
-            </h1>
+            <h1 className="text-title">{title}</h1>
             <div
               className="text-body"
-              dangerouslySetInnerHTML={{__html: descriptionHtml}}
+              dangerouslySetInnerHTML={{ __html: descriptionHtml }}
             />
           </header>
 
@@ -131,8 +160,17 @@ export default function Product() {
 
           {/* "Complete your look" Section */}
           <footer className="mt-16">
-            <h3 className="text-xl text-metalite font-bold mb-6">Complete your look</h3>
+            <h3 className="text-xl text-metalite font-bold mb-6">
+              Complete your look
+            </h3>
             <div className="grid grid-cols-4 gap-3">
+              {/* {product.adjacentVariants.map((variant) => (
+            <div
+              key={variant.id}
+            >
+              <img src={variant.image.url} alt={variant.image.altText || ''} />
+            </div>
+          ))} */}
               {[1, 2, 3, 4].map((i) => (
                 <div
                   key={i}
@@ -205,42 +243,85 @@ const PRODUCT_VARIANT_FRAGMENT = `#graphql
 
 const PRODUCT_FRAGMENT = `#graphql
   fragment Product on Product {
-    id
-    title
-    vendor
-    handle
-    descriptionHtml
-    description
-    encodedVariantExistence
-    encodedVariantAvailability
-    options {
-      name
-      optionValues {
-        name
-        firstSelectableVariant {
-          ...ProductVariant
-        }
-        swatch {
-          color
+  id
+  title
+  vendor
+  handle
+  descriptionHtml
+  description
+  encodedVariantExistence
+  encodedVariantAvailability
+
+  # NEW: product-level media gallery
+  media(first: 20) {
+    edges {
+      node {
+        __typename
+        ... on MediaImage {
+          id
           image {
-            previewImage {
-              url
-            }
+            url
+            altText
+            width
+            height
+          }
+        }
+        ... on Video {
+          id
+          sources {
+            url
+            mimeType
+          }
+        }
+        ... on Model3d {
+          id
+          sources {
+            url
+          }
+        }
+        ... on ExternalVideo {
+          id
+          embeddedUrl
+        }
+      }
+    }
+  }
+
+  options {
+    name
+    optionValues {
+      name
+      firstSelectableVariant {
+        ...ProductVariant
+      }
+      swatch {
+        color
+        image {
+          previewImage {
+            url
           }
         }
       }
     }
-    selectedOrFirstAvailableVariant(selectedOptions: $selectedOptions, ignoreUnknownOptions: true, caseInsensitiveMatch: true) {
-      ...ProductVariant
-    }
-    adjacentVariants (selectedOptions: $selectedOptions) {
-      ...ProductVariant
-    }
-    seo {
-      description
-      title
-    }
   }
+
+  selectedOrFirstAvailableVariant(
+    selectedOptions: $selectedOptions
+    ignoreUnknownOptions: true
+    caseInsensitiveMatch: true
+  ) {
+    ...ProductVariant
+  }
+
+  adjacentVariants(selectedOptions: $selectedOptions) {
+    ...ProductVariant
+  }
+
+  seo {
+    description
+    title
+  }
+}
   ${PRODUCT_VARIANT_FRAGMENT}
 ` as const;
 
