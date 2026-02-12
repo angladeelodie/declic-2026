@@ -104,7 +104,7 @@ export default function Product() {
 
   return (
     <div className="w-full h-full">
-      <div className="grid grid-rows-2 lg:grid-rows-1 grid-cols-6 lg:grid-cols-12 gap-4 lg:max-h-[80vh] overflow-hidden">
+      <div className="grid grid-rows-2 col-span-1 lg:grid-rows-1 grid-cols-6 lg:grid-cols-12 gap-4 lg:max-h-[80vh] overflow-hidden">
         
         {/* Thumbnail Column */}
         <div className="lg:col-start-1 lg:col-span-1 h-full overflow-y-auto flex flex-col gap-4">
@@ -131,7 +131,7 @@ export default function Product() {
         </div>
 
         {/* Main Image Column */}
-        <div className="col-span-6 md:col-span-4 md:col-start-2 lg:col-start-2 lg:col-span-5 h-full min-h-0 relative">
+        <div className="col-span-5 md:col-span-4 md:col-start-2 lg:col-start-2 lg:col-span-5 h-full min-h-0 relative">
           <div className="absolute inset-0 w-full h-full">
             <div className="w-full h-full overflow-hidden rounded-[var(--radius-sharp)_var(--radius-round)_var(--radius-sharp)_var(--radius-round)] bg-[#f3eded]">
               {/* 4. Use the state variable here instead of selectedVariant.image */}

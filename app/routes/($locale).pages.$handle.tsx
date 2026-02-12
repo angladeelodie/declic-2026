@@ -1,6 +1,8 @@
 import {useLoaderData} from 'react-router';
 import type {Route} from './+types/pages.$handle';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
+import {EDITORIAL_MEDIA_METAOBJECT_FRAGMENT} from '~/lib/mediaFragment';
+import {Media} from '~/components/Media';
 
 export const meta: Route.MetaFunction = ({data}) => {
   return [{title: `Hydrogen | ${data?.page.title ?? ''}`}];
@@ -56,13 +58,30 @@ function loadDeferredData({context}: Route.LoaderArgs) {
 
 export default function Page() {
   const {page} = useLoaderData<typeof loader>();
+  console.log('Page data:', page);
 
   return (
     <div className="page">
-      <header>
-        <h1>{page.title}</h1>
-      </header>
-      <main dangerouslySetInnerHTML={{__html: page.body}} />
+      {/* <header>
+      </header> */}
+      <section
+        className={`
+              section-main
+              grid-rows-[1fr]
+              h-fit
+           `}
+      >
+        <Media
+          media={page.media.reference}
+          aspectRatio="2/3"
+          className={`aspect-ratio-2/3 self-center col-span-6 md:col-start-2 md:col-span-4 md:col-start-2 lg:col-span-3 lg:col-start-2 `}
+        />
+        <div className="col-span-6 lg:col-span-6 lg:col-start-6 flex flex-col justify-center">
+          <h1 className='text-title'>{page.title}</h1>
+
+          <div dangerouslySetInnerHTML={{__html: page.body}} className='columns-2 gap-4' />
+        </div>
+      </section>
     </div>
   );
 }
@@ -83,6 +102,17 @@ const PAGE_QUERY = `#graphql
         description
         title
       }
+
+      media: metafield(namespace: "custom", key: "media") {
+        key
+        reference {
+          ... on Metaobject {
+            ...EditorialMediaMetaobject
+          }
+        }
+      }
     }
   }
+  ${EDITORIAL_MEDIA_METAOBJECT_FRAGMENT}
+
 ` as const;

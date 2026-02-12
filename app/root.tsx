@@ -17,6 +17,10 @@ import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
 import tailwindCss from './styles/tailwind.css?url';
 import {PageLayout} from './components/PageLayout';
+type FooterMenus = {
+  pages: FooterQuery['menu'] | null;
+  legal: FooterQuery['menu'] | null;
+};
 
 export type RootLoader = typeof loader;
 
@@ -124,19 +128,42 @@ async function loadCriticalData({context}: Route.LoaderArgs) {
 function loadDeferredData({context}: Route.LoaderArgs) {
   const {storefront, customerAccount, cart} = context;
 
-  // defer the footer query (below the fold)
-  const footer = storefront
-    .query(FOOTER_QUERY, {
-      cache: storefront.CacheLong(),
-      variables: {
-        footerMenuHandle: 'footer', // Adjust to your footer menu handle
-      },
-    })
-    .catch((error: Error) => {
-      // Log query errors, but don't throw them so the page can still render
-      console.error(error);
-      return null;
-    });
+  const {language, country} = storefront.i18n;
+
+  // Defer both footer menu queries (below the fold)
+  const footer: Promise<FooterMenus> = Promise.all([
+    storefront
+      .query(FOOTER_QUERY, {
+        cache: storefront.CacheLong(),
+        variables: {
+          footerMenuHandle: 'footer-pages', // menu handle in Admin
+          language,
+          country,
+        },
+      })
+      .catch((error: Error) => {
+        console.error('Error loading footer-pages menu:', error);
+        return null;
+      }),
+
+    storefront
+      .query(FOOTER_QUERY, {
+        cache: storefront.CacheLong(),
+        variables: {
+          footerMenuHandle: 'footer-legal', // menu handle in Admin
+          language,
+          country,
+        },
+      })
+      .catch((error: Error) => {
+        console.error('Error loading footer-legal menu:', error);
+        return null;
+      }),
+  ]).then(([pagesResult, legalResult]) => ({
+    pages: pagesResult?.menu ?? null,
+    legal: legalResult?.menu ?? null,
+  }));
+
   return {
     cart: cart.get(),
     isLoggedIn: customerAccount.isLoggedIn(),
