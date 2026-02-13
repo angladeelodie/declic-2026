@@ -1,5 +1,8 @@
 import {SECTION_HERO_FRAGMENT, SectionHero} from '~/sections/SectionHero';
-import {SECTION_EDITORIAL_FRAGMENT, SectionEditorial} from '~/sections/SectionEditorial';
+import {
+  SECTION_EDITORIAL_FRAGMENT,
+  SectionEditorial,
+} from '~/sections/SectionEditorial';
 
 import {
   SECTION_FEATURED_PRODUCTS_FRAGMENT,
@@ -9,21 +12,19 @@ import {
   SECTION_FEATURED_COLLECTIONS_FRAGMENT,
   SectionFeaturedCollections,
 } from '~/sections/SectionFeaturedCollections';
-import {SECTION_STORES_FRAGMENT, SectionStores} from '~/sections/SectionStores';
-import {
-  SECTION_STORE_PROFILE_FRAGMENT,
-  SectionStoreProfile,
-} from '~/sections/SectionStoreProfile';
-import { SECTION_LOOKS_SLIDER_FRAGMENT } from './SectionLooksSlider';
 
-import{ SECTION_OUTFITS_AND_MEDIA_FRAGMENT } from '~/sections/SectionOutfitsAndMedia';
+import {SECTION_LOOKS_SLIDER_FRAGMENT} from './SectionLooksSlider';
+
+import {SECTION_OUTFITS_AND_MEDIA_FRAGMENT} from '~/sections/SectionOutfitsAndMedia';
 import {SECTION_ITEMS_GRID_FRAGMENT} from '~/sections/SectionItemsGrid';
-import type {SectionsFragment} from 'storefrontapi.generated';
-import { SectionOutfitsAndMedia } from './SectionOutfitsAndMedia';
-import { SectionItemsGrid } from './SectionItemsGrid';
-import { SectionLooksSlider } from './SectionLooksSlider';
-import {Reveal} from '~/components/Reveal';
+import {SECTION_CONFIGURATOR_FRAGMENT} from './SectionConfigurator';
 import {EDITORIAL_MEDIA_METAOBJECT_FRAGMENT} from '~/lib/mediaFragment';
+import {SectionOutfitsAndMedia} from './SectionOutfitsAndMedia';
+import {SectionItemsGrid} from './SectionItemsGrid';
+import {SectionLooksSlider} from './SectionLooksSlider';
+import {SectionConfigurator} from './SectionConfigurator';
+import type {SectionsFragment} from 'storefrontapi.generated';
+import {Reveal} from '~/components/Reveal';
 
 export function Sections({sections}: {sections: SectionsFragment}) {
   return (
@@ -54,17 +55,16 @@ export function Sections({sections}: {sections: SectionsFragment}) {
           case 'section_items_grid':
             sectionComponent = <SectionItemsGrid {...section} />;
             break;
+          case 'section_configurator':
+            sectionComponent = <SectionConfigurator {...section} />;
+            break;
           default:
             console.log(`Unsupported section type: ${section.type}`);
             return null;
         }
 
         // 2. We wrap that component in the Reveal logic
-        return (
-          <Reveal key={section.id}>
-            {sectionComponent}
-          </Reveal>
-        );
+        return <Reveal key={section.id}>{sectionComponent}</Reveal>;
       })}
     </div>
   );
@@ -85,7 +85,8 @@ export const SECTIONS_FRAGMENT = `#graphql
           ...SectionLooksSlider 
           ...SectionOutfitsAndMedia
           ...SectionItemsGrid
-        }
+          ...SectionConfigurator
+      }
       }
     }
   }
@@ -99,4 +100,5 @@ export const SECTIONS_FRAGMENT = `#graphql
   ${SECTION_OUTFITS_AND_MEDIA_FRAGMENT}
   ${SECTION_ITEMS_GRID_FRAGMENT}
   ${SECTION_LOOKS_SLIDER_FRAGMENT}
+  ${SECTION_CONFIGURATOR_FRAGMENT}
 ` as const;

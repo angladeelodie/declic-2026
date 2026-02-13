@@ -418,7 +418,7 @@ export type HomeQuery = {
               Pick<StorefrontAPI.MetaobjectField, 'key' | 'type' | 'value'>
             >;
             description?: StorefrontAPI.Maybe<
-              Pick<StorefrontAPI.MetaobjectField, 'key' | 'type' | 'value'>
+              Pick<StorefrontAPI.MetaobjectField, 'key' | 'value' | 'type'>
             >;
             media?: StorefrontAPI.Maybe<
               Pick<StorefrontAPI.MetaobjectField, 'key'> & {
@@ -525,7 +525,7 @@ export type HomeQuery = {
               Pick<StorefrontAPI.MetaobjectField, 'type' | 'key' | 'value'>
             >;
             title?: StorefrontAPI.Maybe<
-              Pick<StorefrontAPI.MetaobjectField, 'key' | 'value'>
+              Pick<StorefrontAPI.MetaobjectField, 'key' | 'value' | 'type'>
             >;
             looks?: StorefrontAPI.Maybe<{
               references?: StorefrontAPI.Maybe<{
@@ -1033,7 +1033,7 @@ export type PageQuery = {
                 Pick<StorefrontAPI.MetaobjectField, 'key' | 'type' | 'value'>
               >;
               description?: StorefrontAPI.Maybe<
-                Pick<StorefrontAPI.MetaobjectField, 'key' | 'type' | 'value'>
+                Pick<StorefrontAPI.MetaobjectField, 'key' | 'value' | 'type'>
               >;
               media?: StorefrontAPI.Maybe<
                 Pick<StorefrontAPI.MetaobjectField, 'key'> & {
@@ -1143,7 +1143,7 @@ export type PageQuery = {
                 Pick<StorefrontAPI.MetaobjectField, 'type' | 'key' | 'value'>
               >;
               title?: StorefrontAPI.Maybe<
-                Pick<StorefrontAPI.MetaobjectField, 'key' | 'value'>
+                Pick<StorefrontAPI.MetaobjectField, 'key' | 'value' | 'type'>
               >;
               looks?: StorefrontAPI.Maybe<{
                 references?: StorefrontAPI.Maybe<{
@@ -1814,6 +1814,18 @@ export type StoreRobotsQueryVariables = StorefrontAPI.Exact<{
 
 export type StoreRobotsQuery = {shop: Pick<StorefrontAPI.Shop, 'id'>};
 
+export type SectionConfiguratorFragment = Pick<
+  StorefrontAPI.Metaobject,
+  'type'
+> & {
+  title?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.MetaobjectField, 'key' | 'type' | 'value'>
+  >;
+  description?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.MetaobjectField, 'key' | 'type' | 'value'>
+  >;
+};
+
 export type EditorialLinkFragment = {
   reference?: StorefrontAPI.Maybe<{
     href?: StorefrontAPI.Maybe<Pick<StorefrontAPI.MetaobjectField, 'value'>>;
@@ -2245,144 +2257,6 @@ export type SectionOutfitsAndMediaFragment = Pick<
   }>;
 };
 
-export type StoreProfileFieldFragment = Pick<
-  StorefrontAPI.MetaobjectField,
-  'type' | 'key' | 'value'
->;
-
-export type StoreProfileFragment = Pick<
-  StorefrontAPI.Metaobject,
-  'type' | 'id' | 'handle'
-> & {
-  title?: StorefrontAPI.Maybe<
-    Pick<StorefrontAPI.MetaobjectField, 'type' | 'key' | 'value'>
-  >;
-  heading?: StorefrontAPI.Maybe<
-    Pick<StorefrontAPI.MetaobjectField, 'type' | 'key' | 'value'>
-  >;
-  description?: StorefrontAPI.Maybe<
-    Pick<StorefrontAPI.MetaobjectField, 'type' | 'key' | 'value'>
-  >;
-  address?: StorefrontAPI.Maybe<
-    Pick<StorefrontAPI.MetaobjectField, 'type' | 'key' | 'value'>
-  >;
-  hours?: StorefrontAPI.Maybe<
-    Pick<StorefrontAPI.MetaobjectField, 'type' | 'key' | 'value'>
-  >;
-  image?: StorefrontAPI.Maybe<
-    Pick<StorefrontAPI.MetaobjectField, 'type' | 'key'> & {
-      reference?: StorefrontAPI.Maybe<{
-        image?: StorefrontAPI.Maybe<
-          Pick<StorefrontAPI.Image, 'altText' | 'url' | 'width' | 'height'>
-        >;
-      }>;
-    }
-  >;
-};
-
-export type SectionStoreProfileFragment = Pick<
-  StorefrontAPI.Metaobject,
-  'type' | 'id' | 'handle'
-> & {
-  store?: StorefrontAPI.Maybe<{
-    reference?: StorefrontAPI.Maybe<
-      Pick<StorefrontAPI.Metaobject, 'type' | 'id' | 'handle'> & {
-        title?: StorefrontAPI.Maybe<
-          Pick<StorefrontAPI.MetaobjectField, 'type' | 'key' | 'value'>
-        >;
-        heading?: StorefrontAPI.Maybe<
-          Pick<StorefrontAPI.MetaobjectField, 'type' | 'key' | 'value'>
-        >;
-        description?: StorefrontAPI.Maybe<
-          Pick<StorefrontAPI.MetaobjectField, 'type' | 'key' | 'value'>
-        >;
-        address?: StorefrontAPI.Maybe<
-          Pick<StorefrontAPI.MetaobjectField, 'type' | 'key' | 'value'>
-        >;
-        hours?: StorefrontAPI.Maybe<
-          Pick<StorefrontAPI.MetaobjectField, 'type' | 'key' | 'value'>
-        >;
-        image?: StorefrontAPI.Maybe<
-          Pick<StorefrontAPI.MetaobjectField, 'type' | 'key'> & {
-            reference?: StorefrontAPI.Maybe<{
-              image?: StorefrontAPI.Maybe<
-                Pick<
-                  StorefrontAPI.Image,
-                  'altText' | 'url' | 'width' | 'height'
-                >
-              >;
-            }>;
-          }
-        >;
-      }
-    >;
-  }>;
-};
-
-export type StoreItemFieldFragment = Pick<
-  StorefrontAPI.MetaobjectField,
-  'type' | 'key' | 'value'
->;
-
-export type StoreItemImageFragment = {
-  image?: StorefrontAPI.Maybe<
-    Pick<StorefrontAPI.Image, 'altText' | 'url' | 'width' | 'height'>
-  >;
-};
-
-export type StoreItemFragment = Pick<
-  StorefrontAPI.Metaobject,
-  'type' | 'id' | 'handle'
-> & {
-  heading?: StorefrontAPI.Maybe<
-    Pick<StorefrontAPI.MetaobjectField, 'type' | 'key' | 'value'>
-  >;
-  address?: StorefrontAPI.Maybe<
-    Pick<StorefrontAPI.MetaobjectField, 'type' | 'key' | 'value'>
-  >;
-  image?: StorefrontAPI.Maybe<
-    Pick<StorefrontAPI.MetaobjectField, 'key'> & {
-      reference?: StorefrontAPI.Maybe<{
-        image?: StorefrontAPI.Maybe<
-          Pick<StorefrontAPI.Image, 'altText' | 'url' | 'width' | 'height'>
-        >;
-      }>;
-    }
-  >;
-};
-
-export type SectionStoresFragment = Pick<StorefrontAPI.Metaobject, 'type'> & {
-  heading?: StorefrontAPI.Maybe<
-    Pick<StorefrontAPI.MetaobjectField, 'type' | 'key' | 'value'>
-  >;
-  stores?: StorefrontAPI.Maybe<{
-    references?: StorefrontAPI.Maybe<{
-      nodes: Array<
-        Pick<StorefrontAPI.Metaobject, 'type' | 'id' | 'handle'> & {
-          heading?: StorefrontAPI.Maybe<
-            Pick<StorefrontAPI.MetaobjectField, 'type' | 'key' | 'value'>
-          >;
-          address?: StorefrontAPI.Maybe<
-            Pick<StorefrontAPI.MetaobjectField, 'type' | 'key' | 'value'>
-          >;
-          image?: StorefrontAPI.Maybe<
-            Pick<StorefrontAPI.MetaobjectField, 'key'> & {
-              reference?: StorefrontAPI.Maybe<{
-                image?: StorefrontAPI.Maybe<
-                  Pick<
-                    StorefrontAPI.Image,
-                    'altText' | 'url' | 'width' | 'height'
-                  >
-                >;
-              }>;
-            }
-          >;
-        }
-      >;
-    }>;
-  }>;
-};
-
 export type SectionsFragment = {
   references?: StorefrontAPI.Maybe<{
     nodes: Array<
@@ -2456,7 +2330,7 @@ export type SectionsFragment = {
           Pick<StorefrontAPI.MetaobjectField, 'key' | 'type' | 'value'>
         >;
         description?: StorefrontAPI.Maybe<
-          Pick<StorefrontAPI.MetaobjectField, 'key' | 'type' | 'value'>
+          Pick<StorefrontAPI.MetaobjectField, 'key' | 'value' | 'type'>
         >;
         media?: StorefrontAPI.Maybe<
           Pick<StorefrontAPI.MetaobjectField, 'key'> & {
@@ -2557,7 +2431,7 @@ export type SectionsFragment = {
           Pick<StorefrontAPI.MetaobjectField, 'type' | 'key' | 'value'>
         >;
         title?: StorefrontAPI.Maybe<
-          Pick<StorefrontAPI.MetaobjectField, 'key' | 'value'>
+          Pick<StorefrontAPI.MetaobjectField, 'key' | 'value' | 'type'>
         >;
         looks?: StorefrontAPI.Maybe<{
           references?: StorefrontAPI.Maybe<{
@@ -2637,7 +2511,7 @@ interface GeneratedQueryTypes {
     return: FooterQuery;
     variables: FooterQueryVariables;
   };
-  '#graphql\n  query Home(\n    $language: LanguageCode\n    $country: CountryCode\n  )\n  @inContext(language: $language, country: $country) {\n    shop {\n      id\n      name\n\n      sections: metafield(namespace: "custom", key: "sections") {\n        ...Sections\n      }\n    }\n  }\n\n  #graphql\n  fragment Sections on Metafield {\n    references(first: 10) {\n      nodes {\n        ... on Metaobject {\n          id\n          type\n          ...SectionHero\n          ...SectionEditorial\n          ...SectionFeaturedProducts\n          ...SectionFeaturedCollections\n          ...SectionLooksSlider \n          ...SectionOutfitsAndMedia\n          ...SectionItemsGrid\n        }\n      }\n    }\n  }\n\n  # All section fragments\n  #graphql\n  fragment EditorialMediaMetaobject on Metaobject {\n    media: field(key: "media") {\n      key\n      type\n      reference {\n        __typename\n        ... on MediaImage {\n          image {\n            altText\n            url\n            width\n            height\n          }\n        }\n        ... on Video {\n          id\n          sources {\n            url\n            mimeType\n          }\n          previewImage {\n            url\n          }\n        }\n      }\n    }\n\n    style_index: field(key: "corner_style") {\n      key\n      type\n      value\n    }\n  }\n\n  #graphql\n  fragment SectionHero on Metaobject {\n    type\n\n    heading: field(key: "heading") {\n      key\n      value\n    }\n\n    link: field(key: "link") {\n      ...HeroLink\n    }\n\n    medias: field(key: "medias") {\n      key\n      references(first: 2) {\n        nodes {\n          ... on Metaobject {\n            ...EditorialMediaMetaobject\n          }\n        }\n      }\n    }\n  }\n  #graphql\n  fragment HeroLink on MetaobjectField {\n    ... on MetaobjectField {\n      reference {\n        ... on Metaobject {\n          href: field(key: "href") {\n            value\n          }\n          target: field(key: "target") {\n            value\n          }\n          text: field(key: "text") {\n            value\n          }\n        }\n      }\n    }\n  }\n\n\n  #graphql\n  fragment SectionEditorial on Metaobject {\n    type\n\n    heading: field(key: "heading") {\n      key\n      type\n      value\n    }\n\n    order: field(key: "order") {\n      key\n      type\n      value\n    }\n\n    description: field(key: "description") {\n      key\n      type\n      value\n    }\n\n    link: field(key: "link") {\n      ...EditorialLink\n    }\n\n    media: field(key: "media") {\n      key\n      reference {\n        ... on Metaobject {\n          ...EditorialMediaMetaobject\n        }\n      }\n    }\n  }\n  #graphql\n  fragment EditorialLink on MetaobjectField {\n    ... on MetaobjectField {\n      reference {\n        ... on Metaobject {\n          href: field(key: "href") {\n            value\n          }\n          target: field(key: "target") {\n            value\n          }\n          text: field(key: "text") {\n            value\n          }\n        }\n      }\n    }\n  }\n\n\n  #graphql\n  fragment SectionFeaturedProducts on Metaobject {\n    type\n    heading: field(key: "heading") {\n      key\n      value\n    }\n    body: field(key: "body") {\n      key\n      value\n    }\n    products: field(key: "products") {\n      key\n      references(first: 10) {\n        nodes {\n          ... on Product {\n            ...FeaturedProduct\n          }\n        }\n      }\n    }\n    withProductPrices: field(key: "with_product_prices") {\n      key\n      value\n    }\n  }\n  #graphql\n  fragment FeaturedProduct on Product {\n    id\n    title\n    handle\n    productType\n    variants(first: 1) {\n      nodes {\n        title\n        image {\n          altText\n          width\n          height\n          url\n        }\n      }\n    }\n    priceRange {\n      minVariantPrice {\n        amount\n        currencyCode\n      }\n    }\n  }\n\n\n  #graphql\n  fragment SectionFeaturedCollectionsField on MetaobjectField {\n    type\n    key\n    value\n  }\n  fragment SectionFeaturedCollections on Metaobject {\n    type\n    id\n    heading: field(key: "heading") {\n      ...SectionFeaturedCollectionsField\n    }\n    collections: field(key: "collections") {\n      references(first: 10) {\n        nodes {\n          ... on Collection {\n            ...FeaturedCollection\n          }\n        }\n      }\n    }\n    withCollectionTitles: field(key: "with_collection_titles") {\n     ...SectionFeaturedCollectionsField\n    }\n  }\n  #graphql\n  fragment FeaturedCollectionImage on Image {\n    altText\n    width\n    height\n    url\n  }\n\n  fragment FeaturedCollection on Collection {\n    id\n    title\n    handle\n    image {\n      ...FeaturedCollectionImage\n    }\n  }\n\n\n  #graphql\n  fragment SectionOutfitsAndMedia on Metaobject {\n    type\n    media: field(key: "media") {\n      key\n      reference {\n        ... on Metaobject {\n          ...EditorialMediaMetaobject\n        }\n      }\n    }\n    collection: field(key: "collection") {\n      reference {\n        ... on Collection {\n          id\n          title\n          handle\n          products(first: 200) {\n            nodes {\n              id\n              title\n              handle\n              featuredImage {\n                id\n                url\n                altText\n                width\n                height\n              }\n              media(first: 4) {\n                nodes {\n                  __typename\n                  ... on MediaImage {\n                    image {\n                      id\n                      url\n                      altText\n                      width\n                      height\n                    }\n                  }\n                  # you can support other media types here later if needed\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n\n  #graphql\n  fragment SectionItemsGrid on Metaobject {\n    type\n    collection: field(key: "collection") {\n      reference {\n        ... on Collection {\n          id\n          title\n          handle\n          products(first: 200) {\n            nodes {\n              id\n              title\n              productType\n              tags\n              handle\n              category {\n                id\n                name\n                ancestors {\n                  id\n                  name\n                }\n              }\n              featuredImage {\n                id\n                url\n                altText\n                width\n                height\n              }\n              media(first: 4) {\n                nodes {\n                  __typename\n                  ... on MediaImage {\n                    image {\n                      id\n                      url\n                      altText\n                      width\n                      height\n                    }\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n\n  #graphql\n  fragment SectionLooksSlider on Metaobject {\n    type\n     \n    title: field(key: "title") {\n      key\n      value\n    }\n\n    looks: field(key: "looks") {\n      references(first: 10) {\n        nodes {\n          ...LookItem\n        }\n      }\n    }\n  }\n  #graphql\n  fragment LookItemField on MetaobjectField {\n    type\n    key\n    value\n  }\n  fragment LookItemImage on MediaImage {\n    image {\n      altText\n      url(transform: {maxWidth: 600, maxHeight: 600})\n      width\n      height\n    }\n  }\n\n  fragment LookItem on Metaobject {\n    type\n    id\n    handle\n    title: field(key: "title") {\n      ...LookItemField\n    }\n    image: field(key: "image") {\n      key\n      reference {\n        ... on MediaImage {\n          ...LookItemImage\n        }\n      }\n    }\n}\n \n\n': {
+  '#graphql\n  query Home(\n    $language: LanguageCode\n    $country: CountryCode\n  )\n  @inContext(language: $language, country: $country) {\n    shop {\n      id\n      name\n\n      sections: metafield(namespace: "custom", key: "sections") {\n        ...Sections\n      }\n    }\n  }\n\n  #graphql\n  fragment Sections on Metafield {\n    references(first: 10) {\n      nodes {\n        ... on Metaobject {\n          id\n          type\n          ...SectionHero\n          ...SectionEditorial\n          ...SectionFeaturedProducts\n          ...SectionFeaturedCollections\n          ...SectionLooksSlider \n          ...SectionOutfitsAndMedia\n          ...SectionItemsGrid\n          ...SectionConfigurator\n      }\n      }\n    }\n  }\n\n  # All section fragments\n  #graphql\n  fragment EditorialMediaMetaobject on Metaobject {\n    media: field(key: "media") {\n      key\n      type\n      reference {\n        __typename\n        ... on MediaImage {\n          image {\n            altText\n            url\n            width\n            height\n          }\n        }\n        ... on Video {\n          id\n          sources {\n            url\n            mimeType\n          }\n          previewImage {\n            url\n          }\n        }\n      }\n    }\n\n    style_index: field(key: "corner_style") {\n      key\n      type\n      value\n    }\n  }\n\n  #graphql\n  fragment SectionHero on Metaobject {\n    type\n\n    heading: field(key: "heading") {\n      key\n      value\n    }\n\n    link: field(key: "link") {\n      ...HeroLink\n    }\n\n    medias: field(key: "medias") {\n      key\n      references(first: 2) {\n        nodes {\n          ... on Metaobject {\n            ...EditorialMediaMetaobject\n          }\n        }\n      }\n    }\n  }\n  #graphql\n  fragment HeroLink on MetaobjectField {\n    ... on MetaobjectField {\n      reference {\n        ... on Metaobject {\n          href: field(key: "href") {\n            value\n          }\n          target: field(key: "target") {\n            value\n          }\n          text: field(key: "text") {\n            value\n          }\n        }\n      }\n    }\n  }\n\n\n  #graphql\n  fragment SectionEditorial on Metaobject {\n    type\n\n    heading: field(key: "heading") {\n      key\n      type\n      value\n    }\n\n    order: field(key: "order") {\n      key\n      type\n      value\n    }\n\n    description: field(key: "description") {\n      key\n      type\n      value\n    }\n\n    link: field(key: "link") {\n      ...EditorialLink\n    }\n\n    media: field(key: "media") {\n      key\n      reference {\n        ... on Metaobject {\n          ...EditorialMediaMetaobject\n        }\n      }\n    }\n  }\n  #graphql\n  fragment EditorialLink on MetaobjectField {\n    ... on MetaobjectField {\n      reference {\n        ... on Metaobject {\n          href: field(key: "href") {\n            value\n          }\n          target: field(key: "target") {\n            value\n          }\n          text: field(key: "text") {\n            value\n          }\n        }\n      }\n    }\n  }\n\n\n  #graphql\n  fragment SectionFeaturedProducts on Metaobject {\n    type\n    heading: field(key: "heading") {\n      key\n      value\n    }\n    body: field(key: "body") {\n      key\n      value\n    }\n    products: field(key: "products") {\n      key\n      references(first: 10) {\n        nodes {\n          ... on Product {\n            ...FeaturedProduct\n          }\n        }\n      }\n    }\n    withProductPrices: field(key: "with_product_prices") {\n      key\n      value\n    }\n  }\n  #graphql\n  fragment FeaturedProduct on Product {\n    id\n    title\n    handle\n    productType\n    variants(first: 1) {\n      nodes {\n        title\n        image {\n          altText\n          width\n          height\n          url\n        }\n      }\n    }\n    priceRange {\n      minVariantPrice {\n        amount\n        currencyCode\n      }\n    }\n  }\n\n\n  #graphql\n  fragment SectionFeaturedCollectionsField on MetaobjectField {\n    type\n    key\n    value\n  }\n  fragment SectionFeaturedCollections on Metaobject {\n    type\n    id\n    heading: field(key: "heading") {\n      ...SectionFeaturedCollectionsField\n    }\n    collections: field(key: "collections") {\n      references(first: 10) {\n        nodes {\n          ... on Collection {\n            ...FeaturedCollection\n          }\n        }\n      }\n    }\n    withCollectionTitles: field(key: "with_collection_titles") {\n     ...SectionFeaturedCollectionsField\n    }\n  }\n  #graphql\n  fragment FeaturedCollectionImage on Image {\n    altText\n    width\n    height\n    url\n  }\n\n  fragment FeaturedCollection on Collection {\n    id\n    title\n    handle\n    image {\n      ...FeaturedCollectionImage\n    }\n  }\n\n\n  #graphql\n  fragment SectionOutfitsAndMedia on Metaobject {\n    type\n    media: field(key: "media") {\n      key\n      reference {\n        ... on Metaobject {\n          ...EditorialMediaMetaobject\n        }\n      }\n    }\n    collection: field(key: "collection") {\n      reference {\n        ... on Collection {\n          id\n          title\n          handle\n          products(first: 200) {\n            nodes {\n              id\n              title\n              handle\n              featuredImage {\n                id\n                url\n                altText\n                width\n                height\n              }\n              media(first: 4) {\n                nodes {\n                  __typename\n                  ... on MediaImage {\n                    image {\n                      id\n                      url\n                      altText\n                      width\n                      height\n                    }\n                  }\n                  # you can support other media types here later if needed\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n\n  #graphql\n  fragment SectionItemsGrid on Metaobject {\n    type\n    collection: field(key: "collection") {\n      reference {\n        ... on Collection {\n          id\n          title\n          handle\n          products(first: 200) {\n            nodes {\n              id\n              title\n              productType\n              tags\n              handle\n              category {\n                id\n                name\n                ancestors {\n                  id\n                  name\n                }\n              }\n              featuredImage {\n                id\n                url\n                altText\n                width\n                height\n              }\n              media(first: 4) {\n                nodes {\n                  __typename\n                  ... on MediaImage {\n                    image {\n                      id\n                      url\n                      altText\n                      width\n                      height\n                    }\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n\n  #graphql\n  fragment SectionLooksSlider on Metaobject {\n    type\n     \n    title: field(key: "title") {\n      key\n      value\n    }\n\n    looks: field(key: "looks") {\n      references(first: 10) {\n        nodes {\n          ...LookItem\n        }\n      }\n    }\n  }\n  #graphql\n  fragment LookItemField on MetaobjectField {\n    type\n    key\n    value\n  }\n  fragment LookItemImage on MediaImage {\n    image {\n      altText\n      url(transform: {maxWidth: 600, maxHeight: 600})\n      width\n      height\n    }\n  }\n\n  fragment LookItem on Metaobject {\n    type\n    id\n    handle\n    title: field(key: "title") {\n      ...LookItemField\n    }\n    image: field(key: "image") {\n      key\n      reference {\n        ... on MediaImage {\n          ...LookItemImage\n        }\n      }\n    }\n}\n \n  #graphql\n  fragment SectionConfigurator on Metaobject {\n    type\n    title: field(key: "title") {\n      key\n      type\n      value\n    }\n    description: field(key: "description") {\n      key\n      type\n      value\n    }\n\n   \n  }\n\n\n': {
     return: HomeQuery;
     variables: HomeQueryVariables;
   };
@@ -2665,7 +2539,7 @@ interface GeneratedQueryTypes {
     return: CatalogQuery;
     variables: CatalogQueryVariables;
   };
-  '#graphql\n  query Page(\n    $language: LanguageCode,\n    $country: CountryCode,\n    $handle: String!\n  )\n  @inContext(language: $language, country: $country) {\n    page(handle: $handle) {\n      handle\n      id\n      title\n      body\n      seo {\n        description\n        title\n      }\n\n      media: metafield(namespace: "custom", key: "media") {\n        key\n        reference {\n          ... on Metaobject {\n            ...EditorialMediaMetaobject\n          }\n        }\n      }\n\n      # App-owned sections metafield (namespace defaults to $app)\n      sections: metafield(namespace: "custom", key: "sections") {\n        ...Sections\n      }\n    }\n  }\n  #graphql\n  fragment Sections on Metafield {\n    references(first: 10) {\n      nodes {\n        ... on Metaobject {\n          id\n          type\n          ...SectionHero\n          ...SectionEditorial\n          ...SectionFeaturedProducts\n          ...SectionFeaturedCollections\n          ...SectionLooksSlider \n          ...SectionOutfitsAndMedia\n          ...SectionItemsGrid\n        }\n      }\n    }\n  }\n\n  # All section fragments\n  #graphql\n  fragment EditorialMediaMetaobject on Metaobject {\n    media: field(key: "media") {\n      key\n      type\n      reference {\n        __typename\n        ... on MediaImage {\n          image {\n            altText\n            url\n            width\n            height\n          }\n        }\n        ... on Video {\n          id\n          sources {\n            url\n            mimeType\n          }\n          previewImage {\n            url\n          }\n        }\n      }\n    }\n\n    style_index: field(key: "corner_style") {\n      key\n      type\n      value\n    }\n  }\n\n  #graphql\n  fragment SectionHero on Metaobject {\n    type\n\n    heading: field(key: "heading") {\n      key\n      value\n    }\n\n    link: field(key: "link") {\n      ...HeroLink\n    }\n\n    medias: field(key: "medias") {\n      key\n      references(first: 2) {\n        nodes {\n          ... on Metaobject {\n            ...EditorialMediaMetaobject\n          }\n        }\n      }\n    }\n  }\n  #graphql\n  fragment HeroLink on MetaobjectField {\n    ... on MetaobjectField {\n      reference {\n        ... on Metaobject {\n          href: field(key: "href") {\n            value\n          }\n          target: field(key: "target") {\n            value\n          }\n          text: field(key: "text") {\n            value\n          }\n        }\n      }\n    }\n  }\n\n\n  #graphql\n  fragment SectionEditorial on Metaobject {\n    type\n\n    heading: field(key: "heading") {\n      key\n      type\n      value\n    }\n\n    order: field(key: "order") {\n      key\n      type\n      value\n    }\n\n    description: field(key: "description") {\n      key\n      type\n      value\n    }\n\n    link: field(key: "link") {\n      ...EditorialLink\n    }\n\n    media: field(key: "media") {\n      key\n      reference {\n        ... on Metaobject {\n          ...EditorialMediaMetaobject\n        }\n      }\n    }\n  }\n  #graphql\n  fragment EditorialLink on MetaobjectField {\n    ... on MetaobjectField {\n      reference {\n        ... on Metaobject {\n          href: field(key: "href") {\n            value\n          }\n          target: field(key: "target") {\n            value\n          }\n          text: field(key: "text") {\n            value\n          }\n        }\n      }\n    }\n  }\n\n\n  #graphql\n  fragment SectionFeaturedProducts on Metaobject {\n    type\n    heading: field(key: "heading") {\n      key\n      value\n    }\n    body: field(key: "body") {\n      key\n      value\n    }\n    products: field(key: "products") {\n      key\n      references(first: 10) {\n        nodes {\n          ... on Product {\n            ...FeaturedProduct\n          }\n        }\n      }\n    }\n    withProductPrices: field(key: "with_product_prices") {\n      key\n      value\n    }\n  }\n  #graphql\n  fragment FeaturedProduct on Product {\n    id\n    title\n    handle\n    productType\n    variants(first: 1) {\n      nodes {\n        title\n        image {\n          altText\n          width\n          height\n          url\n        }\n      }\n    }\n    priceRange {\n      minVariantPrice {\n        amount\n        currencyCode\n      }\n    }\n  }\n\n\n  #graphql\n  fragment SectionFeaturedCollectionsField on MetaobjectField {\n    type\n    key\n    value\n  }\n  fragment SectionFeaturedCollections on Metaobject {\n    type\n    id\n    heading: field(key: "heading") {\n      ...SectionFeaturedCollectionsField\n    }\n    collections: field(key: "collections") {\n      references(first: 10) {\n        nodes {\n          ... on Collection {\n            ...FeaturedCollection\n          }\n        }\n      }\n    }\n    withCollectionTitles: field(key: "with_collection_titles") {\n     ...SectionFeaturedCollectionsField\n    }\n  }\n  #graphql\n  fragment FeaturedCollectionImage on Image {\n    altText\n    width\n    height\n    url\n  }\n\n  fragment FeaturedCollection on Collection {\n    id\n    title\n    handle\n    image {\n      ...FeaturedCollectionImage\n    }\n  }\n\n\n  #graphql\n  fragment SectionOutfitsAndMedia on Metaobject {\n    type\n    media: field(key: "media") {\n      key\n      reference {\n        ... on Metaobject {\n          ...EditorialMediaMetaobject\n        }\n      }\n    }\n    collection: field(key: "collection") {\n      reference {\n        ... on Collection {\n          id\n          title\n          handle\n          products(first: 200) {\n            nodes {\n              id\n              title\n              handle\n              featuredImage {\n                id\n                url\n                altText\n                width\n                height\n              }\n              media(first: 4) {\n                nodes {\n                  __typename\n                  ... on MediaImage {\n                    image {\n                      id\n                      url\n                      altText\n                      width\n                      height\n                    }\n                  }\n                  # you can support other media types here later if needed\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n\n  #graphql\n  fragment SectionItemsGrid on Metaobject {\n    type\n    collection: field(key: "collection") {\n      reference {\n        ... on Collection {\n          id\n          title\n          handle\n          products(first: 200) {\n            nodes {\n              id\n              title\n              productType\n              tags\n              handle\n              category {\n                id\n                name\n                ancestors {\n                  id\n                  name\n                }\n              }\n              featuredImage {\n                id\n                url\n                altText\n                width\n                height\n              }\n              media(first: 4) {\n                nodes {\n                  __typename\n                  ... on MediaImage {\n                    image {\n                      id\n                      url\n                      altText\n                      width\n                      height\n                    }\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n\n  #graphql\n  fragment SectionLooksSlider on Metaobject {\n    type\n     \n    title: field(key: "title") {\n      key\n      value\n    }\n\n    looks: field(key: "looks") {\n      references(first: 10) {\n        nodes {\n          ...LookItem\n        }\n      }\n    }\n  }\n  #graphql\n  fragment LookItemField on MetaobjectField {\n    type\n    key\n    value\n  }\n  fragment LookItemImage on MediaImage {\n    image {\n      altText\n      url(transform: {maxWidth: 600, maxHeight: 600})\n      width\n      height\n    }\n  }\n\n  fragment LookItem on Metaobject {\n    type\n    id\n    handle\n    title: field(key: "title") {\n      ...LookItemField\n    }\n    image: field(key: "image") {\n      key\n      reference {\n        ... on MediaImage {\n          ...LookItemImage\n        }\n      }\n    }\n}\n \n\n': {
+  '#graphql\n  query Page(\n    $language: LanguageCode,\n    $country: CountryCode,\n    $handle: String!\n  )\n  @inContext(language: $language, country: $country) {\n    page(handle: $handle) {\n      handle\n      id\n      title\n      body\n      seo {\n        description\n        title\n      }\n\n      media: metafield(namespace: "custom", key: "media") {\n        key\n        reference {\n          ... on Metaobject {\n            ...EditorialMediaMetaobject\n          }\n        }\n      }\n\n      # App-owned sections metafield (namespace defaults to $app)\n      sections: metafield(namespace: "custom", key: "sections") {\n        ...Sections\n      }\n    }\n  }\n  #graphql\n  fragment Sections on Metafield {\n    references(first: 10) {\n      nodes {\n        ... on Metaobject {\n          id\n          type\n          ...SectionHero\n          ...SectionEditorial\n          ...SectionFeaturedProducts\n          ...SectionFeaturedCollections\n          ...SectionLooksSlider \n          ...SectionOutfitsAndMedia\n          ...SectionItemsGrid\n          ...SectionConfigurator\n      }\n      }\n    }\n  }\n\n  # All section fragments\n  #graphql\n  fragment EditorialMediaMetaobject on Metaobject {\n    media: field(key: "media") {\n      key\n      type\n      reference {\n        __typename\n        ... on MediaImage {\n          image {\n            altText\n            url\n            width\n            height\n          }\n        }\n        ... on Video {\n          id\n          sources {\n            url\n            mimeType\n          }\n          previewImage {\n            url\n          }\n        }\n      }\n    }\n\n    style_index: field(key: "corner_style") {\n      key\n      type\n      value\n    }\n  }\n\n  #graphql\n  fragment SectionHero on Metaobject {\n    type\n\n    heading: field(key: "heading") {\n      key\n      value\n    }\n\n    link: field(key: "link") {\n      ...HeroLink\n    }\n\n    medias: field(key: "medias") {\n      key\n      references(first: 2) {\n        nodes {\n          ... on Metaobject {\n            ...EditorialMediaMetaobject\n          }\n        }\n      }\n    }\n  }\n  #graphql\n  fragment HeroLink on MetaobjectField {\n    ... on MetaobjectField {\n      reference {\n        ... on Metaobject {\n          href: field(key: "href") {\n            value\n          }\n          target: field(key: "target") {\n            value\n          }\n          text: field(key: "text") {\n            value\n          }\n        }\n      }\n    }\n  }\n\n\n  #graphql\n  fragment SectionEditorial on Metaobject {\n    type\n\n    heading: field(key: "heading") {\n      key\n      type\n      value\n    }\n\n    order: field(key: "order") {\n      key\n      type\n      value\n    }\n\n    description: field(key: "description") {\n      key\n      type\n      value\n    }\n\n    link: field(key: "link") {\n      ...EditorialLink\n    }\n\n    media: field(key: "media") {\n      key\n      reference {\n        ... on Metaobject {\n          ...EditorialMediaMetaobject\n        }\n      }\n    }\n  }\n  #graphql\n  fragment EditorialLink on MetaobjectField {\n    ... on MetaobjectField {\n      reference {\n        ... on Metaobject {\n          href: field(key: "href") {\n            value\n          }\n          target: field(key: "target") {\n            value\n          }\n          text: field(key: "text") {\n            value\n          }\n        }\n      }\n    }\n  }\n\n\n  #graphql\n  fragment SectionFeaturedProducts on Metaobject {\n    type\n    heading: field(key: "heading") {\n      key\n      value\n    }\n    body: field(key: "body") {\n      key\n      value\n    }\n    products: field(key: "products") {\n      key\n      references(first: 10) {\n        nodes {\n          ... on Product {\n            ...FeaturedProduct\n          }\n        }\n      }\n    }\n    withProductPrices: field(key: "with_product_prices") {\n      key\n      value\n    }\n  }\n  #graphql\n  fragment FeaturedProduct on Product {\n    id\n    title\n    handle\n    productType\n    variants(first: 1) {\n      nodes {\n        title\n        image {\n          altText\n          width\n          height\n          url\n        }\n      }\n    }\n    priceRange {\n      minVariantPrice {\n        amount\n        currencyCode\n      }\n    }\n  }\n\n\n  #graphql\n  fragment SectionFeaturedCollectionsField on MetaobjectField {\n    type\n    key\n    value\n  }\n  fragment SectionFeaturedCollections on Metaobject {\n    type\n    id\n    heading: field(key: "heading") {\n      ...SectionFeaturedCollectionsField\n    }\n    collections: field(key: "collections") {\n      references(first: 10) {\n        nodes {\n          ... on Collection {\n            ...FeaturedCollection\n          }\n        }\n      }\n    }\n    withCollectionTitles: field(key: "with_collection_titles") {\n     ...SectionFeaturedCollectionsField\n    }\n  }\n  #graphql\n  fragment FeaturedCollectionImage on Image {\n    altText\n    width\n    height\n    url\n  }\n\n  fragment FeaturedCollection on Collection {\n    id\n    title\n    handle\n    image {\n      ...FeaturedCollectionImage\n    }\n  }\n\n\n  #graphql\n  fragment SectionOutfitsAndMedia on Metaobject {\n    type\n    media: field(key: "media") {\n      key\n      reference {\n        ... on Metaobject {\n          ...EditorialMediaMetaobject\n        }\n      }\n    }\n    collection: field(key: "collection") {\n      reference {\n        ... on Collection {\n          id\n          title\n          handle\n          products(first: 200) {\n            nodes {\n              id\n              title\n              handle\n              featuredImage {\n                id\n                url\n                altText\n                width\n                height\n              }\n              media(first: 4) {\n                nodes {\n                  __typename\n                  ... on MediaImage {\n                    image {\n                      id\n                      url\n                      altText\n                      width\n                      height\n                    }\n                  }\n                  # you can support other media types here later if needed\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n\n  #graphql\n  fragment SectionItemsGrid on Metaobject {\n    type\n    collection: field(key: "collection") {\n      reference {\n        ... on Collection {\n          id\n          title\n          handle\n          products(first: 200) {\n            nodes {\n              id\n              title\n              productType\n              tags\n              handle\n              category {\n                id\n                name\n                ancestors {\n                  id\n                  name\n                }\n              }\n              featuredImage {\n                id\n                url\n                altText\n                width\n                height\n              }\n              media(first: 4) {\n                nodes {\n                  __typename\n                  ... on MediaImage {\n                    image {\n                      id\n                      url\n                      altText\n                      width\n                      height\n                    }\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n\n  #graphql\n  fragment SectionLooksSlider on Metaobject {\n    type\n     \n    title: field(key: "title") {\n      key\n      value\n    }\n\n    looks: field(key: "looks") {\n      references(first: 10) {\n        nodes {\n          ...LookItem\n        }\n      }\n    }\n  }\n  #graphql\n  fragment LookItemField on MetaobjectField {\n    type\n    key\n    value\n  }\n  fragment LookItemImage on MediaImage {\n    image {\n      altText\n      url(transform: {maxWidth: 600, maxHeight: 600})\n      width\n      height\n    }\n  }\n\n  fragment LookItem on Metaobject {\n    type\n    id\n    handle\n    title: field(key: "title") {\n      ...LookItemField\n    }\n    image: field(key: "image") {\n      key\n      reference {\n        ... on MediaImage {\n          ...LookItemImage\n        }\n      }\n    }\n}\n \n  #graphql\n  fragment SectionConfigurator on Metaobject {\n    type\n    title: field(key: "title") {\n      key\n      type\n      value\n    }\n    description: field(key: "description") {\n      key\n      type\n      value\n    }\n\n   \n  }\n\n\n': {
     return: PageQuery;
     variables: PageQueryVariables;
   };
