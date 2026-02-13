@@ -1,8 +1,10 @@
 import {useLoaderData} from 'react-router';
 import type {Route} from './+types/pages.$handle';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
-import {EDITORIAL_MEDIA_METAOBJECT_FRAGMENT} from '~/lib/mediaFragment';
 import {Media} from '~/components/Media';
+
+import {SECTIONS_FRAGMENT, Sections} from '~/sections/Sections';
+
 
 export const meta: Route.MetaFunction = ({data}) => {
   return [{title: `Hydrogen | ${data?.page.title ?? ''}`}];
@@ -31,6 +33,8 @@ async function loadCriticalData({context, request, params}: Route.LoaderArgs) {
     context.storefront.query(PAGE_QUERY, {
       variables: {
         handle: params.handle,
+        country: context.storefront.i18n.country,
+        language: context.storefront.i18n.language,
       },
     }),
     // Add other queries here, so that they are loaded in parallel
@@ -62,26 +66,30 @@ export default function Page() {
 
   return (
     <div className="page">
-      {/* <header>
-      </header> */}
-      <section
+      {/* <section
         className={`
-              section-main
-              grid-rows-[1fr]
-              h-fit
-           `}
+          section-main
+          grid-rows-[1fr]
+          h-fit
+        `}
       >
         <Media
           media={page.media.reference}
           aspectRatio="2/3"
-          className={`aspect-ratio-2/3 self-center col-span-6 md:col-start-2 md:col-span-4 md:col-start-2 lg:col-span-3 lg:col-start-2 `}
+          className="aspect-ratio-2/3 self-center col-span-6 md:col-start-2 md:col-span-4 md:col-start-2 lg:col-span-3 lg:col-start-2"
         />
         <div className="col-span-6 lg:col-span-6 lg:col-start-6 flex flex-col justify-center">
-          <h1 className='text-title'>{page.title}</h1>
+          <h1 className="text-title">{page.title}</h1>
 
-          <div dangerouslySetInnerHTML={{__html: page.body}} className='columns-2 gap-4' />
+          <div
+            dangerouslySetInnerHTML={{__html: page.body}}
+            className="columns-2 gap-4"
+          />
         </div>
-      </section>
+      </section> */}
+
+      {/* Render metaobject sections chosen on the page metafield */}
+      {page.sections && <Sections sections={page.sections} />}
     </div>
   );
 }
@@ -111,8 +119,12 @@ const PAGE_QUERY = `#graphql
           }
         }
       }
+
+      # App-owned sections metafield (namespace defaults to $app)
+      sections: metafield(namespace: "custom", key: "sections") {
+        ...Sections
+      }
     }
   }
-  ${EDITORIAL_MEDIA_METAOBJECT_FRAGMENT}
-
+  ${SECTIONS_FRAGMENT}
 ` as const;

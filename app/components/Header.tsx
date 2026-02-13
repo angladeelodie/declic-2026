@@ -82,21 +82,21 @@ export function HeaderMenu({
         // SPECIAL CASE:
         // If this menu item is the "Shop" item from Shopify,
         // send it to our Hydrogen /shop route instead of the Shopify URL.
-        if (item.title === 'Shop') {
-          return (
-            <NavLink
-              className="text-nav no-underline uppercase hover:opacity-60 transition-opacity"
-              end
-              key={item.id}
-              onClick={close}
-              prefetch="intent"
-              style={activeLinkStyle}
-              to="/shop"
-            >
-              {item.title}
-            </NavLink>
-          );
-        }
+        // if (item.title === 'Shop') {
+        //   return (
+        //     <NavLink
+        //       className="text-nav no-underline uppercase hover:opacity-60 transition-opacity"
+        //       end
+        //       key={item.id}
+        //       onClick={close}
+        //       prefetch="intent"
+        //       style={activeLinkStyle}
+        //       to="/shop"
+        //     >
+        //       {item.title}
+        //     </NavLink>
+        //   );
+        // }
 
         const url =
           item.url.includes('myshopify.com') ||

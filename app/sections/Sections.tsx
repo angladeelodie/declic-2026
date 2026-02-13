@@ -23,7 +23,7 @@ import { SectionOutfitsAndMedia } from './SectionOutfitsAndMedia';
 import { SectionItemsGrid } from './SectionItemsGrid';
 import { SectionLooksSlider } from './SectionLooksSlider';
 import {Reveal} from '~/components/Reveal';
-
+import {EDITORIAL_MEDIA_METAOBJECT_FRAGMENT} from '~/lib/mediaFragment';
 
 export function Sections({sections}: {sections: SectionsFragment}) {
   return (
@@ -45,14 +45,8 @@ export function Sections({sections}: {sections: SectionsFragment}) {
           case 'section_featured_collections':
             sectionComponent = <SectionFeaturedCollections {...section} />;
             break;
-          case 'section_stores_grid':
-            sectionComponent = <SectionStores {...section} />;
-            break;
           case 'section_looks_slider':
             sectionComponent = <SectionLooksSlider {...section} />;
-            break;
-          case 'section_store_profile':
-            sectionComponent = <SectionStoreProfile {...section} />;
             break;
           case 'section_outfits_and_media':
             sectionComponent = <SectionOutfitsAndMedia {...section} />;
@@ -76,36 +70,33 @@ export function Sections({sections}: {sections: SectionsFragment}) {
   );
 }
 
+// app/sections/Sections.tsx
 export const SECTIONS_FRAGMENT = `#graphql
-  fragment Sections on MetaobjectField {
-    ... on MetaobjectField {
-      references(first: 10) {
-        nodes {
-          ... on Metaobject {
-            id
-            type
-            ...SectionHero
-            ...SectionEditorial
-            ...SectionFeaturedProducts
-            ...SectionFeaturedCollections
-            ...SectionStores
-            ...SectionStoreProfile
-            ...SectionOutfitsAndMedia
-            ...SectionItemsGrid
-            ...SectionLooksSlider
-          }
+  fragment Sections on Metafield {
+    references(first: 10) {
+      nodes {
+        ... on Metaobject {
+          id
+          type
+          ...SectionHero
+          ...SectionEditorial
+          ...SectionFeaturedProducts
+          ...SectionFeaturedCollections
+          ...SectionLooksSlider 
+          ...SectionOutfitsAndMedia
+          ...SectionItemsGrid
         }
       }
     }
   }
+
   # All section fragments
+  ${EDITORIAL_MEDIA_METAOBJECT_FRAGMENT}
   ${SECTION_HERO_FRAGMENT}
   ${SECTION_EDITORIAL_FRAGMENT}
   ${SECTION_FEATURED_PRODUCTS_FRAGMENT}
   ${SECTION_FEATURED_COLLECTIONS_FRAGMENT}
-  ${SECTION_STORES_FRAGMENT}
-  ${SECTION_STORE_PROFILE_FRAGMENT}
-  ${SECTION_OUTFITS_AND_MEDIA_FRAGMENT} 
+  ${SECTION_OUTFITS_AND_MEDIA_FRAGMENT}
   ${SECTION_ITEMS_GRID_FRAGMENT}
   ${SECTION_LOOKS_SLIDER_FRAGMENT}
-  `;
+` as const;

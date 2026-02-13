@@ -1,56 +1,66 @@
+// app/routes/($locale)._index.tsx
 import {useLoaderData} from 'react-router';
-import type {Route} from './+types/_index';
+import type {Route} from './+types/($locale)._index';
 
-// @description Add metaobject content imports
-import {ROUTE_CONTENT_QUERY, RouteContent} from '~/sections/RouteContent';
+import {Sections, SECTIONS_FRAGMENT} from '~/sections/Sections';
 
-export const meta: Route.MetaFunction = () => {
-  return [{title: 'Hydrogen Metaobject | Home'}];
+export const meta: Route.MetaFunction = ({data}) => {
+  const title = data?.shop?.name
+    ? `${data.shop.name} | Home`
+    : 'Hydrogen Metaobject | Home';
+  return [{title}];
 };
 
-export async function loader(args: Route.LoaderArgs) {
-  // Start fetching non-critical data without blocking time to first byte
-  const deferredData = loadDeferredData(args);
+export async function loader({context}: Route.LoaderArgs) {
+  try {
+    const data = await context.storefront.query(HOME_QUERY, {
+      variables: {
+        country: context.storefront.i18n.country,
+        language: context.storefront.i18n.language,
+      },
+    });
 
-  // Await the critical data required to render initial state of the page
-  const criticalData = await loadCriticalData(args);
+    if (!data?.shop) {
+      console.error('No shop data returned from Shopify');
+      return {shop: null};
+    }
 
-  return {...deferredData, ...criticalData};
+    return {shop: data.shop};
+  } catch (error) {
+    console.error('GraphQL Error:', error);
+    return {shop: null};
+  }
 }
 
-/**
- * Load data necessary for rendering content above the fold. This is the critical data
- * needed to render the page. If it's unavailable, the whole page should 400 or 500 error.
- */
-async function loadCriticalData({context}: Route.LoaderArgs) {
-  const {storefront} = context;
+const HOME_QUERY = `#graphql
+  query Home(
+    $language: LanguageCode
+    $country: CountryCode
+  )
+  @inContext(language: $language, country: $country) {
+    shop {
+      id
+      name
 
-  // @description Query the home route metaobject
-  const [{route}] = await Promise.all([
-    storefront.query(ROUTE_CONTENT_QUERY, {
-      variables: {handle: 'route-home'},
-      cache: storefront.CacheNone(),
-    }),
-  ]);
+      sections: metafield(namespace: "custom", key: "sections") {
+        ...Sections
+      }
+    }
+  }
 
-  return {route};
-}
-
-/**
- * Load data for rendering content below the fold. This data is deferred and will be
- * fetched after the initial page load. If it's unavailable, the page should still 200.
- * Make sure to not throw any errors here, as it will cause the page to 500.
- */
-function loadDeferredData({context}: Route.LoaderArgs) {
-  return {};
-}
+  ${SECTIONS_FRAGMENT}
+` as const;
 
 export default function Homepage() {
- const {route} = useLoaderData<typeof loader>();
+  const {shop} = useLoaderData<typeof loader>();
+  // console.log('shop', shop);
+
   return (
     <div className="home">
-      {/* @description Render the route's content sections */}
-      <RouteContent route={route} />
+      <h1>Homepage</h1>
+
+      {/* Render the shop's sections metafield */}
+      {shop?.sections && <Sections sections={shop.sections} />}
     </div>
   );
 }

@@ -112,5 +112,4 @@ export const SECTION_HERO_FRAGMENT = `#graphql
     }
   }
   ${HERO_LINK_FRAGMENT}
-  # IMPORTANT: do NOT interpolate EDITORIAL_MEDIA_METAOBJECT_FRAGMENT here
 `;
