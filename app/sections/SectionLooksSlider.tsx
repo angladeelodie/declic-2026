@@ -28,7 +28,7 @@ export function SectionLooksSlider(props: SectionLooksSliderFragment) {
         {/* Column 2: Left Arrow */}
         <div className="hidden lg:block lg:col-start-1">
           <button className="swiper-prev-button cursor-pointer p-2 hover:opacity-60 transition-opacity">
-               <img
+            <img
               src={ArrowSvg}
               alt="arrow"
               className="scale-x-[-1]
@@ -53,32 +53,49 @@ export function SectionLooksSlider(props: SectionLooksSliderFragment) {
             loop={true}
             className="looks-swiper overflow-hidden"
           >
-            {looks?.nodes.map((store) => (
-              <SwiperSlide key={store.id} className="custom-slide">
-                <Link
-                  to={`/looks/${store.handle}`}
-                  className="flex flex-col h-full"
-                >
-                  <div className="image-container relative aspect-[2/3] w-full overflow-hidden rounded-[30px] bg-[#e5eae8]">
-                    {store.image?.image?.url && (
-                      <img
-                        src={store.image.image.url}
-                        alt={store.image.image.altText || ''}
-                        className="w-full h-full object-cover"
-                      />
-                    )}
-                  </div>
-                  <div className="mt-4 text-center slide-content transition-opacity duration-500">
-                    <h2 className="text-xl uppercase tracking-tighter">
-                      {store.heading?.value}
-                    </h2>
-                    <p className="text-sm text-gray-400">
-                      {store.address?.value}
-                    </p>
-                  </div>
-                </Link>
-              </SwiperSlide>
-            ))}
+            {looks?.nodes.map((look) => {
+              const topHandle = (look as any).top?.handle;
+              const bottomHandle = (look as any).bottom?.handle;
+              const sleeveHandle = (look as any).sleeves?.handle;
+
+              const hasAllProducts = topHandle && bottomHandle && sleeveHandle;
+
+              const configuratorUrl = hasAllProducts
+                ? `/pages/configurator?top=${encodeURIComponent(
+                    topHandle,
+                  )}&bottom=${encodeURIComponent(
+                    bottomHandle,
+                  )}&sleeve=${encodeURIComponent(sleeveHandle)}`
+                : '#';
+
+                console.log(look)
+
+              return (
+                <SwiperSlide key={look.id} className="custom-slide">
+                  <Link
+                    to={configuratorUrl}
+                    className={`flex flex-col h-full ${
+                      hasAllProducts ? '' : 'pointer-events-none opacity-50'
+                    }`}
+                  >
+                    <div className="image-container relative aspect-[2/3] w-full overflow-hidden rounded-[30px] bg-[#e5eae8]">
+                      {look.image?.image?.url && (
+                        <img
+                          src={look.image.image.url}
+                          alt={look.image.image.altText || ''}
+                          className="w-full h-full object-cover"
+                        />
+                      )}
+                    </div>
+                    <div className="mt-4 text-center slide-content transition-opacity duration-500">
+                      <h2 className="text-xl uppercase tracking-tighter">
+                        {look.title?.value}
+                      </h2>
+                    </div>
+                  </Link>
+                </SwiperSlide>
+              );
+            })}
           </Swiper>
         </div>
 
@@ -106,6 +123,7 @@ const LOOK_ITEM_FRAGMENT = `#graphql
     key
     value
   }
+
   fragment LookItemImage on MediaImage {
     image {
       altText
@@ -115,13 +133,28 @@ const LOOK_ITEM_FRAGMENT = `#graphql
     }
   }
 
+  fragment LookItemProduct on Product {
+    id
+    title
+    handle
+    featuredImage {
+      id
+      url
+      altText
+      width
+      height
+    }
+  }
+
   fragment LookItem on Metaobject {
     type
     id
     handle
+
     title: field(key: "title") {
       ...LookItemField
     }
+
     image: field(key: "image") {
       key
       reference {
@@ -130,7 +163,31 @@ const LOOK_ITEM_FRAGMENT = `#graphql
         }
       }
     }
-}
+
+    top: field(key: "top") {
+      reference {
+        ... on Product {
+          ...LookItemProduct
+        }
+      }
+    }
+
+    bottom: field(key: "bottom") {
+      reference {
+        ... on Product {
+          ...LookItemProduct
+        }
+      }
+    }
+
+    sleeves: field(key: "sleeves") {
+      reference {
+        ... on Product {
+          ...LookItemProduct
+        }
+      }
+    }
+  }
 `;
 
 export const SECTION_LOOKS_SLIDER_FRAGMENT = `#graphql
