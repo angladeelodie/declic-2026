@@ -1,7 +1,5 @@
-// app/sections/SectionEditorial.tsx
-
 import {parseSection} from '~/utils/parseSection';
-import {Image, Video, RichText} from '@shopify/hydrogen';
+import {Image} from '@shopify/hydrogen';
 import {motion, AnimatePresence} from 'framer-motion';
 import {Link} from 'react-router';
 import type {SectionItemsGridFragment} from 'storefrontapi.generated';
@@ -73,11 +71,9 @@ export function SectionItemsGrid(props: SectionItemsGridFragment) {
   if (!collection) return null;
 
   const products = collection.products?.nodes ?? [];
-  console.log('SectionItemsGrid products:', products);
 
   const filteredProducts = useMemo(() => {
     if (activeCategory === 'all') return products;
-
     return products.filter((product) =>
       productMatchesCategoryFilter(product, activeCategory),
     );
@@ -85,61 +81,98 @@ export function SectionItemsGrid(props: SectionItemsGridFragment) {
 
   return (
     <section className="section-items-grid section-main relative h-fit">
-      {/* Filter buttons remain the same */}
+      {/* Filters */}
       <div className="col-span-6 lg:col-span-12 flex gap-8 flex-row justify-center pb-8">
-        {['all', 'tops', 'bottoms', 'sleeves'].map((category) => (
-          <button
-            key={category}
-            onClick={() => setActiveCategory(category)}
-            className={[
-              'text-title uppercase transition-colors cursor-pointer',
-              activeCategory === category ? 'text-black' : 'text-gray-300',
-            ].join(' ')}
-          >
-            {CATEGORY_FILTER_LABELS[category]}
-          </button>
-        ))}
+        {(['all', 'tops', 'bottoms', 'sleeves'] as CategoryFilter[]).map(
+          (category) => (
+            <button
+              key={category}
+              onClick={() => setActiveCategory(category)}
+              className={[
+                'text-title uppercase transition-colors cursor-pointer',
+                activeCategory === category ? 'text-black' : 'text-gray-300',
+              ].join(' ')}
+            >
+              {CATEGORY_FILTER_LABELS[category]}
+            </button>
+          ),
+        )}
       </div>
 
       {/* Collection block */}
       <div className="col-span-6 lg:col-span-10 lg:col-start-2">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           <AnimatePresence mode="popLayout">
-            {filteredProducts.map((product, index) => (
-              <motion.div
-                layout // Smoothly animates items moving to new grid positions
-                key={product.id}
-                initial={{opacity: 0, scale: 0.9}}
-                animate={{opacity: 1, scale: 1}}
-                exit={{opacity: 0, scale: 0.9}}
-                transition={{
-                  duration: 0.4,
-                  ease: [0.21, 0.6, 0.35, 1],
-                  delay: index * 0.05, // Staggered entry effect
-                }}
-                className={index >= 4 ? 'hidden md:block' : ''}
-              >
-                <Link
-                  to={`/products/${product.handle}`}
-                  className="block w-full"
-                  prefetch="intent"
+            {filteredProducts.map((product, index) => {
+              const mediaNodes = product.media?.nodes || [];
+
+              // Primary image: standard featured image
+              const primaryImage = product.featuredImage || null;
+
+              // Hover image logic:
+              // 1. Filter media to only include actual images
+              const allImages = mediaNodes
+                .filter(
+                  (node) => node.__typename === 'MediaImage' && node.image,
+                )
+                .map((node) => node.image);
+
+              // 2. If the first image in 'media' is the same as 'featuredImage',
+              //    grab the second one. Otherwise, grab the first.
+              let hoverImage = null;
+              if (allImages.length > 1) {
+                // If the first media image URL matches the featured image URL, take the second one
+                const isFirstSameAsPrimary =
+                  allImages[0]?.url === primaryImage?.url;
+                hoverImage = isFirstSameAsPrimary ? allImages[1] : allImages[0];
+              }
+
+              return (
+                <motion.div
+                  layout
+                  key={product.id}
+                  initial={{opacity: 0, scale: 0.9}}
+                  animate={{opacity: 1, scale: 1}}
+                  exit={{opacity: 0, scale: 0.9}}
+                  transition={{
+                    duration: 0.4,
+                    ease: [0.21, 0.6, 0.35, 1],
+                    delay: index * 0.05,
+                  }}
+                  className={index >= 4 ? 'hidden md:block' : ''}
                 >
-                  {product.featuredImage && (
-                    <div className="aspect-[4/5] w-full overflow-hidden rounded-[30px] bg-[#e5eae8]">
-                      <Image
-                        data={product.featuredImage}
-                        sizes="(min-width: 768px) 20vw, 40vw"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  )}
-                </Link>
-              </motion.div>
-            ))}
+                  <Link
+                    to={`/products/${product.handle}`}
+                    className="group block w-full"
+                    prefetch="intent"
+                  >
+                    {primaryImage && (
+                      <div className="aspect-[4/5] w-full overflow-hidden rounded-[30px] bg-[#e5eae8] relative">
+                        {/* Primary (front) image */}
+                        <Image
+                          data={primaryImage}
+                          sizes="(min-width: 768px) 20vw, 40vw"
+                          className="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-0"
+                        />
+
+                        {/* Hover (back/alt) image */}
+                        {hoverImage && (
+                          <Image
+                            data={hoverImage}
+                            sizes="(min-width: 768px) 20vw, 40vw"
+                            className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                          />
+                        )}
+                      </div>
+                    )}
+                  </Link>
+                </motion.div>
+              );
+            })}
           </AnimatePresence>
         </div>
 
-        {/* Empty State Animation */}
+        {/* Empty state */}
         <AnimatePresence>
           {filteredProducts.length === 0 && (
             <motion.p
@@ -155,7 +188,6 @@ export function SectionItemsGrid(props: SectionItemsGridFragment) {
     </section>
   );
 }
-
 export const SECTION_ITEMS_GRID_FRAGMENT = `#graphql
   fragment SectionItemsGrid on Metaobject {
     type
@@ -186,6 +218,20 @@ export const SECTION_ITEMS_GRID_FRAGMENT = `#graphql
                 altText
                 width
                 height
+              }
+              media(first: 4) {
+                nodes {
+                  __typename
+                  ... on MediaImage {
+                    image {
+                      id
+                      url
+                      altText
+                      width
+                      height
+                    }
+                  }
+                }
               }
             }
           }
