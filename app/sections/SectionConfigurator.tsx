@@ -1,6 +1,7 @@
 import {useSearchParams} from 'react-router';
 import {useState} from 'react';
 import type {SectionConfiguratorFragment} from 'storefrontapi.generated';
+import {ConfiguratorCanvas} from '~/components/ConfiguratorCanvas';
 
 export function SectionConfigurator(props: SectionConfiguratorFragment) {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -96,7 +97,7 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
     <section className="section-configurator section-main grid-rows-[1fr]">
       {/* Left column: preview area */}
       <div className="lg:col-start-2 lg:col-span-4 h-full">
-        <div className="aspect-2/3 bg-gray-200 w-full h-auto self-center rounded-[var(--radius-sharp)]" />
+        <ConfiguratorCanvas />
       </div>
 
       {/* Right column: tabs + lists */}

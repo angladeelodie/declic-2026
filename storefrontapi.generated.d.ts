@@ -306,36 +306,34 @@ export type FooterQuery = {
   >;
   shop: {
     contactEmail?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
-    socials?: StorefrontAPI.Maybe<
-      Pick<StorefrontAPI.Metafield, 'namespace' | 'key' | 'type' | 'value'> & {
-        references?: StorefrontAPI.Maybe<{
-          nodes: Array<
-            | {
-                __typename:
-                  | 'Collection'
-                  | 'GenericFile'
-                  | 'MediaImage'
-                  | 'Model3d'
-                  | 'Page'
-                  | 'Product'
-                  | 'ProductVariant'
-                  | 'Video';
-              }
-            | ({__typename: 'Metaobject'} & Pick<
-                StorefrontAPI.Metaobject,
-                'id' | 'type'
-              > & {
-                  fields: Array<
-                    Pick<
-                      StorefrontAPI.MetaobjectField,
-                      'key' | 'type' | 'value'
-                    >
-                  >;
-                })
-          >;
-        }>;
-      }
-    >;
+    socials?: StorefrontAPI.Maybe<{
+      references?: StorefrontAPI.Maybe<{
+        nodes: Array<
+          | {
+              __typename:
+                | 'Collection'
+                | 'GenericFile'
+                | 'MediaImage'
+                | 'Model3d'
+                | 'Page'
+                | 'Product'
+                | 'ProductVariant'
+                | 'Video';
+            }
+          | ({__typename: 'Metaobject'} & Pick<
+              StorefrontAPI.Metaobject,
+              'id' | 'type'
+            > & {
+                name?: StorefrontAPI.Maybe<
+                  Pick<StorefrontAPI.MetaobjectField, 'value'>
+                >;
+                url?: StorefrontAPI.Maybe<
+                  Pick<StorefrontAPI.MetaobjectField, 'value'>
+                >;
+              })
+        >;
+      }>;
+    }>;
   };
 };
 
@@ -3064,7 +3062,7 @@ interface GeneratedQueryTypes {
     return: HeaderQuery;
     variables: HeaderQueryVariables;
   };
-  '#graphql\n  query Footer(\n    $country: CountryCode\n    $language: LanguageCode\n    $pagesMenuHandle: String!\n    $legalMenuHandle: String!\n  ) @inContext(language: $language, country: $country) {\n    pages: menu(handle: $pagesMenuHandle) {\n      ...Menu\n    }\n\n    legal: menu(handle: $legalMenuHandle) {\n      ...Menu\n    }\n    shop {\n  contactEmail: metafield(namespace: "custom", key: "contact_email") {\n    value\n  }\n  socials: metafield(namespace: "custom", key: "socials") {\n    namespace\n    key\n    type\n    value\n\n    references(first: 10) {\n      nodes {\n        __typename\n        ... on Metaobject {\n          id\n          type\n          fields {\n            key\n            type\n            value\n          }\n        }\n      }\n    }\n  }\n}\n\n  }\n\n  #graphql\n  fragment MenuItem on MenuItem {\n    id\n    resourceId\n    tags\n    title\n    type\n    url\n  }\n  fragment ChildMenuItem on MenuItem {\n    ...MenuItem\n  }\n  fragment ParentMenuItem on MenuItem {\n    ...MenuItem\n    items {\n      ...ChildMenuItem\n    }\n  }\n  fragment Menu on Menu {\n    id\n    items {\n      ...ParentMenuItem\n    }\n  }\n\n': {
+  '#graphql\n  query Footer(\n    $country: CountryCode\n    $language: LanguageCode\n    $pagesMenuHandle: String!\n    $legalMenuHandle: String!\n  ) @inContext(language: $language, country: $country) {\n    pages: menu(handle: $pagesMenuHandle) {\n      ...Menu\n    }\n\n    legal: menu(handle: $legalMenuHandle) {\n      ...Menu\n    }\n    \n    shop {\n      contactEmail: metafield(namespace: "custom", key: "contact_email") {\n        value\n      }\n      socials: metafield(namespace: "custom", key: "socials") {\n        references(first: 20) {\n          nodes {\n            __typename\n            ... on Metaobject {\n              id\n              type\n              name: field(key: "name") {\n                value\n              }\n              url: field(key: "url") {\n                value\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n\n  #graphql\n  fragment MenuItem on MenuItem {\n    id\n    resourceId\n    tags\n    title\n    type\n    url\n  }\n  fragment ChildMenuItem on MenuItem {\n    ...MenuItem\n  }\n  fragment ParentMenuItem on MenuItem {\n    ...MenuItem\n    items {\n      ...ChildMenuItem\n    }\n  }\n  fragment Menu on Menu {\n    id\n    items {\n      ...ParentMenuItem\n    }\n  }\n\n': {
     return: FooterQuery;
     variables: FooterQueryVariables;
   };
