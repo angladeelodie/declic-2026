@@ -17,10 +17,9 @@ import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
 import tailwindCss from './styles/tailwind.css?url';
 import {PageLayout} from './components/PageLayout';
-type FooterMenus = {
-  pages: FooterQuery['menu'] | null;
-  legal: FooterQuery['menu'] | null;
-};
+import type {FooterMenus} from '~/components/Footer';
+
+import type {FooterQuery} from 'storefrontapi.generated';
 
 export type RootLoader = typeof loader;
 
@@ -125,44 +124,58 @@ async function loadCriticalData({context}: Route.LoaderArgs) {
  * fetched after the initial page load. If it's unavailable, the page should still 200.
  * Make sure to not throw any errors here, as it will cause the page to 500.
  */
+
+/**
+ * Load data for rendering content below the fold. This data is deferred and will be
+ * fetched after the initial page load. If it's unavailable, the page should still 200.
+ * Make sure to not throw any errors here, as it will cause the page to 500.
+ */
 function loadDeferredData({context}: Route.LoaderArgs) {
   const {storefront, customerAccount, cart} = context;
-
   const {language, country} = storefront.i18n;
 
-  // Defer both footer menu queries (below the fold)
-  const footer: Promise<FooterMenus> = Promise.all([
-    storefront
-      .query(FOOTER_QUERY, {
-        cache: storefront.CacheLong(),
-        variables: {
-          footerMenuHandle: 'footer-pages', // menu handle in Admin
-          language,
-          country,
-        },
-      })
-      .catch((error: Error) => {
-        console.error('Error loading footer-pages menu:', error);
-        return null;
-      }),
+  const footer: Promise<FooterMenus> = storefront
+    .query<FooterQuery>(FOOTER_QUERY, {
+      cache: storefront.CacheLong(),
+      variables: {
+        pagesMenuHandle: 'footer-pages', // menu handle in Admin
+        legalMenuHandle: 'footer-legal', // menu handle in Admin
+        language,
+        country,
+      },
+    })
+    .then((data) => {
+      // Safely extract contact email
+      const contactEmail = data.shop.contactEmail?.value?.trim() || null;
 
-    storefront
-      .query(FOOTER_QUERY, {
-        cache: storefront.CacheLong(),
-        variables: {
-          footerMenuHandle: 'footer-legal', // menu handle in Admin
-          language,
-          country,
-        },
-      })
-      .catch((error: Error) => {
-        console.error('Error loading footer-legal menu:', error);
-        return null;
-      }),
-  ]).then(([pagesResult, legalResult]) => ({
-    pages: pagesResult?.menu ?? null,
-    legal: legalResult?.menu ?? null,
-  }));
+      // Normalize socials metaobjects into {label, url}[]
+      const socials =
+        data.shop.socials?.references?.nodes
+          ?.flatMap((node) => {
+            if (node.__typename !== 'Metaobject') return [];
+            const name = node.name?.value?.trim();
+            const url = node.url?.value?.trim();
+            if (!name || !url) return [];
+            return [{label: name, url}];
+          }) ?? [];
+
+      return {
+        pages: data.pages,
+        legal: data.legal,
+        contactEmail,
+        socials,
+      };
+    })
+    .catch((error: Error) => {
+      console.error('Error loading footer data:', error);
+      // Safe fallback: no menus, no contact, no socials
+      return {
+        pages: null,
+        legal: null,
+        contactEmail: null,
+        socials: [],
+      } satisfies FooterMenus;
+    });
 
   return {
     cart: cart.get(),

@@ -220,16 +220,47 @@ export const HEADER_QUERY = `#graphql
   ${MENU_FRAGMENT}
 ` as const;
 
+// fragments.ts
+// fragments.ts
 export const FOOTER_QUERY = `#graphql
   query Footer(
     $country: CountryCode
-    $footerMenuHandle: String!
     $language: LanguageCode
+    $pagesMenuHandle: String!
+    $legalMenuHandle: String!
   ) @inContext(language: $language, country: $country) {
-    menu(handle: $footerMenuHandle) {
+    pages: menu(handle: $pagesMenuHandle) {
       ...Menu
     }
+
+    legal: menu(handle: $legalMenuHandle) {
+      ...Menu
+    }
+    
+    shop {
+      contactEmail: metafield(namespace: "custom", key: "contact_email") {
+        value
+      }
+      socials: metafield(namespace: "custom", key: "socials") {
+        references(first: 20) {
+          nodes {
+            __typename
+            ... on Metaobject {
+              id
+              type
+              name: field(key: "name") {
+                value
+              }
+              url: field(key: "url") {
+                value
+              }
+            }
+          }
+        }
+      }
+    }
   }
+
   ${MENU_FRAGMENT}
 ` as const;
 
