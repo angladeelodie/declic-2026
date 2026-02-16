@@ -220,6 +220,6 @@ const FALLBACK_HEADER_MENU = {
 
 function activeLinkStyle({isActive}: {isActive: boolean}) {
   return {
-    fontWeight: isActive ? '600' : '00',
+    fontWeight: isActive ? '600' : '100',
   };
 }

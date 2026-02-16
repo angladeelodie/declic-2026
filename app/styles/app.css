@@ -17,7 +17,10 @@
   --radius-round: calc(12vw + 12vh);
 }
 
-
+body::selection {
+  background: var(--color-accent);
+  color: var(--color-light);
+} 
 
 
 /*

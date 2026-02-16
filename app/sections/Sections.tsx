@@ -19,6 +19,7 @@ import {SECTION_OUTFITS_AND_MEDIA_FRAGMENT} from '~/sections/SectionOutfitsAndMe
 import {SECTION_ITEMS_GRID_FRAGMENT} from '~/sections/SectionItemsGrid';
 import {SECTION_CONFIGURATOR_FRAGMENT} from './SectionConfigurator';
 import {EDITORIAL_MEDIA_METAOBJECT_FRAGMENT} from '~/lib/mediaFragment';
+import {SECTION_BASIC_PAGE_FRAGMENT, SectionBasicPage} from './SectionBasicPage';
 import {SectionOutfitsAndMedia} from './SectionOutfitsAndMedia';
 import {SectionItemsGrid} from './SectionItemsGrid';
 import {SectionLooksSlider} from './SectionLooksSlider';
@@ -58,6 +59,9 @@ export function Sections({sections}: {sections: SectionsFragment}) {
           case 'section_configurator':
             sectionComponent = <SectionConfigurator {...section} />;
             break;
+          case 'section_basic_page':
+            sectionComponent = <SectionBasicPage {...section} />;
+            break;
           default:
             console.log(`Unsupported section type: ${section.type}`);
             return null;
@@ -86,7 +90,8 @@ export const SECTIONS_FRAGMENT = `#graphql
           ...SectionOutfitsAndMedia
           ...SectionItemsGrid
           ...SectionConfigurator
-      }
+          ...SectionBasicPage
+        }
       }
     }
   }
@@ -101,4 +106,5 @@ export const SECTIONS_FRAGMENT = `#graphql
   ${SECTION_ITEMS_GRID_FRAGMENT}
   ${SECTION_LOOKS_SLIDER_FRAGMENT}
   ${SECTION_CONFIGURATOR_FRAGMENT}
+  ${SECTION_BASIC_PAGE_FRAGMENT}
 ` as const;
