@@ -57,7 +57,7 @@ function FooterMenu({
 }) {
   const pagesItems = pagesMenu?.items ?? FALLBACK_FOOTER_MENU.items;
   const legalItems = legalMenu?.items ?? [];
-  console.log("socialLinks:", socialLinks);
+  // console.log("socialLinks:", socialLinks);
   return (
     <nav
       className="grid grid-rows-2 md:grid-rows-1 grid-cols-6 lg:grid-cols-12 gap-4"

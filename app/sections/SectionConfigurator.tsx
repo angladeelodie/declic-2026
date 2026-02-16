@@ -18,7 +18,9 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
   const bottoms = bottomsCollection?.products?.nodes ?? [];
   const sleeves = sleevesCollection?.products?.nodes ?? [];
 
-  const [activeCategory, setActiveCategory] = useState<'tops' | 'bottoms' | 'sleeves'>('tops');
+  const [activeCategory, setActiveCategory] = useState<
+    'tops' | 'bottoms' | 'sleeves'
+  >('tops');
 
   function handleSelectTop(handle: string) {
     setSearchParams((prev) => {
@@ -56,13 +58,19 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
           const image = product.featuredImage;
 
           return (
-            <li key={product.id} className={`aspect-square overflow-hidden rounded-md flex-shrink-1 ${isSelected ? 'border-2 border-black' : 'border-2 border-transparent'}`}>
+            <li
+              key={product.id}
+              className={`aspect-square overflow-hidden rounded-md flex-shrink-1 ${
+                isSelected
+                  ? 'border-2 border-black'
+                  : 'border-2 border-transparent'
+              }`}
+            >
               <button
                 type="button"
                 onClick={() => onSelect(product.handle)}
-                className={`h-full w-full`}
+                className="h-full w-full"
               >
-                {/* Thumbnail */}
                 {image?.url && (
                   <div className="h-full w-full bg-gray-100">
                     <img
@@ -72,9 +80,6 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
                     />
                   </div>
                 )}
-
-                {/* Title */}
-                {/* <span className="text-sm">{product.title}</span> */}
               </button>
             </li>
           );
@@ -88,16 +93,49 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
       return renderProductList(tops, selectedTopHandle, handleSelectTop);
     }
     if (activeCategory === 'bottoms') {
-      return renderProductList(bottoms, selectedBottomHandle, handleSelectBottom);
+      return renderProductList(
+        bottoms,
+        selectedBottomHandle,
+        handleSelectBottom,
+      );
     }
     return renderProductList(sleeves, selectedSleeveHandle, handleSelectSleeve);
   }
+
+  // --- NEW: derive selected products & model URLs ---
+
+  const selectedTopProduct = selectedTopHandle
+    ? tops.find((p) => p.handle === selectedTopHandle)
+    : null;
+
+  const selectedBottomProduct = selectedBottomHandle
+    ? bottoms.find((p) => p.handle === selectedBottomHandle)
+    : null;
+
+  const selectedSleeveProduct = selectedSleeveHandle
+    ? sleeves.find((p) => p.handle === selectedSleeveHandle)
+    : null;
+
+  const topModelUrl = selectedTopProduct?.model?.reference?.sources[0].url ?? null;
+  const bottomModelUrl =
+    selectedBottomProduct?.model?.reference?.sources[0].url ?? null;
+  const sleeveModelUrl =
+    selectedSleeveProduct?.model?.reference?.sources[0].url ?? null;
+
 
   return (
     <section className="section-configurator section-main grid-rows-[1fr]">
       {/* Left column: preview area */}
       <div className="lg:col-start-2 lg:col-span-4 h-full">
-        <ConfiguratorCanvas />
+        <div className="relative w-full aspect-[2/3] bg-gray-200 self-center rounded-[var(--radius-sharp)] overflow-hidden">
+          <div className="absolute inset-0">
+            <ConfiguratorCanvas
+              topModelUrl={topModelUrl}
+              bottomModelUrl={bottomModelUrl}
+              sleeveModelUrl={sleeveModelUrl}
+            />
+          </div>
+        </div>
       </div>
 
       {/* Right column: tabs + lists */}
@@ -108,9 +146,7 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
             type="button"
             onClick={() => setActiveCategory('tops')}
             className={`text-title ${
-              activeCategory === 'tops'
-                ? 'text-black'
-                : 'text-gray-300'
+              activeCategory === 'tops' ? 'text-black' : 'text-gray-300'
             }`}
           >
             Tops
@@ -119,9 +155,7 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
             type="button"
             onClick={() => setActiveCategory('bottoms')}
             className={`text-title ${
-              activeCategory === 'bottoms'
-                ? 'text-black'
-                : 'text-gray-300'
+              activeCategory === 'bottoms' ? 'text-black' : 'text-gray-300'
             }`}
           >
             Bottoms
@@ -130,9 +164,7 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
             type="button"
             onClick={() => setActiveCategory('sleeves')}
             className={`text-title ${
-              activeCategory === 'sleeves'
-                ? 'text-black'
-                : 'text-gray-300'
+              activeCategory === 'sleeves' ? 'text-black' : 'text-gray-300'
             }`}
           >
             Sleeves
@@ -145,7 +177,6 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
     </section>
   );
 }
-
 export const SECTION_CONFIGURATOR_FRAGMENT = `#graphql
   fragment SectionConfigurator on Metaobject {
     type
@@ -180,6 +211,15 @@ export const SECTION_CONFIGURATOR_FRAGMENT = `#graphql
                 width
                 height
               }
+              model: metafield(namespace: "custom", key: "model") {
+                reference {
+                  ... on Model3d {
+                    sources {
+                      url
+                    }
+                  }
+                }
+              }
             }
           }
         }
@@ -204,6 +244,15 @@ export const SECTION_CONFIGURATOR_FRAGMENT = `#graphql
                 width
                 height
               }
+              model: metafield(namespace: "custom", key: "model") {
+                reference {
+                  ... on Model3d {
+                    sources {
+                      url
+                    }
+                  }
+                }
+              }
             }
           }
         }
@@ -227,6 +276,15 @@ export const SECTION_CONFIGURATOR_FRAGMENT = `#graphql
                 altText
                 width
                 height
+              }
+              model: metafield(namespace: "custom", key: "model") {
+                reference {
+                  ... on Model3d {
+                    sources {
+                      url
+                    }
+                  }
+                }
               }
             }
           }

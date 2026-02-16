@@ -21,11 +21,21 @@ export default async function handleRequest(
     },
     // Explicitly allow video/media from your store domain
     // ELD fix
+    connectSrc: [
+      "'self'",
+      // your store domain (if not already included by default)
+      `https://${context.env.PUBLIC_STORE_DOMAIN}`,
+      // checkout domain (if you need Storefront API / checkout)
+      `https://${context.env.PUBLIC_CHECKOUT_DOMAIN}`,
+      // allow Shopify's CDN for GLB files
+      'https://cdn.shopify.com',
+    ],
     mediaSrc: [
       "'self'",
       'https://cdn.shopify.com',
       // your store domain; could also use https://*.myshopify.com
       `https://${context.env.PUBLIC_STORE_DOMAIN}`,
+      // `https://${context.env.PUBLIC_CHECKOUT_DOMAIN}`,
     ],
   });
 

@@ -68,7 +68,7 @@ export function SectionLooksSlider(props: SectionLooksSliderFragment) {
                   )}&sleeve=${encodeURIComponent(sleeveHandle)}`
                 : '#';
 
-                console.log(look)
+                // console.log(look)
 
               return (
                 <SwiperSlide key={look.id} className="custom-slide">
