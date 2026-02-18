@@ -97,7 +97,7 @@ export function SectionLooksSlider(props: SectionLooksSliderFragment) {
                         <img
                           src={look.image.image.url}
                           alt={look.image.image.altText || ''}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" 
                         />
                       )}
                     </div>

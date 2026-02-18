@@ -10,11 +10,14 @@ import {
 } from '@shopify/hydrogen';
 import {ProductPrice} from '~/components/ProductPrice';
 import {getPaginationVariables, Image} from '@shopify/hydrogen';
+import {Accordion, AccordionItem} from '~/components/Accordion';
 
 import {ProductImage} from '~/components/ProductImage';
 import {ProductForm} from '~/components/ProductForm';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
-import { useState, useEffect } from 'react'; // Add these imports
+import {useState, useEffect} from 'react';
+import {RichText} from '@shopify/hydrogen';
+
 export const meta: Route.MetaFunction = ({data}) => {
   return [
     {title: `Hydrogen | ${data?.product.title ?? ''}`},
@@ -26,19 +29,11 @@ export const meta: Route.MetaFunction = ({data}) => {
 };
 
 export async function loader(args: Route.LoaderArgs) {
-  // Start fetching non-critical data without blocking time to first byte
   const deferredData = loadDeferredData(args);
-
-  // Await the critical data required to render initial state of the page
   const criticalData = await loadCriticalData(args);
-
   return {...deferredData, ...criticalData};
 }
 
-/**
- * Load data necessary for rendering content above the fold. This is the critical data
- * needed to render the page. If it's unavailable, the whole page should 400 or 500 error.
- */
 async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
   const {handle} = params;
   const {storefront} = context;
@@ -51,14 +46,12 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
     storefront.query(PRODUCT_QUERY, {
       variables: {handle, selectedOptions: getSelectedProductOptions(request)},
     }),
-    // Add other queries here, so that they are loaded in parallel
   ]);
 
   if (!product?.id) {
     throw new Response(null, {status: 404});
   }
 
-  // The API handle might be localized, so redirect to the localized handle
   redirectIfHandleIsLocalized(request, {handle, data: product});
 
   return {
@@ -66,29 +59,21 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
   };
 }
 
-/**
- * Load data for rendering content below the fold. This data is deferred and will be
- * fetched after the initial page load. If it's unavailable, the page should still 200.
- * Make sure to not throw any errors here, as it will cause the page to 500.
- */
 function loadDeferredData({context, params}: Route.LoaderArgs) {
-  // Put any API calls that is not critical to be available on first page render
-  // For example: product reviews, product recommendations, social feeds.
-
   return {};
 }
+
 export default function Product() {
-  const { product } = useLoaderData<typeof loader>();
+  const {product} = useLoaderData<typeof loader>();
 
   const selectedVariant = useOptimisticVariant(
     product.selectedOrFirstAvailableVariant,
     getAdjacentAndFirstAvailableVariants(product),
   );
 
-  // 1. Initialize state for the featured image
+  // Featured image state, synced to selected variant
   const [featuredImage, setFeaturedImage] = useState(selectedVariant?.image);
 
-  // 2. Sync state if the variant changes (e.g., user selects a different color via dropdown)
   useEffect(() => {
     setFeaturedImage(selectedVariant?.image);
   }, [selectedVariant]);
@@ -100,21 +85,23 @@ export default function Product() {
     selectedOrFirstAvailableVariant: selectedVariant,
   });
 
-  const { title, descriptionHtml } = product;
+  const {title, descriptionHtml} = product;
+
+  // --- Information panels from metafield ---
+  const informationPanels = product.informationPanels?.references?.nodes ?? [];
 
   return (
     <div className="w-full h-full">
-      <div className="grid grid-rows-2 col-span-1 lg:grid-rows-1 grid-cols-6 lg:grid-cols-12 gap-4 lg:max-h-[80vh] overflow-hidden">
-        
+      <div className="grid grid-rows-2 col-span-1 lg:grid-rows-1 grid-cols-6 lg:grid-cols-12 gap-4 lg:min-h-[80vh] overflow-hidden">
         {/* Thumbnail Column */}
-        <div className="lg:col-start-1 lg:col-span-1 h-full overflow-y-auto flex flex-col gap-4">
+        <div className="lg:col-start-1 lg:col-span-1 h-full lg:h-[80vh] overflow-y-auto flex flex-col gap-4">
           {product.media.edges.map((media) => (
-            <button // Changed to a button for accessibility
+            <button
               key={media.node.id}
-              onClick={() => setFeaturedImage(media.node.image)} // 3. Update state on click
+              onClick={() => setFeaturedImage(media.node.image)}
               className={`w-full relative rounded-lg border-2 transition-all ${
-                featuredImage?.url === media.node.image.url 
-                  ? 'border-black' 
+                featuredImage?.url === media.node.image.url
+                  ? 'border-black'
                   : 'border-transparent hover:border-gray-300'
               }`}
             >
@@ -131,10 +118,9 @@ export default function Product() {
         </div>
 
         {/* Main Image Column */}
-        <div className="col-span-5 md:col-span-4 md:col-start-2 lg:col-start-2 lg:col-span-5 h-full min-h-0 relative">
+        <div className="col-span-5 md:col-span-4 md:col-start-2 lg:col-start-2 lg:col-span-5 h-full lg:h-[80vh] min-h-0 relative">
           <div className="absolute inset-0 w-full h-full">
             <div className="w-full h-full overflow-hidden rounded-[var(--radius-sharp)_var(--radius-round)_var(--radius-sharp)_var(--radius-round)] bg-[#f9f9f9]">
-              {/* 4. Use the state variable here instead of selectedVariant.image */}
               <ProductImage image={featuredImage} />
             </div>
           </div>
@@ -146,7 +132,7 @@ export default function Product() {
             <h1 className="text-title">{title}</h1>
             <div
               className="text-body"
-              dangerouslySetInnerHTML={{ __html: descriptionHtml }}
+              dangerouslySetInnerHTML={{__html: descriptionHtml}}
             />
           </header>
 
@@ -158,25 +144,42 @@ export default function Product() {
             />
           </section>
 
+          {/* Information panels accordion (from information_panels metafield) */}
+          {informationPanels.length > 0 && (
+            <section className="mt-10 border-t border-gray-200 pt-4">
+              <Accordion>
+                {informationPanels.map((panel: any, index: number) => {
+                  const panelTitle = panel.title?.value || `Panel ${index + 1}`;
+                  const panelContent = panel.content?.value || '';
+
+                  return (
+                    <AccordionItem
+                      key={panel.id ?? `${panelTitle}-${index}`}
+                      title={panelTitle}
+                      defaultOpen={index === 0}
+                    >
+                      <RichText
+                        className="prose prose-sm max-w-none"
+                        data={panelContent}
+                      />
+                    </AccordionItem>
+                  );
+                })}
+              </Accordion>
+            </section>
+          )}
+
           {/* "Complete your look" Section */}
           <footer className="mt-16">
             <h3 className="text-xl text-metalite font-bold mb-6">
               Complete your look
             </h3>
             <div className="grid grid-cols-4 gap-3">
-              {/* {product.adjacentVariants.map((variant) => (
-            <div
-              key={variant.id}
-            >
-              <img src={variant.image.url} alt={variant.image.altText || ''} />
-            </div>
-          ))} */}
               {[1, 2, 3, 4].map((i) => (
                 <div
                   key={i}
                   className="aspect-square bg-gray-100 rounded-tr-2xl rounded-bl-2xl overflow-hidden cursor-pointer hover:opacity-80 transition-opacity"
                 >
-                  {/* Logic for related product images would go here */}
                   <div className="w-full h-full bg-[#dcdcdc] animate-pulse" />
                 </div>
               ))}
@@ -203,7 +206,6 @@ export default function Product() {
     </div>
   );
 }
-
 const PRODUCT_VARIANT_FRAGMENT = `#graphql
   fragment ProductVariant on ProductVariant {
     availableForSale
@@ -320,6 +322,23 @@ const PRODUCT_FRAGMENT = `#graphql
   seo {
     description
     title
+  }
+
+  # NEW: Information panels → list of $app:information_panel metaobjects
+  informationPanels: metafield(namespace: "custom", key: "information_panels") {
+    references(first: 20) {
+      nodes {
+        ... on Metaobject {
+          type
+          title: field(key: "title") {
+            value
+          }
+          content: field(key: "content") {
+            value
+          }
+        }
+      }
+    }
   }
 }
   ${PRODUCT_VARIANT_FRAGMENT}
