@@ -654,7 +654,7 @@ export type HomeQuery = {
                     nodes: Array<
                       Pick<
                         StorefrontAPI.Product,
-                        'id' | 'title' | 'handle' | 'productType' | 'tags'
+                        'id' | 'title' | 'productType' | 'tags' | 'handle'
                       > & {
                         featuredImage?: StorefrontAPI.Maybe<
                           Pick<
@@ -684,19 +684,219 @@ export type HomeQuery = {
                               })
                           >;
                         };
-                        category?: StorefrontAPI.Maybe<
+                        variants: {
+                          nodes: Array<
+                            Pick<
+                              StorefrontAPI.ProductVariant,
+                              'id' | 'title'
+                            > & {
+                              image?: StorefrontAPI.Maybe<
+                                Pick<
+                                  StorefrontAPI.Image,
+                                  'id' | 'url' | 'altText' | 'width' | 'height'
+                                >
+                              >;
+                              selectedOptions: Array<
+                                Pick<
+                                  StorefrontAPI.SelectedOption,
+                                  'name' | 'value'
+                                >
+                              >;
+                            }
+                          >;
+                        };
+                      }
+                    >;
+                  };
+                }
+              >;
+            }>;
+            topsCollection?: StorefrontAPI.Maybe<{
+              reference?: StorefrontAPI.Maybe<
+                Pick<StorefrontAPI.Collection, 'id' | 'title' | 'handle'> & {
+                  products: {
+                    nodes: Array<
+                      Pick<
+                        StorefrontAPI.Product,
+                        'id' | 'title' | 'productType' | 'tags' | 'handle'
+                      > & {
+                        featuredImage?: StorefrontAPI.Maybe<
                           Pick<
-                            StorefrontAPI.TaxonomyCategory,
-                            'id' | 'name'
-                          > & {
-                            ancestors: Array<
-                              Pick<
-                                StorefrontAPI.TaxonomyCategory,
-                                'id' | 'name'
-                              >
-                            >;
-                          }
+                            StorefrontAPI.Image,
+                            'id' | 'url' | 'altText' | 'width' | 'height'
+                          >
                         >;
+                        media: {
+                          nodes: Array<
+                            | {
+                                __typename:
+                                  | 'ExternalVideo'
+                                  | 'Model3d'
+                                  | 'Video';
+                              }
+                            | ({__typename: 'MediaImage'} & {
+                                image?: StorefrontAPI.Maybe<
+                                  Pick<
+                                    StorefrontAPI.Image,
+                                    | 'id'
+                                    | 'url'
+                                    | 'altText'
+                                    | 'width'
+                                    | 'height'
+                                  >
+                                >;
+                              })
+                          >;
+                        };
+                        variants: {
+                          nodes: Array<
+                            Pick<
+                              StorefrontAPI.ProductVariant,
+                              'id' | 'title'
+                            > & {
+                              image?: StorefrontAPI.Maybe<
+                                Pick<
+                                  StorefrontAPI.Image,
+                                  'id' | 'url' | 'altText' | 'width' | 'height'
+                                >
+                              >;
+                              selectedOptions: Array<
+                                Pick<
+                                  StorefrontAPI.SelectedOption,
+                                  'name' | 'value'
+                                >
+                              >;
+                            }
+                          >;
+                        };
+                      }
+                    >;
+                  };
+                }
+              >;
+            }>;
+            bottomsCollection?: StorefrontAPI.Maybe<{
+              reference?: StorefrontAPI.Maybe<
+                Pick<StorefrontAPI.Collection, 'id' | 'title' | 'handle'> & {
+                  products: {
+                    nodes: Array<
+                      Pick<
+                        StorefrontAPI.Product,
+                        'id' | 'title' | 'productType' | 'tags' | 'handle'
+                      > & {
+                        featuredImage?: StorefrontAPI.Maybe<
+                          Pick<
+                            StorefrontAPI.Image,
+                            'id' | 'url' | 'altText' | 'width' | 'height'
+                          >
+                        >;
+                        media: {
+                          nodes: Array<
+                            | {
+                                __typename:
+                                  | 'ExternalVideo'
+                                  | 'Model3d'
+                                  | 'Video';
+                              }
+                            | ({__typename: 'MediaImage'} & {
+                                image?: StorefrontAPI.Maybe<
+                                  Pick<
+                                    StorefrontAPI.Image,
+                                    | 'id'
+                                    | 'url'
+                                    | 'altText'
+                                    | 'width'
+                                    | 'height'
+                                  >
+                                >;
+                              })
+                          >;
+                        };
+                        variants: {
+                          nodes: Array<
+                            Pick<
+                              StorefrontAPI.ProductVariant,
+                              'id' | 'title'
+                            > & {
+                              image?: StorefrontAPI.Maybe<
+                                Pick<
+                                  StorefrontAPI.Image,
+                                  'id' | 'url' | 'altText' | 'width' | 'height'
+                                >
+                              >;
+                              selectedOptions: Array<
+                                Pick<
+                                  StorefrontAPI.SelectedOption,
+                                  'name' | 'value'
+                                >
+                              >;
+                            }
+                          >;
+                        };
+                      }
+                    >;
+                  };
+                }
+              >;
+            }>;
+            sleevesCollection?: StorefrontAPI.Maybe<{
+              reference?: StorefrontAPI.Maybe<
+                Pick<StorefrontAPI.Collection, 'id' | 'title' | 'handle'> & {
+                  products: {
+                    nodes: Array<
+                      Pick<
+                        StorefrontAPI.Product,
+                        'id' | 'title' | 'productType' | 'tags' | 'handle'
+                      > & {
+                        featuredImage?: StorefrontAPI.Maybe<
+                          Pick<
+                            StorefrontAPI.Image,
+                            'id' | 'url' | 'altText' | 'width' | 'height'
+                          >
+                        >;
+                        media: {
+                          nodes: Array<
+                            | {
+                                __typename:
+                                  | 'ExternalVideo'
+                                  | 'Model3d'
+                                  | 'Video';
+                              }
+                            | ({__typename: 'MediaImage'} & {
+                                image?: StorefrontAPI.Maybe<
+                                  Pick<
+                                    StorefrontAPI.Image,
+                                    | 'id'
+                                    | 'url'
+                                    | 'altText'
+                                    | 'width'
+                                    | 'height'
+                                  >
+                                >;
+                              })
+                          >;
+                        };
+                        variants: {
+                          nodes: Array<
+                            Pick<
+                              StorefrontAPI.ProductVariant,
+                              'id' | 'title'
+                            > & {
+                              image?: StorefrontAPI.Maybe<
+                                Pick<
+                                  StorefrontAPI.Image,
+                                  'id' | 'url' | 'altText' | 'width' | 'height'
+                                >
+                              >;
+                              selectedOptions: Array<
+                                Pick<
+                                  StorefrontAPI.SelectedOption,
+                                  'name' | 'value'
+                                >
+                              >;
+                            }
+                          >;
+                        };
                       }
                     >;
                   };
@@ -716,9 +916,11 @@ export type HomeQuery = {
                           >
                         >;
                         model?: StorefrontAPI.Maybe<{
-                          reference?: StorefrontAPI.Maybe<
-                            Pick<StorefrontAPI.GenericFile, 'url'>
-                          >;
+                          reference?: StorefrontAPI.Maybe<{
+                            sources: Array<
+                              Pick<StorefrontAPI.Model3dSource, 'url'>
+                            >;
+                          }>;
                         }>;
                       }
                     >;
@@ -739,9 +941,11 @@ export type HomeQuery = {
                           >
                         >;
                         model?: StorefrontAPI.Maybe<{
-                          reference?: StorefrontAPI.Maybe<
-                            Pick<StorefrontAPI.GenericFile, 'url'>
-                          >;
+                          reference?: StorefrontAPI.Maybe<{
+                            sources: Array<
+                              Pick<StorefrontAPI.Model3dSource, 'url'>
+                            >;
+                          }>;
                         }>;
                       }
                     >;
@@ -762,9 +966,11 @@ export type HomeQuery = {
                           >
                         >;
                         model?: StorefrontAPI.Maybe<{
-                          reference?: StorefrontAPI.Maybe<
-                            Pick<StorefrontAPI.GenericFile, 'url'>
-                          >;
+                          reference?: StorefrontAPI.Maybe<{
+                            sources: Array<
+                              Pick<StorefrontAPI.Model3dSource, 'url'>
+                            >;
+                          }>;
                         }>;
                       }
                     >;
@@ -1392,7 +1598,7 @@ export type PageQuery = {
                       nodes: Array<
                         Pick<
                           StorefrontAPI.Product,
-                          'id' | 'title' | 'handle' | 'productType' | 'tags'
+                          'id' | 'title' | 'productType' | 'tags' | 'handle'
                         > & {
                           featuredImage?: StorefrontAPI.Maybe<
                             Pick<
@@ -1422,19 +1628,235 @@ export type PageQuery = {
                                 })
                             >;
                           };
-                          category?: StorefrontAPI.Maybe<
+                          variants: {
+                            nodes: Array<
+                              Pick<
+                                StorefrontAPI.ProductVariant,
+                                'id' | 'title'
+                              > & {
+                                image?: StorefrontAPI.Maybe<
+                                  Pick<
+                                    StorefrontAPI.Image,
+                                    | 'id'
+                                    | 'url'
+                                    | 'altText'
+                                    | 'width'
+                                    | 'height'
+                                  >
+                                >;
+                                selectedOptions: Array<
+                                  Pick<
+                                    StorefrontAPI.SelectedOption,
+                                    'name' | 'value'
+                                  >
+                                >;
+                              }
+                            >;
+                          };
+                        }
+                      >;
+                    };
+                  }
+                >;
+              }>;
+              topsCollection?: StorefrontAPI.Maybe<{
+                reference?: StorefrontAPI.Maybe<
+                  Pick<StorefrontAPI.Collection, 'id' | 'title' | 'handle'> & {
+                    products: {
+                      nodes: Array<
+                        Pick<
+                          StorefrontAPI.Product,
+                          'id' | 'title' | 'productType' | 'tags' | 'handle'
+                        > & {
+                          featuredImage?: StorefrontAPI.Maybe<
                             Pick<
-                              StorefrontAPI.TaxonomyCategory,
-                              'id' | 'name'
-                            > & {
-                              ancestors: Array<
-                                Pick<
-                                  StorefrontAPI.TaxonomyCategory,
-                                  'id' | 'name'
-                                >
-                              >;
-                            }
+                              StorefrontAPI.Image,
+                              'id' | 'url' | 'altText' | 'width' | 'height'
+                            >
                           >;
+                          media: {
+                            nodes: Array<
+                              | {
+                                  __typename:
+                                    | 'ExternalVideo'
+                                    | 'Model3d'
+                                    | 'Video';
+                                }
+                              | ({__typename: 'MediaImage'} & {
+                                  image?: StorefrontAPI.Maybe<
+                                    Pick<
+                                      StorefrontAPI.Image,
+                                      | 'id'
+                                      | 'url'
+                                      | 'altText'
+                                      | 'width'
+                                      | 'height'
+                                    >
+                                  >;
+                                })
+                            >;
+                          };
+                          variants: {
+                            nodes: Array<
+                              Pick<
+                                StorefrontAPI.ProductVariant,
+                                'id' | 'title'
+                              > & {
+                                image?: StorefrontAPI.Maybe<
+                                  Pick<
+                                    StorefrontAPI.Image,
+                                    | 'id'
+                                    | 'url'
+                                    | 'altText'
+                                    | 'width'
+                                    | 'height'
+                                  >
+                                >;
+                                selectedOptions: Array<
+                                  Pick<
+                                    StorefrontAPI.SelectedOption,
+                                    'name' | 'value'
+                                  >
+                                >;
+                              }
+                            >;
+                          };
+                        }
+                      >;
+                    };
+                  }
+                >;
+              }>;
+              bottomsCollection?: StorefrontAPI.Maybe<{
+                reference?: StorefrontAPI.Maybe<
+                  Pick<StorefrontAPI.Collection, 'id' | 'title' | 'handle'> & {
+                    products: {
+                      nodes: Array<
+                        Pick<
+                          StorefrontAPI.Product,
+                          'id' | 'title' | 'productType' | 'tags' | 'handle'
+                        > & {
+                          featuredImage?: StorefrontAPI.Maybe<
+                            Pick<
+                              StorefrontAPI.Image,
+                              'id' | 'url' | 'altText' | 'width' | 'height'
+                            >
+                          >;
+                          media: {
+                            nodes: Array<
+                              | {
+                                  __typename:
+                                    | 'ExternalVideo'
+                                    | 'Model3d'
+                                    | 'Video';
+                                }
+                              | ({__typename: 'MediaImage'} & {
+                                  image?: StorefrontAPI.Maybe<
+                                    Pick<
+                                      StorefrontAPI.Image,
+                                      | 'id'
+                                      | 'url'
+                                      | 'altText'
+                                      | 'width'
+                                      | 'height'
+                                    >
+                                  >;
+                                })
+                            >;
+                          };
+                          variants: {
+                            nodes: Array<
+                              Pick<
+                                StorefrontAPI.ProductVariant,
+                                'id' | 'title'
+                              > & {
+                                image?: StorefrontAPI.Maybe<
+                                  Pick<
+                                    StorefrontAPI.Image,
+                                    | 'id'
+                                    | 'url'
+                                    | 'altText'
+                                    | 'width'
+                                    | 'height'
+                                  >
+                                >;
+                                selectedOptions: Array<
+                                  Pick<
+                                    StorefrontAPI.SelectedOption,
+                                    'name' | 'value'
+                                  >
+                                >;
+                              }
+                            >;
+                          };
+                        }
+                      >;
+                    };
+                  }
+                >;
+              }>;
+              sleevesCollection?: StorefrontAPI.Maybe<{
+                reference?: StorefrontAPI.Maybe<
+                  Pick<StorefrontAPI.Collection, 'id' | 'title' | 'handle'> & {
+                    products: {
+                      nodes: Array<
+                        Pick<
+                          StorefrontAPI.Product,
+                          'id' | 'title' | 'productType' | 'tags' | 'handle'
+                        > & {
+                          featuredImage?: StorefrontAPI.Maybe<
+                            Pick<
+                              StorefrontAPI.Image,
+                              'id' | 'url' | 'altText' | 'width' | 'height'
+                            >
+                          >;
+                          media: {
+                            nodes: Array<
+                              | {
+                                  __typename:
+                                    | 'ExternalVideo'
+                                    | 'Model3d'
+                                    | 'Video';
+                                }
+                              | ({__typename: 'MediaImage'} & {
+                                  image?: StorefrontAPI.Maybe<
+                                    Pick<
+                                      StorefrontAPI.Image,
+                                      | 'id'
+                                      | 'url'
+                                      | 'altText'
+                                      | 'width'
+                                      | 'height'
+                                    >
+                                  >;
+                                })
+                            >;
+                          };
+                          variants: {
+                            nodes: Array<
+                              Pick<
+                                StorefrontAPI.ProductVariant,
+                                'id' | 'title'
+                              > & {
+                                image?: StorefrontAPI.Maybe<
+                                  Pick<
+                                    StorefrontAPI.Image,
+                                    | 'id'
+                                    | 'url'
+                                    | 'altText'
+                                    | 'width'
+                                    | 'height'
+                                  >
+                                >;
+                                selectedOptions: Array<
+                                  Pick<
+                                    StorefrontAPI.SelectedOption,
+                                    'name' | 'value'
+                                  >
+                                >;
+                              }
+                            >;
+                          };
                         }
                       >;
                     };
@@ -1457,9 +1879,11 @@ export type PageQuery = {
                             >
                           >;
                           model?: StorefrontAPI.Maybe<{
-                            reference?: StorefrontAPI.Maybe<
-                              Pick<StorefrontAPI.GenericFile, 'url'>
-                            >;
+                            reference?: StorefrontAPI.Maybe<{
+                              sources: Array<
+                                Pick<StorefrontAPI.Model3dSource, 'url'>
+                              >;
+                            }>;
                           }>;
                         }
                       >;
@@ -1483,9 +1907,11 @@ export type PageQuery = {
                             >
                           >;
                           model?: StorefrontAPI.Maybe<{
-                            reference?: StorefrontAPI.Maybe<
-                              Pick<StorefrontAPI.GenericFile, 'url'>
-                            >;
+                            reference?: StorefrontAPI.Maybe<{
+                              sources: Array<
+                                Pick<StorefrontAPI.Model3dSource, 'url'>
+                              >;
+                            }>;
                           }>;
                         }
                       >;
@@ -1509,9 +1935,11 @@ export type PageQuery = {
                             >
                           >;
                           model?: StorefrontAPI.Maybe<{
-                            reference?: StorefrontAPI.Maybe<
-                              Pick<StorefrontAPI.GenericFile, 'url'>
-                            >;
+                            reference?: StorefrontAPI.Maybe<{
+                              sources: Array<
+                                Pick<StorefrontAPI.Model3dSource, 'url'>
+                              >;
+                            }>;
                           }>;
                         }
                       >;
@@ -2191,9 +2619,9 @@ export type SectionConfiguratorFragment = Pick<
                 >
               >;
               model?: StorefrontAPI.Maybe<{
-                reference?: StorefrontAPI.Maybe<
-                  Pick<StorefrontAPI.GenericFile, 'url'>
-                >;
+                reference?: StorefrontAPI.Maybe<{
+                  sources: Array<Pick<StorefrontAPI.Model3dSource, 'url'>>;
+                }>;
               }>;
             }
           >;
@@ -2214,9 +2642,9 @@ export type SectionConfiguratorFragment = Pick<
                 >
               >;
               model?: StorefrontAPI.Maybe<{
-                reference?: StorefrontAPI.Maybe<
-                  Pick<StorefrontAPI.GenericFile, 'url'>
-                >;
+                reference?: StorefrontAPI.Maybe<{
+                  sources: Array<Pick<StorefrontAPI.Model3dSource, 'url'>>;
+                }>;
               }>;
             }
           >;
@@ -2237,9 +2665,9 @@ export type SectionConfiguratorFragment = Pick<
                 >
               >;
               model?: StorefrontAPI.Maybe<{
-                reference?: StorefrontAPI.Maybe<
-                  Pick<StorefrontAPI.GenericFile, 'url'>
-                >;
+                reference?: StorefrontAPI.Maybe<{
+                  sources: Array<Pick<StorefrontAPI.Model3dSource, 'url'>>;
+                }>;
               }>;
             }
           >;
@@ -2498,7 +2926,7 @@ export type SectionItemsGridFragment = Pick<
   StorefrontAPI.Metaobject,
   'type'
 > & {
-  collection?: StorefrontAPI.Maybe<{
+  topsCollection?: StorefrontAPI.Maybe<{
     reference?: StorefrontAPI.Maybe<
       Pick<StorefrontAPI.Collection, 'id' | 'title' | 'handle'> & {
         products: {
@@ -2507,13 +2935,6 @@ export type SectionItemsGridFragment = Pick<
               StorefrontAPI.Product,
               'id' | 'title' | 'productType' | 'tags' | 'handle'
             > & {
-              category?: StorefrontAPI.Maybe<
-                Pick<StorefrontAPI.TaxonomyCategory, 'id' | 'name'> & {
-                  ancestors: Array<
-                    Pick<StorefrontAPI.TaxonomyCategory, 'id' | 'name'>
-                  >;
-                }
-              >;
               featuredImage?: StorefrontAPI.Maybe<
                 Pick<
                   StorefrontAPI.Image,
@@ -2531,6 +2952,119 @@ export type SectionItemsGridFragment = Pick<
                         >
                       >;
                     })
+                >;
+              };
+              variants: {
+                nodes: Array<
+                  Pick<StorefrontAPI.ProductVariant, 'id' | 'title'> & {
+                    image?: StorefrontAPI.Maybe<
+                      Pick<
+                        StorefrontAPI.Image,
+                        'id' | 'url' | 'altText' | 'width' | 'height'
+                      >
+                    >;
+                    selectedOptions: Array<
+                      Pick<StorefrontAPI.SelectedOption, 'name' | 'value'>
+                    >;
+                  }
+                >;
+              };
+            }
+          >;
+        };
+      }
+    >;
+  }>;
+  bottomsCollection?: StorefrontAPI.Maybe<{
+    reference?: StorefrontAPI.Maybe<
+      Pick<StorefrontAPI.Collection, 'id' | 'title' | 'handle'> & {
+        products: {
+          nodes: Array<
+            Pick<
+              StorefrontAPI.Product,
+              'id' | 'title' | 'productType' | 'tags' | 'handle'
+            > & {
+              featuredImage?: StorefrontAPI.Maybe<
+                Pick<
+                  StorefrontAPI.Image,
+                  'id' | 'url' | 'altText' | 'width' | 'height'
+                >
+              >;
+              media: {
+                nodes: Array<
+                  | {__typename: 'ExternalVideo' | 'Model3d' | 'Video'}
+                  | ({__typename: 'MediaImage'} & {
+                      image?: StorefrontAPI.Maybe<
+                        Pick<
+                          StorefrontAPI.Image,
+                          'id' | 'url' | 'altText' | 'width' | 'height'
+                        >
+                      >;
+                    })
+                >;
+              };
+              variants: {
+                nodes: Array<
+                  Pick<StorefrontAPI.ProductVariant, 'id' | 'title'> & {
+                    image?: StorefrontAPI.Maybe<
+                      Pick<
+                        StorefrontAPI.Image,
+                        'id' | 'url' | 'altText' | 'width' | 'height'
+                      >
+                    >;
+                    selectedOptions: Array<
+                      Pick<StorefrontAPI.SelectedOption, 'name' | 'value'>
+                    >;
+                  }
+                >;
+              };
+            }
+          >;
+        };
+      }
+    >;
+  }>;
+  sleevesCollection?: StorefrontAPI.Maybe<{
+    reference?: StorefrontAPI.Maybe<
+      Pick<StorefrontAPI.Collection, 'id' | 'title' | 'handle'> & {
+        products: {
+          nodes: Array<
+            Pick<
+              StorefrontAPI.Product,
+              'id' | 'title' | 'productType' | 'tags' | 'handle'
+            > & {
+              featuredImage?: StorefrontAPI.Maybe<
+                Pick<
+                  StorefrontAPI.Image,
+                  'id' | 'url' | 'altText' | 'width' | 'height'
+                >
+              >;
+              media: {
+                nodes: Array<
+                  | {__typename: 'ExternalVideo' | 'Model3d' | 'Video'}
+                  | ({__typename: 'MediaImage'} & {
+                      image?: StorefrontAPI.Maybe<
+                        Pick<
+                          StorefrontAPI.Image,
+                          'id' | 'url' | 'altText' | 'width' | 'height'
+                        >
+                      >;
+                    })
+                >;
+              };
+              variants: {
+                nodes: Array<
+                  Pick<StorefrontAPI.ProductVariant, 'id' | 'title'> & {
+                    image?: StorefrontAPI.Maybe<
+                      Pick<
+                        StorefrontAPI.Image,
+                        'id' | 'url' | 'altText' | 'width' | 'height'
+                      >
+                    >;
+                    selectedOptions: Array<
+                      Pick<StorefrontAPI.SelectedOption, 'name' | 'value'>
+                    >;
+                  }
                 >;
               };
             }
@@ -2733,7 +3267,10 @@ export type SectionOutfitsAndMediaFragment = Pick<
       Pick<StorefrontAPI.Collection, 'id' | 'title' | 'handle'> & {
         products: {
           nodes: Array<
-            Pick<StorefrontAPI.Product, 'id' | 'title' | 'handle'> & {
+            Pick<
+              StorefrontAPI.Product,
+              'id' | 'title' | 'productType' | 'tags' | 'handle'
+            > & {
               featuredImage?: StorefrontAPI.Maybe<
                 Pick<
                   StorefrontAPI.Image,
@@ -2751,6 +3288,21 @@ export type SectionOutfitsAndMediaFragment = Pick<
                         >
                       >;
                     })
+                >;
+              };
+              variants: {
+                nodes: Array<
+                  Pick<StorefrontAPI.ProductVariant, 'id' | 'title'> & {
+                    image?: StorefrontAPI.Maybe<
+                      Pick<
+                        StorefrontAPI.Image,
+                        'id' | 'url' | 'altText' | 'width' | 'height'
+                      >
+                    >;
+                    selectedOptions: Array<
+                      Pick<StorefrontAPI.SelectedOption, 'name' | 'value'>
+                    >;
+                  }
                 >;
               };
             }
@@ -3003,7 +3555,7 @@ export type SectionsFragment = {
                 nodes: Array<
                   Pick<
                     StorefrontAPI.Product,
-                    'id' | 'title' | 'handle' | 'productType' | 'tags'
+                    'id' | 'title' | 'productType' | 'tags' | 'handle'
                   > & {
                     featuredImage?: StorefrontAPI.Maybe<
                       Pick<
@@ -3024,13 +3576,168 @@ export type SectionsFragment = {
                           })
                       >;
                     };
-                    category?: StorefrontAPI.Maybe<
-                      Pick<StorefrontAPI.TaxonomyCategory, 'id' | 'name'> & {
-                        ancestors: Array<
-                          Pick<StorefrontAPI.TaxonomyCategory, 'id' | 'name'>
-                        >;
-                      }
+                    variants: {
+                      nodes: Array<
+                        Pick<StorefrontAPI.ProductVariant, 'id' | 'title'> & {
+                          image?: StorefrontAPI.Maybe<
+                            Pick<
+                              StorefrontAPI.Image,
+                              'id' | 'url' | 'altText' | 'width' | 'height'
+                            >
+                          >;
+                          selectedOptions: Array<
+                            Pick<StorefrontAPI.SelectedOption, 'name' | 'value'>
+                          >;
+                        }
+                      >;
+                    };
+                  }
+                >;
+              };
+            }
+          >;
+        }>;
+        topsCollection?: StorefrontAPI.Maybe<{
+          reference?: StorefrontAPI.Maybe<
+            Pick<StorefrontAPI.Collection, 'id' | 'title' | 'handle'> & {
+              products: {
+                nodes: Array<
+                  Pick<
+                    StorefrontAPI.Product,
+                    'id' | 'title' | 'productType' | 'tags' | 'handle'
+                  > & {
+                    featuredImage?: StorefrontAPI.Maybe<
+                      Pick<
+                        StorefrontAPI.Image,
+                        'id' | 'url' | 'altText' | 'width' | 'height'
+                      >
                     >;
+                    media: {
+                      nodes: Array<
+                        | {__typename: 'ExternalVideo' | 'Model3d' | 'Video'}
+                        | ({__typename: 'MediaImage'} & {
+                            image?: StorefrontAPI.Maybe<
+                              Pick<
+                                StorefrontAPI.Image,
+                                'id' | 'url' | 'altText' | 'width' | 'height'
+                              >
+                            >;
+                          })
+                      >;
+                    };
+                    variants: {
+                      nodes: Array<
+                        Pick<StorefrontAPI.ProductVariant, 'id' | 'title'> & {
+                          image?: StorefrontAPI.Maybe<
+                            Pick<
+                              StorefrontAPI.Image,
+                              'id' | 'url' | 'altText' | 'width' | 'height'
+                            >
+                          >;
+                          selectedOptions: Array<
+                            Pick<StorefrontAPI.SelectedOption, 'name' | 'value'>
+                          >;
+                        }
+                      >;
+                    };
+                  }
+                >;
+              };
+            }
+          >;
+        }>;
+        bottomsCollection?: StorefrontAPI.Maybe<{
+          reference?: StorefrontAPI.Maybe<
+            Pick<StorefrontAPI.Collection, 'id' | 'title' | 'handle'> & {
+              products: {
+                nodes: Array<
+                  Pick<
+                    StorefrontAPI.Product,
+                    'id' | 'title' | 'productType' | 'tags' | 'handle'
+                  > & {
+                    featuredImage?: StorefrontAPI.Maybe<
+                      Pick<
+                        StorefrontAPI.Image,
+                        'id' | 'url' | 'altText' | 'width' | 'height'
+                      >
+                    >;
+                    media: {
+                      nodes: Array<
+                        | {__typename: 'ExternalVideo' | 'Model3d' | 'Video'}
+                        | ({__typename: 'MediaImage'} & {
+                            image?: StorefrontAPI.Maybe<
+                              Pick<
+                                StorefrontAPI.Image,
+                                'id' | 'url' | 'altText' | 'width' | 'height'
+                              >
+                            >;
+                          })
+                      >;
+                    };
+                    variants: {
+                      nodes: Array<
+                        Pick<StorefrontAPI.ProductVariant, 'id' | 'title'> & {
+                          image?: StorefrontAPI.Maybe<
+                            Pick<
+                              StorefrontAPI.Image,
+                              'id' | 'url' | 'altText' | 'width' | 'height'
+                            >
+                          >;
+                          selectedOptions: Array<
+                            Pick<StorefrontAPI.SelectedOption, 'name' | 'value'>
+                          >;
+                        }
+                      >;
+                    };
+                  }
+                >;
+              };
+            }
+          >;
+        }>;
+        sleevesCollection?: StorefrontAPI.Maybe<{
+          reference?: StorefrontAPI.Maybe<
+            Pick<StorefrontAPI.Collection, 'id' | 'title' | 'handle'> & {
+              products: {
+                nodes: Array<
+                  Pick<
+                    StorefrontAPI.Product,
+                    'id' | 'title' | 'productType' | 'tags' | 'handle'
+                  > & {
+                    featuredImage?: StorefrontAPI.Maybe<
+                      Pick<
+                        StorefrontAPI.Image,
+                        'id' | 'url' | 'altText' | 'width' | 'height'
+                      >
+                    >;
+                    media: {
+                      nodes: Array<
+                        | {__typename: 'ExternalVideo' | 'Model3d' | 'Video'}
+                        | ({__typename: 'MediaImage'} & {
+                            image?: StorefrontAPI.Maybe<
+                              Pick<
+                                StorefrontAPI.Image,
+                                'id' | 'url' | 'altText' | 'width' | 'height'
+                              >
+                            >;
+                          })
+                      >;
+                    };
+                    variants: {
+                      nodes: Array<
+                        Pick<StorefrontAPI.ProductVariant, 'id' | 'title'> & {
+                          image?: StorefrontAPI.Maybe<
+                            Pick<
+                              StorefrontAPI.Image,
+                              'id' | 'url' | 'altText' | 'width' | 'height'
+                            >
+                          >;
+                          selectedOptions: Array<
+                            Pick<StorefrontAPI.SelectedOption, 'name' | 'value'>
+                          >;
+                        }
+                      >;
+                    };
                   }
                 >;
               };
@@ -3050,9 +3757,11 @@ export type SectionsFragment = {
                       >
                     >;
                     model?: StorefrontAPI.Maybe<{
-                      reference?: StorefrontAPI.Maybe<
-                        Pick<StorefrontAPI.GenericFile, 'url'>
-                      >;
+                      reference?: StorefrontAPI.Maybe<{
+                        sources: Array<
+                          Pick<StorefrontAPI.Model3dSource, 'url'>
+                        >;
+                      }>;
                     }>;
                   }
                 >;
@@ -3073,9 +3782,11 @@ export type SectionsFragment = {
                       >
                     >;
                     model?: StorefrontAPI.Maybe<{
-                      reference?: StorefrontAPI.Maybe<
-                        Pick<StorefrontAPI.GenericFile, 'url'>
-                      >;
+                      reference?: StorefrontAPI.Maybe<{
+                        sources: Array<
+                          Pick<StorefrontAPI.Model3dSource, 'url'>
+                        >;
+                      }>;
                     }>;
                   }
                 >;
@@ -3096,9 +3807,11 @@ export type SectionsFragment = {
                       >
                     >;
                     model?: StorefrontAPI.Maybe<{
-                      reference?: StorefrontAPI.Maybe<
-                        Pick<StorefrontAPI.GenericFile, 'url'>
-                      >;
+                      reference?: StorefrontAPI.Maybe<{
+                        sources: Array<
+                          Pick<StorefrontAPI.Model3dSource, 'url'>
+                        >;
+                      }>;
                     }>;
                   }
                 >;
@@ -3126,7 +3839,7 @@ interface GeneratedQueryTypes {
     return: FooterQuery;
     variables: FooterQueryVariables;
   };
-  '#graphql\n  query Home(\n    $language: LanguageCode\n    $country: CountryCode\n  )\n  @inContext(language: $language, country: $country) {\n    shop {\n      id\n      name\n\n      sections: metafield(namespace: "custom", key: "sections") {\n        ...Sections\n      }\n    }\n  }\n\n  #graphql\n  fragment Sections on Metafield {\n    references(first: 10) {\n      nodes {\n        ... on Metaobject {\n          id\n          type\n          ...SectionHero\n          ...SectionEditorial\n          ...SectionFeaturedProducts\n          ...SectionFeaturedCollections\n          ...SectionLooksSlider \n          ...SectionOutfitsAndMedia\n          ...SectionItemsGrid\n          ...SectionConfigurator\n          ...SectionBasicPage\n        }\n      }\n    }\n  }\n\n  # All section fragments\n  #graphql\n  fragment EditorialMediaMetaobject on Metaobject {\n    media: field(key: "media") {\n      key\n      type\n      reference {\n        __typename\n        ... on MediaImage {\n          image {\n            altText\n            url\n            width\n            height\n          }\n        }\n        ... on Video {\n          id\n          sources {\n            url\n            mimeType\n          }\n          previewImage {\n            url\n          }\n        }\n      }\n    }\n\n    style_index: field(key: "corner_style") {\n      key\n      type\n      value\n    }\n  }\n\n  #graphql\n  fragment SectionHero on Metaobject {\n    type\n\n    heading: field(key: "heading") {\n      key\n      value\n    }\n\n    link: field(key: "link") {\n      ...HeroLink\n    }\n\n    medias: field(key: "medias") {\n      key\n      references(first: 2) {\n        nodes {\n          ... on Metaobject {\n            ...EditorialMediaMetaobject\n          }\n        }\n      }\n    }\n  }\n  #graphql\n  fragment HeroLink on MetaobjectField {\n    ... on MetaobjectField {\n      reference {\n        ... on Metaobject {\n          href: field(key: "href") {\n            value\n          }\n          target: field(key: "target") {\n            value\n          }\n          text: field(key: "text") {\n            value\n          }\n        }\n      }\n    }\n  }\n\n\n  #graphql\n  fragment SectionEditorial on Metaobject {\n    type\n\n    heading: field(key: "heading") {\n      key\n      type\n      value\n    }\n\n    order: field(key: "order") {\n      key\n      type\n      value\n    }\n\n    description: field(key: "description") {\n      key\n      type\n      value\n    }\n\n    link: field(key: "link") {\n      ...EditorialLink\n    }\n\n    media: field(key: "media") {\n      key\n      reference {\n        ... on Metaobject {\n          ...EditorialMediaMetaobject\n        }\n      }\n    }\n  }\n  #graphql\n  fragment EditorialLink on MetaobjectField {\n    ... on MetaobjectField {\n      reference {\n        ... on Metaobject {\n          href: field(key: "href") {\n            value\n          }\n          target: field(key: "target") {\n            value\n          }\n          text: field(key: "text") {\n            value\n          }\n        }\n      }\n    }\n  }\n\n\n  #graphql\n  fragment SectionFeaturedProducts on Metaobject {\n    type\n    heading: field(key: "heading") {\n      key\n      value\n    }\n    body: field(key: "body") {\n      key\n      value\n    }\n    products: field(key: "products") {\n      key\n      references(first: 10) {\n        nodes {\n          ... on Product {\n            ...FeaturedProduct\n          }\n        }\n      }\n    }\n    withProductPrices: field(key: "with_product_prices") {\n      key\n      value\n    }\n  }\n  #graphql\n  fragment FeaturedProduct on Product {\n    id\n    title\n    handle\n    productType\n    variants(first: 1) {\n      nodes {\n        title\n        image {\n          altText\n          width\n          height\n          url\n        }\n      }\n    }\n    priceRange {\n      minVariantPrice {\n        amount\n        currencyCode\n      }\n    }\n  }\n\n\n  #graphql\n  fragment SectionFeaturedCollectionsField on MetaobjectField {\n    type\n    key\n    value\n  }\n  fragment SectionFeaturedCollections on Metaobject {\n    type\n    id\n    heading: field(key: "heading") {\n      ...SectionFeaturedCollectionsField\n    }\n    collections: field(key: "collections") {\n      references(first: 10) {\n        nodes {\n          ... on Collection {\n            ...FeaturedCollection\n          }\n        }\n      }\n    }\n    withCollectionTitles: field(key: "with_collection_titles") {\n     ...SectionFeaturedCollectionsField\n    }\n  }\n  #graphql\n  fragment FeaturedCollectionImage on Image {\n    altText\n    width\n    height\n    url\n  }\n\n  fragment FeaturedCollection on Collection {\n    id\n    title\n    handle\n    image {\n      ...FeaturedCollectionImage\n    }\n  }\n\n\n  #graphql\n  fragment SectionOutfitsAndMedia on Metaobject {\n    type\n    media: field(key: "media") {\n      key\n      reference {\n        ... on Metaobject {\n          ...EditorialMediaMetaobject\n        }\n      }\n    }\n    collection: field(key: "collection") {\n      reference {\n        ... on Collection {\n          id\n          title\n          handle\n          products(first: 200) {\n            nodes {\n              id\n              title\n              handle\n              featuredImage {\n                id\n                url\n                altText\n                width\n                height\n              }\n              media(first: 4) {\n                nodes {\n                  __typename\n                  ... on MediaImage {\n                    image {\n                      id\n                      url\n                      altText\n                      width\n                      height\n                    }\n                  }\n                  # you can support other media types here later if needed\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n\n  #graphql\n  fragment SectionItemsGrid on Metaobject {\n    type\n    collection: field(key: "collection") {\n      reference {\n        ... on Collection {\n          id\n          title\n          handle\n          products(first: 200) {\n            nodes {\n              id\n              title\n              productType\n              tags\n              handle\n              category {\n                id\n                name\n                ancestors {\n                  id\n                  name\n                }\n              }\n              featuredImage {\n                id\n                url\n                altText\n                width\n                height\n              }\n              media(first: 4) {\n                nodes {\n                  __typename\n                  ... on MediaImage {\n                    image {\n                      id\n                      url\n                      altText\n                      width\n                      height\n                    }\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n\n  #graphql\n  fragment SectionLooksSlider on Metaobject {\n    type\n     \n    title: field(key: "title") {\n      key\n      value\n    }\n\n    looks: field(key: "looks") {\n      references(first: 10) {\n        nodes {\n          ...LookItem\n        }\n      }\n    }\n  }\n  #graphql\n  fragment LookItemField on MetaobjectField {\n    type\n    key\n    value\n  }\n\n  fragment LookItemImage on MediaImage {\n    image {\n      altText\n      url(transform: {maxWidth: 600, maxHeight: 600})\n      width\n      height\n    }\n  }\n\n  fragment LookItemProduct on Product {\n    id\n    title\n    handle\n    featuredImage {\n      id\n      url\n      altText\n      width\n      height\n    }\n  }\n\n  fragment LookItem on Metaobject {\n    type\n    id\n    handle\n\n    title: field(key: "title") {\n      ...LookItemField\n    }\n\n    image: field(key: "image") {\n      key\n      reference {\n        ... on MediaImage {\n          ...LookItemImage\n        }\n      }\n    }\n\n    top: field(key: "top") {\n      reference {\n        ... on Product {\n          ...LookItemProduct\n        }\n      }\n    }\n\n    bottom: field(key: "bottom") {\n      reference {\n        ... on Product {\n          ...LookItemProduct\n        }\n      }\n    }\n\n    sleeves: field(key: "sleeves") {\n      reference {\n        ... on Product {\n          ...LookItemProduct\n        }\n      }\n    }\n  }\n \n  #graphql\n  fragment SectionConfigurator on Metaobject {\n    type\n\n    title: field(key: "title") {\n      key\n      type\n      value\n    }\n\n    description: field(key: "description") {\n      key\n      type\n      value\n    }\n\n    tops_collection: field(key: "tops_collection") {\n      reference {\n        ... on Collection {\n          id\n          title\n          handle\n          products(first: 50) {\n            nodes {\n              id\n              title\n              handle\n              featuredImage {\n                id\n                url\n                altText\n                width\n                height\n              }\n              model: metafield(namespace: "custom", key: "model") {\n                reference {\n                  ... on GenericFile {\n                    url\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n\n    bottoms_collection: field(key: "bottoms_collection") {\n      reference {\n        ... on Collection {\n          id\n          title\n          handle\n          products(first: 50) {\n            nodes {\n              id\n              title\n              handle\n              featuredImage {\n                id\n                url\n                altText\n                width\n                height\n              }\n              model: metafield(namespace: "custom", key: "model") {\n                reference {\n                  ... on GenericFile {\n                    url\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n\n    sleeves_collection: field(key: "sleeves_collection") {\n      reference {\n        ... on Collection {\n          id\n          title\n          handle\n          products(first: 50) {\n            nodes {\n              id\n              title\n              handle\n              featuredImage {\n                id\n                url\n                altText\n                width\n                height\n              }\n              model: metafield(namespace: "custom", key: "model") {\n                reference {\n                  ... on GenericFile {\n                    url\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n\n  #graphql\n  fragment SectionBasicPage on Metaobject {\n    type\n\n    title: field(key: "title") {\n      key\n      type\n      value\n    }\n\n    first_column_text: field(key: "first_column_text") {\n      key\n      type\n      value\n    }\n\n    second_column_text: field(key: "second_column_text") {\n      key\n      type\n      value\n    }\n\n\n    media: field(key: "media") {\n      key\n      reference {\n        ... on Metaobject {\n          ...EditorialMediaMetaobject\n        }\n      }\n    }\n  }\n\n\n': {
+  '#graphql\n  query Home(\n    $language: LanguageCode\n    $country: CountryCode\n  )\n  @inContext(language: $language, country: $country) {\n    shop {\n      id\n      name\n\n      sections: metafield(namespace: "custom", key: "sections") {\n        ...Sections\n      }\n    }\n  }\n\n  #graphql\n  fragment Sections on Metafield {\n    references(first: 10) {\n      nodes {\n        ... on Metaobject {\n          id\n          type\n          ...SectionHero\n          ...SectionEditorial\n          ...SectionFeaturedProducts\n          ...SectionFeaturedCollections\n          ...SectionLooksSlider \n          ...SectionOutfitsAndMedia\n          ...SectionItemsGrid\n          ...SectionConfigurator\n          ...SectionBasicPage\n        }\n      }\n    }\n  }\n\n  # All section fragments\n  #graphql\n  fragment EditorialMediaMetaobject on Metaobject {\n    media: field(key: "media") {\n      key\n      type\n      reference {\n        __typename\n        ... on MediaImage {\n          image {\n            altText\n            url\n            width\n            height\n          }\n        }\n        ... on Video {\n          id\n          sources {\n            url\n            mimeType\n          }\n          previewImage {\n            url\n          }\n        }\n      }\n    }\n\n    style_index: field(key: "corner_style") {\n      key\n      type\n      value\n    }\n  }\n\n  #graphql\n  fragment SectionHero on Metaobject {\n    type\n\n    heading: field(key: "heading") {\n      key\n      value\n    }\n\n    link: field(key: "link") {\n      ...HeroLink\n    }\n\n    medias: field(key: "medias") {\n      key\n      references(first: 2) {\n        nodes {\n          ... on Metaobject {\n            ...EditorialMediaMetaobject\n          }\n        }\n      }\n    }\n  }\n  #graphql\n  fragment HeroLink on MetaobjectField {\n    ... on MetaobjectField {\n      reference {\n        ... on Metaobject {\n          href: field(key: "href") {\n            value\n          }\n          target: field(key: "target") {\n            value\n          }\n          text: field(key: "text") {\n            value\n          }\n        }\n      }\n    }\n  }\n\n\n  #graphql\n  fragment SectionEditorial on Metaobject {\n    type\n\n    heading: field(key: "heading") {\n      key\n      type\n      value\n    }\n\n    order: field(key: "order") {\n      key\n      type\n      value\n    }\n\n    description: field(key: "description") {\n      key\n      type\n      value\n    }\n\n    link: field(key: "link") {\n      ...EditorialLink\n    }\n\n    media: field(key: "media") {\n      key\n      reference {\n        ... on Metaobject {\n          ...EditorialMediaMetaobject\n        }\n      }\n    }\n  }\n  #graphql\n  fragment EditorialLink on MetaobjectField {\n    ... on MetaobjectField {\n      reference {\n        ... on Metaobject {\n          href: field(key: "href") {\n            value\n          }\n          target: field(key: "target") {\n            value\n          }\n          text: field(key: "text") {\n            value\n          }\n        }\n      }\n    }\n  }\n\n\n  #graphql\n  fragment SectionFeaturedProducts on Metaobject {\n    type\n    heading: field(key: "heading") {\n      key\n      value\n    }\n    body: field(key: "body") {\n      key\n      value\n    }\n    products: field(key: "products") {\n      key\n      references(first: 10) {\n        nodes {\n          ... on Product {\n            ...FeaturedProduct\n          }\n        }\n      }\n    }\n    withProductPrices: field(key: "with_product_prices") {\n      key\n      value\n    }\n  }\n  #graphql\n  fragment FeaturedProduct on Product {\n    id\n    title\n    handle\n    productType\n    variants(first: 1) {\n      nodes {\n        title\n        image {\n          altText\n          width\n          height\n          url\n        }\n      }\n    }\n    priceRange {\n      minVariantPrice {\n        amount\n        currencyCode\n      }\n    }\n  }\n\n\n  #graphql\n  fragment SectionFeaturedCollectionsField on MetaobjectField {\n    type\n    key\n    value\n  }\n  fragment SectionFeaturedCollections on Metaobject {\n    type\n    id\n    heading: field(key: "heading") {\n      ...SectionFeaturedCollectionsField\n    }\n    collections: field(key: "collections") {\n      references(first: 10) {\n        nodes {\n          ... on Collection {\n            ...FeaturedCollection\n          }\n        }\n      }\n    }\n    withCollectionTitles: field(key: "with_collection_titles") {\n     ...SectionFeaturedCollectionsField\n    }\n  }\n  #graphql\n  fragment FeaturedCollectionImage on Image {\n    altText\n    width\n    height\n    url\n  }\n\n  fragment FeaturedCollection on Collection {\n    id\n    title\n    handle\n    image {\n      ...FeaturedCollectionImage\n    }\n  }\n\n\n  #graphql\n  fragment SectionOutfitsAndMedia on Metaobject {\n    type\n    media: field(key: "media") {\n      key\n      reference {\n        ... on Metaobject {\n          ...EditorialMediaMetaobject\n        }\n      }\n    }\n    collection: field(key: "collection") {\n      reference {\n        ... on Collection {\n          id\n          title\n          handle\n          products(first: 200) {\n            nodes {\n              id\n              title\n              productType\n              tags\n              handle\n              featuredImage {\n                id\n                url\n                altText\n                width\n                height\n              }\n              media(first: 4) {\n                nodes {\n                  __typename\n                  ... on MediaImage {\n                    image {\n                      id\n                      url\n                      altText\n                      width\n                      height\n                    }\n                  }\n                }\n              }\n              variants(first: 10) {\n                nodes {\n                  id\n                  title\n                  image {\n                    id\n                    url\n                    altText\n                    width\n                    height\n                  }\n                  selectedOptions {\n                    name\n                    value\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n\n  #graphql\n  fragment SectionItemsGrid on Metaobject {\n    type\n\n    topsCollection: field(key: "tops_collection") {\n      reference {\n        ... on Collection {\n          id\n          title\n          handle\n          products(first: 200) {\n            nodes {\n              id\n              title\n              productType\n              tags\n              handle\n              featuredImage {\n                id\n                url\n                altText\n                width\n                height\n              }\n              media(first: 4) {\n                nodes {\n                  __typename\n                  ... on MediaImage {\n                    image {\n                      id\n                      url\n                      altText\n                      width\n                      height\n                    }\n                  }\n                }\n              }\n              variants(first: 10) {\n                nodes {\n                  id\n                  title\n                  image {\n                    id\n                    url\n                    altText\n                    width\n                    height\n                  }\n                  selectedOptions {\n                    name\n                    value\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n\n    bottomsCollection: field(key: "bottoms_collection") {\n      reference {\n        ... on Collection {\n          id\n          title\n          handle\n          products(first: 200) {\n            nodes {\n              id\n              title\n              productType\n              tags\n              handle\n              featuredImage {\n                id\n                url\n                altText\n                width\n                height\n              }\n              media(first: 4) {\n                nodes {\n                  __typename\n                  ... on MediaImage {\n                    image {\n                      id\n                      url\n                      altText\n                      width\n                      height\n                    }\n                  }\n                }\n              }\n              variants(first: 10) {\n                nodes {\n                  id\n                  title\n                  image {\n                    id\n                    url\n                    altText\n                    width\n                    height\n                  }\n                  selectedOptions {\n                    name\n                    value\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n\n    sleevesCollection: field(key: "sleeves_collection") {\n      reference {\n        ... on Collection {\n          id\n          title\n          handle\n          products(first: 200) {\n            nodes {\n              id\n              title\n              productType\n              tags\n              handle\n              featuredImage {\n                id\n                url\n                altText\n                width\n                height\n              }\n              media(first: 4) {\n                nodes {\n                  __typename\n                  ... on MediaImage {\n                    image {\n                      id\n                      url\n                      altText\n                      width\n                      height\n                    }\n                  }\n                }\n              }\n              variants(first: 10) {\n                nodes {\n                  id\n                  title\n                  image {\n                    id\n                    url\n                    altText\n                    width\n                    height\n                  }\n                  selectedOptions {\n                    name\n                    value\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n\n  #graphql\n  fragment SectionLooksSlider on Metaobject {\n    type\n     \n    title: field(key: "title") {\n      key\n      value\n    }\n\n    looks: field(key: "looks") {\n      references(first: 10) {\n        nodes {\n          ...LookItem\n        }\n      }\n    }\n  }\n  #graphql\n  fragment LookItemField on MetaobjectField {\n    type\n    key\n    value\n  }\n\n  fragment LookItemImage on MediaImage {\n    image {\n      altText\n      url(transform: {maxWidth: 600, maxHeight: 600})\n      width\n      height\n    }\n  }\n\n  fragment LookItemProduct on Product {\n    id\n    title\n    handle\n    featuredImage {\n      id\n      url\n      altText\n      width\n      height\n    }\n  }\n\n  fragment LookItem on Metaobject {\n    type\n    id\n    handle\n\n    title: field(key: "title") {\n      ...LookItemField\n    }\n\n    image: field(key: "image") {\n      key\n      reference {\n        ... on MediaImage {\n          ...LookItemImage\n        }\n      }\n    }\n\n    top: field(key: "top") {\n      reference {\n        ... on Product {\n          ...LookItemProduct\n        }\n      }\n    }\n\n    bottom: field(key: "bottom") {\n      reference {\n        ... on Product {\n          ...LookItemProduct\n        }\n      }\n    }\n\n    sleeves: field(key: "sleeves") {\n      reference {\n        ... on Product {\n          ...LookItemProduct\n        }\n      }\n    }\n  }\n \n  #graphql\n  fragment SectionConfigurator on Metaobject {\n    type\n\n    title: field(key: "title") {\n      key\n      type\n      value\n    }\n\n    description: field(key: "description") {\n      key\n      type\n      value\n    }\n\n    tops_collection: field(key: "tops_collection") {\n      reference {\n        ... on Collection {\n          id\n          title\n          handle\n          products(first: 50) {\n            nodes {\n              id\n              title\n              handle\n              featuredImage {\n                id\n                url\n                altText\n                width\n                height\n              }\n              model: metafield(namespace: "custom", key: "model") {\n                reference {\n                  ... on Model3d {\n                    sources {\n                      url\n                    }\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n\n    bottoms_collection: field(key: "bottoms_collection") {\n      reference {\n        ... on Collection {\n          id\n          title\n          handle\n          products(first: 50) {\n            nodes {\n              id\n              title\n              handle\n              featuredImage {\n                id\n                url\n                altText\n                width\n                height\n              }\n              model: metafield(namespace: "custom", key: "model") {\n                reference {\n                  ... on Model3d {\n                    sources {\n                      url\n                    }\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n\n    sleeves_collection: field(key: "sleeves_collection") {\n      reference {\n        ... on Collection {\n          id\n          title\n          handle\n          products(first: 50) {\n            nodes {\n              id\n              title\n              handle\n              featuredImage {\n                id\n                url\n                altText\n                width\n                height\n              }\n              model: metafield(namespace: "custom", key: "model") {\n                reference {\n                  ... on Model3d {\n                    sources {\n                      url\n                    }\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n\n  #graphql\n  fragment SectionBasicPage on Metaobject {\n    type\n\n    title: field(key: "title") {\n      key\n      type\n      value\n    }\n\n    first_column_text: field(key: "first_column_text") {\n      key\n      type\n      value\n    }\n\n    second_column_text: field(key: "second_column_text") {\n      key\n      type\n      value\n    }\n\n\n    media: field(key: "media") {\n      key\n      reference {\n        ... on Metaobject {\n          ...EditorialMediaMetaobject\n        }\n      }\n    }\n  }\n\n\n': {
     return: HomeQuery;
     variables: HomeQueryVariables;
   };
@@ -3154,7 +3867,7 @@ interface GeneratedQueryTypes {
     return: CatalogQuery;
     variables: CatalogQueryVariables;
   };
-  '#graphql\n  query Page(\n    $language: LanguageCode,\n    $country: CountryCode,\n    $handle: String!\n  )\n  @inContext(language: $language, country: $country) {\n    page(handle: $handle) {\n      handle\n      id\n      title\n      body\n      seo {\n        description\n        title\n      }\n\n      media: metafield(namespace: "custom", key: "media") {\n        key\n        reference {\n          ... on Metaobject {\n            ...EditorialMediaMetaobject\n          }\n        }\n      }\n\n      # App-owned sections metafield (namespace defaults to $app)\n      sections: metafield(namespace: "custom", key: "sections") {\n        ...Sections\n      }\n    }\n  }\n  #graphql\n  fragment Sections on Metafield {\n    references(first: 10) {\n      nodes {\n        ... on Metaobject {\n          id\n          type\n          ...SectionHero\n          ...SectionEditorial\n          ...SectionFeaturedProducts\n          ...SectionFeaturedCollections\n          ...SectionLooksSlider \n          ...SectionOutfitsAndMedia\n          ...SectionItemsGrid\n          ...SectionConfigurator\n          ...SectionBasicPage\n        }\n      }\n    }\n  }\n\n  # All section fragments\n  #graphql\n  fragment EditorialMediaMetaobject on Metaobject {\n    media: field(key: "media") {\n      key\n      type\n      reference {\n        __typename\n        ... on MediaImage {\n          image {\n            altText\n            url\n            width\n            height\n          }\n        }\n        ... on Video {\n          id\n          sources {\n            url\n            mimeType\n          }\n          previewImage {\n            url\n          }\n        }\n      }\n    }\n\n    style_index: field(key: "corner_style") {\n      key\n      type\n      value\n    }\n  }\n\n  #graphql\n  fragment SectionHero on Metaobject {\n    type\n\n    heading: field(key: "heading") {\n      key\n      value\n    }\n\n    link: field(key: "link") {\n      ...HeroLink\n    }\n\n    medias: field(key: "medias") {\n      key\n      references(first: 2) {\n        nodes {\n          ... on Metaobject {\n            ...EditorialMediaMetaobject\n          }\n        }\n      }\n    }\n  }\n  #graphql\n  fragment HeroLink on MetaobjectField {\n    ... on MetaobjectField {\n      reference {\n        ... on Metaobject {\n          href: field(key: "href") {\n            value\n          }\n          target: field(key: "target") {\n            value\n          }\n          text: field(key: "text") {\n            value\n          }\n        }\n      }\n    }\n  }\n\n\n  #graphql\n  fragment SectionEditorial on Metaobject {\n    type\n\n    heading: field(key: "heading") {\n      key\n      type\n      value\n    }\n\n    order: field(key: "order") {\n      key\n      type\n      value\n    }\n\n    description: field(key: "description") {\n      key\n      type\n      value\n    }\n\n    link: field(key: "link") {\n      ...EditorialLink\n    }\n\n    media: field(key: "media") {\n      key\n      reference {\n        ... on Metaobject {\n          ...EditorialMediaMetaobject\n        }\n      }\n    }\n  }\n  #graphql\n  fragment EditorialLink on MetaobjectField {\n    ... on MetaobjectField {\n      reference {\n        ... on Metaobject {\n          href: field(key: "href") {\n            value\n          }\n          target: field(key: "target") {\n            value\n          }\n          text: field(key: "text") {\n            value\n          }\n        }\n      }\n    }\n  }\n\n\n  #graphql\n  fragment SectionFeaturedProducts on Metaobject {\n    type\n    heading: field(key: "heading") {\n      key\n      value\n    }\n    body: field(key: "body") {\n      key\n      value\n    }\n    products: field(key: "products") {\n      key\n      references(first: 10) {\n        nodes {\n          ... on Product {\n            ...FeaturedProduct\n          }\n        }\n      }\n    }\n    withProductPrices: field(key: "with_product_prices") {\n      key\n      value\n    }\n  }\n  #graphql\n  fragment FeaturedProduct on Product {\n    id\n    title\n    handle\n    productType\n    variants(first: 1) {\n      nodes {\n        title\n        image {\n          altText\n          width\n          height\n          url\n        }\n      }\n    }\n    priceRange {\n      minVariantPrice {\n        amount\n        currencyCode\n      }\n    }\n  }\n\n\n  #graphql\n  fragment SectionFeaturedCollectionsField on MetaobjectField {\n    type\n    key\n    value\n  }\n  fragment SectionFeaturedCollections on Metaobject {\n    type\n    id\n    heading: field(key: "heading") {\n      ...SectionFeaturedCollectionsField\n    }\n    collections: field(key: "collections") {\n      references(first: 10) {\n        nodes {\n          ... on Collection {\n            ...FeaturedCollection\n          }\n        }\n      }\n    }\n    withCollectionTitles: field(key: "with_collection_titles") {\n     ...SectionFeaturedCollectionsField\n    }\n  }\n  #graphql\n  fragment FeaturedCollectionImage on Image {\n    altText\n    width\n    height\n    url\n  }\n\n  fragment FeaturedCollection on Collection {\n    id\n    title\n    handle\n    image {\n      ...FeaturedCollectionImage\n    }\n  }\n\n\n  #graphql\n  fragment SectionOutfitsAndMedia on Metaobject {\n    type\n    media: field(key: "media") {\n      key\n      reference {\n        ... on Metaobject {\n          ...EditorialMediaMetaobject\n        }\n      }\n    }\n    collection: field(key: "collection") {\n      reference {\n        ... on Collection {\n          id\n          title\n          handle\n          products(first: 200) {\n            nodes {\n              id\n              title\n              handle\n              featuredImage {\n                id\n                url\n                altText\n                width\n                height\n              }\n              media(first: 4) {\n                nodes {\n                  __typename\n                  ... on MediaImage {\n                    image {\n                      id\n                      url\n                      altText\n                      width\n                      height\n                    }\n                  }\n                  # you can support other media types here later if needed\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n\n  #graphql\n  fragment SectionItemsGrid on Metaobject {\n    type\n    collection: field(key: "collection") {\n      reference {\n        ... on Collection {\n          id\n          title\n          handle\n          products(first: 200) {\n            nodes {\n              id\n              title\n              productType\n              tags\n              handle\n              category {\n                id\n                name\n                ancestors {\n                  id\n                  name\n                }\n              }\n              featuredImage {\n                id\n                url\n                altText\n                width\n                height\n              }\n              media(first: 4) {\n                nodes {\n                  __typename\n                  ... on MediaImage {\n                    image {\n                      id\n                      url\n                      altText\n                      width\n                      height\n                    }\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n\n  #graphql\n  fragment SectionLooksSlider on Metaobject {\n    type\n     \n    title: field(key: "title") {\n      key\n      value\n    }\n\n    looks: field(key: "looks") {\n      references(first: 10) {\n        nodes {\n          ...LookItem\n        }\n      }\n    }\n  }\n  #graphql\n  fragment LookItemField on MetaobjectField {\n    type\n    key\n    value\n  }\n\n  fragment LookItemImage on MediaImage {\n    image {\n      altText\n      url(transform: {maxWidth: 600, maxHeight: 600})\n      width\n      height\n    }\n  }\n\n  fragment LookItemProduct on Product {\n    id\n    title\n    handle\n    featuredImage {\n      id\n      url\n      altText\n      width\n      height\n    }\n  }\n\n  fragment LookItem on Metaobject {\n    type\n    id\n    handle\n\n    title: field(key: "title") {\n      ...LookItemField\n    }\n\n    image: field(key: "image") {\n      key\n      reference {\n        ... on MediaImage {\n          ...LookItemImage\n        }\n      }\n    }\n\n    top: field(key: "top") {\n      reference {\n        ... on Product {\n          ...LookItemProduct\n        }\n      }\n    }\n\n    bottom: field(key: "bottom") {\n      reference {\n        ... on Product {\n          ...LookItemProduct\n        }\n      }\n    }\n\n    sleeves: field(key: "sleeves") {\n      reference {\n        ... on Product {\n          ...LookItemProduct\n        }\n      }\n    }\n  }\n \n  #graphql\n  fragment SectionConfigurator on Metaobject {\n    type\n\n    title: field(key: "title") {\n      key\n      type\n      value\n    }\n\n    description: field(key: "description") {\n      key\n      type\n      value\n    }\n\n    tops_collection: field(key: "tops_collection") {\n      reference {\n        ... on Collection {\n          id\n          title\n          handle\n          products(first: 50) {\n            nodes {\n              id\n              title\n              handle\n              featuredImage {\n                id\n                url\n                altText\n                width\n                height\n              }\n              model: metafield(namespace: "custom", key: "model") {\n                reference {\n                  ... on GenericFile {\n                    url\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n\n    bottoms_collection: field(key: "bottoms_collection") {\n      reference {\n        ... on Collection {\n          id\n          title\n          handle\n          products(first: 50) {\n            nodes {\n              id\n              title\n              handle\n              featuredImage {\n                id\n                url\n                altText\n                width\n                height\n              }\n              model: metafield(namespace: "custom", key: "model") {\n                reference {\n                  ... on GenericFile {\n                    url\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n\n    sleeves_collection: field(key: "sleeves_collection") {\n      reference {\n        ... on Collection {\n          id\n          title\n          handle\n          products(first: 50) {\n            nodes {\n              id\n              title\n              handle\n              featuredImage {\n                id\n                url\n                altText\n                width\n                height\n              }\n              model: metafield(namespace: "custom", key: "model") {\n                reference {\n                  ... on GenericFile {\n                    url\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n\n  #graphql\n  fragment SectionBasicPage on Metaobject {\n    type\n\n    title: field(key: "title") {\n      key\n      type\n      value\n    }\n\n    first_column_text: field(key: "first_column_text") {\n      key\n      type\n      value\n    }\n\n    second_column_text: field(key: "second_column_text") {\n      key\n      type\n      value\n    }\n\n\n    media: field(key: "media") {\n      key\n      reference {\n        ... on Metaobject {\n          ...EditorialMediaMetaobject\n        }\n      }\n    }\n  }\n\n\n': {
+  '#graphql\n  query Page(\n    $language: LanguageCode,\n    $country: CountryCode,\n    $handle: String!\n  )\n  @inContext(language: $language, country: $country) {\n    page(handle: $handle) {\n      handle\n      id\n      title\n      body\n      seo {\n        description\n        title\n      }\n\n      media: metafield(namespace: "custom", key: "media") {\n        key\n        reference {\n          ... on Metaobject {\n            ...EditorialMediaMetaobject\n          }\n        }\n      }\n\n      # App-owned sections metafield (namespace defaults to $app)\n      sections: metafield(namespace: "custom", key: "sections") {\n        ...Sections\n      }\n    }\n  }\n  #graphql\n  fragment Sections on Metafield {\n    references(first: 10) {\n      nodes {\n        ... on Metaobject {\n          id\n          type\n          ...SectionHero\n          ...SectionEditorial\n          ...SectionFeaturedProducts\n          ...SectionFeaturedCollections\n          ...SectionLooksSlider \n          ...SectionOutfitsAndMedia\n          ...SectionItemsGrid\n          ...SectionConfigurator\n          ...SectionBasicPage\n        }\n      }\n    }\n  }\n\n  # All section fragments\n  #graphql\n  fragment EditorialMediaMetaobject on Metaobject {\n    media: field(key: "media") {\n      key\n      type\n      reference {\n        __typename\n        ... on MediaImage {\n          image {\n            altText\n            url\n            width\n            height\n          }\n        }\n        ... on Video {\n          id\n          sources {\n            url\n            mimeType\n          }\n          previewImage {\n            url\n          }\n        }\n      }\n    }\n\n    style_index: field(key: "corner_style") {\n      key\n      type\n      value\n    }\n  }\n\n  #graphql\n  fragment SectionHero on Metaobject {\n    type\n\n    heading: field(key: "heading") {\n      key\n      value\n    }\n\n    link: field(key: "link") {\n      ...HeroLink\n    }\n\n    medias: field(key: "medias") {\n      key\n      references(first: 2) {\n        nodes {\n          ... on Metaobject {\n            ...EditorialMediaMetaobject\n          }\n        }\n      }\n    }\n  }\n  #graphql\n  fragment HeroLink on MetaobjectField {\n    ... on MetaobjectField {\n      reference {\n        ... on Metaobject {\n          href: field(key: "href") {\n            value\n          }\n          target: field(key: "target") {\n            value\n          }\n          text: field(key: "text") {\n            value\n          }\n        }\n      }\n    }\n  }\n\n\n  #graphql\n  fragment SectionEditorial on Metaobject {\n    type\n\n    heading: field(key: "heading") {\n      key\n      type\n      value\n    }\n\n    order: field(key: "order") {\n      key\n      type\n      value\n    }\n\n    description: field(key: "description") {\n      key\n      type\n      value\n    }\n\n    link: field(key: "link") {\n      ...EditorialLink\n    }\n\n    media: field(key: "media") {\n      key\n      reference {\n        ... on Metaobject {\n          ...EditorialMediaMetaobject\n        }\n      }\n    }\n  }\n  #graphql\n  fragment EditorialLink on MetaobjectField {\n    ... on MetaobjectField {\n      reference {\n        ... on Metaobject {\n          href: field(key: "href") {\n            value\n          }\n          target: field(key: "target") {\n            value\n          }\n          text: field(key: "text") {\n            value\n          }\n        }\n      }\n    }\n  }\n\n\n  #graphql\n  fragment SectionFeaturedProducts on Metaobject {\n    type\n    heading: field(key: "heading") {\n      key\n      value\n    }\n    body: field(key: "body") {\n      key\n      value\n    }\n    products: field(key: "products") {\n      key\n      references(first: 10) {\n        nodes {\n          ... on Product {\n            ...FeaturedProduct\n          }\n        }\n      }\n    }\n    withProductPrices: field(key: "with_product_prices") {\n      key\n      value\n    }\n  }\n  #graphql\n  fragment FeaturedProduct on Product {\n    id\n    title\n    handle\n    productType\n    variants(first: 1) {\n      nodes {\n        title\n        image {\n          altText\n          width\n          height\n          url\n        }\n      }\n    }\n    priceRange {\n      minVariantPrice {\n        amount\n        currencyCode\n      }\n    }\n  }\n\n\n  #graphql\n  fragment SectionFeaturedCollectionsField on MetaobjectField {\n    type\n    key\n    value\n  }\n  fragment SectionFeaturedCollections on Metaobject {\n    type\n    id\n    heading: field(key: "heading") {\n      ...SectionFeaturedCollectionsField\n    }\n    collections: field(key: "collections") {\n      references(first: 10) {\n        nodes {\n          ... on Collection {\n            ...FeaturedCollection\n          }\n        }\n      }\n    }\n    withCollectionTitles: field(key: "with_collection_titles") {\n     ...SectionFeaturedCollectionsField\n    }\n  }\n  #graphql\n  fragment FeaturedCollectionImage on Image {\n    altText\n    width\n    height\n    url\n  }\n\n  fragment FeaturedCollection on Collection {\n    id\n    title\n    handle\n    image {\n      ...FeaturedCollectionImage\n    }\n  }\n\n\n  #graphql\n  fragment SectionOutfitsAndMedia on Metaobject {\n    type\n    media: field(key: "media") {\n      key\n      reference {\n        ... on Metaobject {\n          ...EditorialMediaMetaobject\n        }\n      }\n    }\n    collection: field(key: "collection") {\n      reference {\n        ... on Collection {\n          id\n          title\n          handle\n          products(first: 200) {\n            nodes {\n              id\n              title\n              productType\n              tags\n              handle\n              featuredImage {\n                id\n                url\n                altText\n                width\n                height\n              }\n              media(first: 4) {\n                nodes {\n                  __typename\n                  ... on MediaImage {\n                    image {\n                      id\n                      url\n                      altText\n                      width\n                      height\n                    }\n                  }\n                }\n              }\n              variants(first: 10) {\n                nodes {\n                  id\n                  title\n                  image {\n                    id\n                    url\n                    altText\n                    width\n                    height\n                  }\n                  selectedOptions {\n                    name\n                    value\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n\n  #graphql\n  fragment SectionItemsGrid on Metaobject {\n    type\n\n    topsCollection: field(key: "tops_collection") {\n      reference {\n        ... on Collection {\n          id\n          title\n          handle\n          products(first: 200) {\n            nodes {\n              id\n              title\n              productType\n              tags\n              handle\n              featuredImage {\n                id\n                url\n                altText\n                width\n                height\n              }\n              media(first: 4) {\n                nodes {\n                  __typename\n                  ... on MediaImage {\n                    image {\n                      id\n                      url\n                      altText\n                      width\n                      height\n                    }\n                  }\n                }\n              }\n              variants(first: 10) {\n                nodes {\n                  id\n                  title\n                  image {\n                    id\n                    url\n                    altText\n                    width\n                    height\n                  }\n                  selectedOptions {\n                    name\n                    value\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n\n    bottomsCollection: field(key: "bottoms_collection") {\n      reference {\n        ... on Collection {\n          id\n          title\n          handle\n          products(first: 200) {\n            nodes {\n              id\n              title\n              productType\n              tags\n              handle\n              featuredImage {\n                id\n                url\n                altText\n                width\n                height\n              }\n              media(first: 4) {\n                nodes {\n                  __typename\n                  ... on MediaImage {\n                    image {\n                      id\n                      url\n                      altText\n                      width\n                      height\n                    }\n                  }\n                }\n              }\n              variants(first: 10) {\n                nodes {\n                  id\n                  title\n                  image {\n                    id\n                    url\n                    altText\n                    width\n                    height\n                  }\n                  selectedOptions {\n                    name\n                    value\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n\n    sleevesCollection: field(key: "sleeves_collection") {\n      reference {\n        ... on Collection {\n          id\n          title\n          handle\n          products(first: 200) {\n            nodes {\n              id\n              title\n              productType\n              tags\n              handle\n              featuredImage {\n                id\n                url\n                altText\n                width\n                height\n              }\n              media(first: 4) {\n                nodes {\n                  __typename\n                  ... on MediaImage {\n                    image {\n                      id\n                      url\n                      altText\n                      width\n                      height\n                    }\n                  }\n                }\n              }\n              variants(first: 10) {\n                nodes {\n                  id\n                  title\n                  image {\n                    id\n                    url\n                    altText\n                    width\n                    height\n                  }\n                  selectedOptions {\n                    name\n                    value\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n\n  #graphql\n  fragment SectionLooksSlider on Metaobject {\n    type\n     \n    title: field(key: "title") {\n      key\n      value\n    }\n\n    looks: field(key: "looks") {\n      references(first: 10) {\n        nodes {\n          ...LookItem\n        }\n      }\n    }\n  }\n  #graphql\n  fragment LookItemField on MetaobjectField {\n    type\n    key\n    value\n  }\n\n  fragment LookItemImage on MediaImage {\n    image {\n      altText\n      url(transform: {maxWidth: 600, maxHeight: 600})\n      width\n      height\n    }\n  }\n\n  fragment LookItemProduct on Product {\n    id\n    title\n    handle\n    featuredImage {\n      id\n      url\n      altText\n      width\n      height\n    }\n  }\n\n  fragment LookItem on Metaobject {\n    type\n    id\n    handle\n\n    title: field(key: "title") {\n      ...LookItemField\n    }\n\n    image: field(key: "image") {\n      key\n      reference {\n        ... on MediaImage {\n          ...LookItemImage\n        }\n      }\n    }\n\n    top: field(key: "top") {\n      reference {\n        ... on Product {\n          ...LookItemProduct\n        }\n      }\n    }\n\n    bottom: field(key: "bottom") {\n      reference {\n        ... on Product {\n          ...LookItemProduct\n        }\n      }\n    }\n\n    sleeves: field(key: "sleeves") {\n      reference {\n        ... on Product {\n          ...LookItemProduct\n        }\n      }\n    }\n  }\n \n  #graphql\n  fragment SectionConfigurator on Metaobject {\n    type\n\n    title: field(key: "title") {\n      key\n      type\n      value\n    }\n\n    description: field(key: "description") {\n      key\n      type\n      value\n    }\n\n    tops_collection: field(key: "tops_collection") {\n      reference {\n        ... on Collection {\n          id\n          title\n          handle\n          products(first: 50) {\n            nodes {\n              id\n              title\n              handle\n              featuredImage {\n                id\n                url\n                altText\n                width\n                height\n              }\n              model: metafield(namespace: "custom", key: "model") {\n                reference {\n                  ... on Model3d {\n                    sources {\n                      url\n                    }\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n\n    bottoms_collection: field(key: "bottoms_collection") {\n      reference {\n        ... on Collection {\n          id\n          title\n          handle\n          products(first: 50) {\n            nodes {\n              id\n              title\n              handle\n              featuredImage {\n                id\n                url\n                altText\n                width\n                height\n              }\n              model: metafield(namespace: "custom", key: "model") {\n                reference {\n                  ... on Model3d {\n                    sources {\n                      url\n                    }\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n\n    sleeves_collection: field(key: "sleeves_collection") {\n      reference {\n        ... on Collection {\n          id\n          title\n          handle\n          products(first: 50) {\n            nodes {\n              id\n              title\n              handle\n              featuredImage {\n                id\n                url\n                altText\n                width\n                height\n              }\n              model: metafield(namespace: "custom", key: "model") {\n                reference {\n                  ... on Model3d {\n                    sources {\n                      url\n                    }\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n\n  #graphql\n  fragment SectionBasicPage on Metaobject {\n    type\n\n    title: field(key: "title") {\n      key\n      type\n      value\n    }\n\n    first_column_text: field(key: "first_column_text") {\n      key\n      type\n      value\n    }\n\n    second_column_text: field(key: "second_column_text") {\n      key\n      type\n      value\n    }\n\n\n    media: field(key: "media") {\n      key\n      reference {\n        ... on Metaobject {\n          ...EditorialMediaMetaobject\n        }\n      }\n    }\n  }\n\n\n': {
     return: PageQuery;
     variables: PageQueryVariables;
   };

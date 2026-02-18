@@ -133,7 +133,7 @@ export default function Product() {
         {/* Main Image Column */}
         <div className="col-span-5 md:col-span-4 md:col-start-2 lg:col-start-2 lg:col-span-5 h-full min-h-0 relative">
           <div className="absolute inset-0 w-full h-full">
-            <div className="w-full h-full overflow-hidden rounded-[var(--radius-sharp)_var(--radius-round)_var(--radius-sharp)_var(--radius-round)] bg-[#f3eded]">
+            <div className="w-full h-full overflow-hidden rounded-[var(--radius-sharp)_var(--radius-round)_var(--radius-sharp)_var(--radius-round)] bg-[#f9f9f9]">
               {/* 4. Use the state variable here instead of selectedVariant.image */}
               <ProductImage image={featuredImage} />
             </div>

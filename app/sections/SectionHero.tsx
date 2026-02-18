@@ -47,7 +47,7 @@ export function SectionHero(props: SectionHeroFragment) {
       {/* ROW 2: Heading & Button (Fits Content) */}
       <div className="row-start-2 col-span-full md:col-span-4 md:col-start-2 flex flex-col items-center lg:items-start pt-8">
         {heading && (
-          <h1 className="text-title text-center lg:text-left m-0">
+          <h1 className="text-title text-center lg:text-left m-0 pb-0">
             {heading.parsedValue}
           </h1>
         )}

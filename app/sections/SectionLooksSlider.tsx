@@ -52,6 +52,20 @@ export function SectionLooksSlider(props: SectionLooksSliderFragment) {
             slidesPerView={3} // Crucial: allows CSS to define widths
             loop={true}
             className="looks-swiper overflow-hidden"
+            breakpoints={{
+              // ≥ 0px (mobile): 1.5 slides
+              0: {
+                slidesPerView: 1.5,
+              },
+              // ≥ 768px (md): still 1.5 slides
+              768: {
+                slidesPerView: 3,
+              },
+              // ≥ 1024px (lg): 3 slides
+              // 1024: {
+              //   slidesPerView: 3,
+              // },
+            }}
           >
             {looks?.nodes.map((look) => {
               const topHandle = (look as any).top?.handle;
@@ -68,7 +82,7 @@ export function SectionLooksSlider(props: SectionLooksSliderFragment) {
                   )}&sleeve=${encodeURIComponent(sleeveHandle)}`
                 : '#';
 
-                // console.log(look)
+              // console.log(look)
 
               return (
                 <SwiperSlide key={look.id} className="custom-slide">
@@ -87,11 +101,11 @@ export function SectionLooksSlider(props: SectionLooksSliderFragment) {
                         />
                       )}
                     </div>
-                    <div className="mt-4 text-center slide-content transition-opacity duration-500">
+                    {/* <div className="mt-4 text-center slide-content transition-opacity duration-500">
                       <h2 className="text-xl uppercase tracking-tighter">
                         {look.title?.value}
                       </h2>
-                    </div>
+                    </div> */}
                   </Link>
                 </SwiperSlide>
               );
