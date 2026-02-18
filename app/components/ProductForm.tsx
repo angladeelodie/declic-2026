@@ -55,7 +55,6 @@ export function ProductForm({
         <AddToCartButton
           disabled={!selectedVariant || !selectedVariant.availableForSale}
           onClick={() => open('cart')}
-          className="bg-[#3eff9d] hover:bg-[#34e58b] text-black font-bold py-3 px-8 rounded-full flex items-center gap-3 transition-transform active:scale-95 shadow-sm"
           lines={
             selectedVariant
               ? [

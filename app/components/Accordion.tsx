@@ -15,22 +15,22 @@ export function AccordionItem({
   const [open, setOpen] = useState(defaultOpen);
 
   return (
-    <div className="border-b border-gray-200">
+    <div className="">
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
         className="flex w-full items-center justify-between py-4 text-left"
       >
-        <span className="text-emphasis">{title}</span>
+        <span className="text-metalite text-emphasis font-bold">{title}</span>
         <span
           className={`flex flex-col items-center justify-center w-4 h-4 transition-transform duration-200 ${
             open ? 'rotate-45' : ''
           }`}
         >
           {/* Horizontal bar */}
-          <span className="block h-[1px] w-3 bg-black" />
+          <span className="block h-[2px] w-4 bg-black" />
           {/* Vertical bar, centered under the horizontal bar */}
-          <span className="block w-[1px] h-3 bg-black -mt-[6px]" />
+          <span className="block w-[2px] h-4 bg-black -mt-[8px]" />
         </span>
       </button>
 

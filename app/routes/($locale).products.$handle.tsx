@@ -8,6 +8,8 @@ import {
   getAdjacentAndFirstAvailableVariants,
   useSelectedOptionInUrlParam,
 } from '@shopify/hydrogen';
+import {Reveal} from '~/components/Reveal';
+
 import {ProductPrice} from '~/components/ProductPrice';
 import {getPaginationVariables, Image} from '@shopify/hydrogen';
 import {Accordion, AccordionItem} from '~/components/Accordion';
@@ -91,119 +93,122 @@ export default function Product() {
   const informationPanels = product.informationPanels?.references?.nodes ?? [];
 
   return (
-    <div className="w-full h-full">
-      <div className="grid grid-rows-2 col-span-1 lg:grid-rows-1 grid-cols-6 lg:grid-cols-12 gap-4 lg:min-h-[80vh] overflow-hidden">
-        {/* Thumbnail Column */}
-        <div className="lg:col-start-1 lg:col-span-1 h-full lg:h-[80vh] overflow-y-auto flex flex-col gap-4">
-          {product.media.edges.map((media) => (
-            <button
-              key={media.node.id}
-              onClick={() => setFeaturedImage(media.node.image)}
-              className={`w-full relative rounded-lg border-2 transition-all ${
-                featuredImage?.url === media.node.image.url
-                  ? 'border-black'
-                  : 'border-transparent hover:border-gray-300'
-              }`}
-            >
-              <Image
-                src={media.node.image.url}
-                alt={media.node.image.altText || ''}
-                aspectRatio="4/5"
-                className="object-cover rounded-lg"
-                sizes="(min-width: 10rem) 400px, 20vw"
-                loading="lazy"
-              />
-            </button>
-          ))}
-        </div>
+    <Reveal>
+      <div className="w-full h-full">
+        <div className="grid grid-rows-2 col-span-1 lg:grid-rows-1 grid-cols-6 lg:grid-cols-12 gap-4 lg:min-h-[80vh] overflow-hidden">
+          {/* Thumbnail Column */}
+          <div className="lg:col-start-1 lg:col-span-1 h-full lg:h-[80vh] overflow-y-auto flex flex-col gap-4">
+            {product.media.edges.map((media) => (
+              <button
+                key={media.node.id}
+                onClick={() => setFeaturedImage(media.node.image)}
+                className={`w-full relative rounded-lg border-2 transition-all ${
+                  featuredImage?.url === media.node.image.url
+                    ? 'border-black'
+                    : 'border-transparent hover:border-gray-300'
+                }`}
+              >
+                <Image
+                  src={media.node.image.url}
+                  alt={media.node.image.altText || ''}
+                  aspectRatio="4/5"
+                  className="object-cover rounded-lg"
+                  sizes="(min-width: 10rem) 400px, 20vw"
+                  loading="lazy"
+                />
+              </button>
+            ))}
+          </div>
 
-        {/* Main Image Column */}
-        <div className="col-span-5 md:col-span-4 md:col-start-2 lg:col-start-2 lg:col-span-5 h-full lg:h-[80vh] min-h-0 relative">
-          <div className="absolute inset-0 w-full h-full">
-            <div className="w-full h-full overflow-hidden rounded-[var(--radius-sharp)_var(--radius-round)_var(--radius-sharp)_var(--radius-round)] bg-[#f9f9f9]">
-              <ProductImage image={featuredImage} />
+          {/* Main Image Column */}
+          <div className="col-span-5 md:col-span-4 md:col-start-2 lg:col-start-2 lg:col-span-5 h-full lg:h-[80vh] min-h-0 relative">
+            <div className="absolute inset-0 w-full h-full">
+              <div className="w-full h-full overflow-hidden rounded-[var(--radius-sharp)_var(--radius-round)_var(--radius-sharp)_var(--radius-round)] bg-[#f9f9f9]">
+                <ProductImage image={featuredImage} />
+              </div>
             </div>
+          </div>
+
+          {/* Info Column */}
+          <div className="col-span-6 md:col-span-4 lg:col-span-4 md:col-start-2 lg:col-start-8 flex flex-col pt-4">
+            <header className="mb-8">
+              <h1 className="text-title">{title}</h1>
+              <div
+                className="text-body"
+                dangerouslySetInnerHTML={{__html: descriptionHtml}}
+              />
+            </header>
+
+            {/* Price and Form Section */}
+            <section className="space-y-8">
+              <ProductForm
+                productOptions={productOptions}
+                selectedVariant={selectedVariant}
+              />
+            </section>
+
+            {/* Information panels accordion (from information_panels metafield) */}
+            {informationPanels.length > 0 && (
+              <section className="mt-4 pt-4">
+                <Accordion>
+                  {informationPanels.map((panel: any, index: number) => {
+                    const panelTitle =
+                      panel.title?.value || `Panel ${index + 1}`;
+                    const panelContent = panel.content?.value || '';
+
+                    return (
+                      <AccordionItem
+                        key={panel.id ?? `${panelTitle}-${index}`}
+                        title={panelTitle}
+                        defaultOpen={false}
+                      >
+                        <RichText
+                          className="prose prose-sm max-w-none"
+                          data={panelContent}
+                        />
+                      </AccordionItem>
+                    );
+                  })}
+                </Accordion>
+              </section>
+            )}
+
+            {/* "Complete your look" Section */}
+            <footer className="mt-4">
+              <h3 className="text-metalite text-emphasis font-bold mb-4">
+                Complete your look
+              </h3>
+              <div className="grid grid-cols-4 gap-3">
+                {[1, 2, 3, 4].map((i) => (
+                  <div
+                    key={i}
+                    className="aspect-square bg-gray-100 rounded-tr-2xl rounded-bl-2xl overflow-hidden cursor-pointer hover:opacity-80 transition-opacity"
+                  >
+                    <div className="w-full h-full bg-[#dcdcdc] animate-pulse" />
+                  </div>
+                ))}
+              </div>
+            </footer>
           </div>
         </div>
 
-        {/* Info Column */}
-        <div className="col-span-6 md:col-span-4 lg:col-span-4 md:col-start-2 lg:col-start-8 flex flex-col pt-4">
-          <header className="mb-8">
-            <h1 className="text-title">{title}</h1>
-            <div
-              className="text-body"
-              dangerouslySetInnerHTML={{__html: descriptionHtml}}
-            />
-          </header>
-
-          {/* Price and Form Section */}
-          <section className="space-y-8">
-            <ProductForm
-              productOptions={productOptions}
-              selectedVariant={selectedVariant}
-            />
-          </section>
-
-          {/* Information panels accordion (from information_panels metafield) */}
-          {informationPanels.length > 0 && (
-            <section className="mt-10 border-t border-gray-200 pt-4">
-              <Accordion>
-                {informationPanels.map((panel: any, index: number) => {
-                  const panelTitle = panel.title?.value || `Panel ${index + 1}`;
-                  const panelContent = panel.content?.value || '';
-
-                  return (
-                    <AccordionItem
-                      key={panel.id ?? `${panelTitle}-${index}`}
-                      title={panelTitle}
-                      defaultOpen={index === 0}
-                    >
-                      <RichText
-                        className="prose prose-sm max-w-none"
-                        data={panelContent}
-                      />
-                    </AccordionItem>
-                  );
-                })}
-              </Accordion>
-            </section>
-          )}
-
-          {/* "Complete your look" Section */}
-          <footer className="mt-16">
-            <h3 className="text-xl text-metalite font-bold mb-6">
-              Complete your look
-            </h3>
-            <div className="grid grid-cols-4 gap-3">
-              {[1, 2, 3, 4].map((i) => (
-                <div
-                  key={i}
-                  className="aspect-square bg-gray-100 rounded-tr-2xl rounded-bl-2xl overflow-hidden cursor-pointer hover:opacity-80 transition-opacity"
-                >
-                  <div className="w-full h-full bg-[#dcdcdc] animate-pulse" />
-                </div>
-              ))}
-            </div>
-          </footer>
-        </div>
+        <Analytics.ProductView
+          data={{
+            products: [
+              {
+                id: product.id,
+                title: product.title,
+                price: selectedVariant?.price.amount || '0',
+                vendor: product.vendor,
+                variantId: selectedVariant?.id || '',
+                variantTitle: selectedVariant?.title || '',
+                quantity: 1,
+              },
+            ],
+          }}
+        />
       </div>
-
-      <Analytics.ProductView
-        data={{
-          products: [
-            {
-              id: product.id,
-              title: product.title,
-              price: selectedVariant?.price.amount || '0',
-              vendor: product.vendor,
-              variantId: selectedVariant?.id || '',
-              variantTitle: selectedVariant?.title || '',
-              quantity: 1,
-            },
-          ],
-        }}
-      />
-    </div>
+    </Reveal>
   );
 }
 const PRODUCT_VARIANT_FRAGMENT = `#graphql
