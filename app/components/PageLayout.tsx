@@ -1,5 +1,6 @@
 import {Await, Link} from 'react-router';
 import {Suspense, useId} from 'react';
+import {NavigationProgress} from '~/components/NavigationProgress';
 import type {
   CartApiQueryFragment,
   FooterQuery,
@@ -34,6 +35,7 @@ export function PageLayout({
 }: PageLayoutProps) {
   return (
     <Aside.Provider>
+      <NavigationProgress />
       <CartAside cart={cart} />
       <SearchAside />
       <MobileMenuAside header={header} publicStoreDomain={publicStoreDomain} />

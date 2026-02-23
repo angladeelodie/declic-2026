@@ -16,7 +16,7 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
 
   return (
     <div aria-labelledby="cart-summary" className={className}>
-      <div className="flex flex-col gap-4 bg-white max-w-md mx-auto">
+      <div className={`flex flex-col gap-4 bg-white ${layout === 'aside' ? 'max-w-md mx-auto' : ''}`}>
         <h2 className="text-2xl font-bold tracking-tight mb-2">Summary</h2>
 
         {/* 6-Column Grid for Totals */}

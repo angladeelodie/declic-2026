@@ -109,9 +109,12 @@ export default function Cart() {
   const cart = useLoaderData<typeof loader>();
 
   return (
-    <div className="cart">
-      <h1>Cart</h1>
-      <CartMain layout="page" cart={cart} />
-    </div>
+    <section className="w-full pb-8 lg:pb-0 lg:h-[calc(100dvh-var(--header-height))] lg:overflow-hidden grid grid-cols-6 lg:grid-cols-12 gap-4 px-4 md:px-0 pt-8">
+      <div className="col-span-6 md:col-start-2 md:col-span-4 lg:col-start-3 lg:col-span-8 lg:flex lg:flex-col lg:min-h-0">
+        <div className="lg:flex-1 lg:min-h-0 lg:overflow-hidden">
+          <CartMain layout="page" cart={cart} />
+        </div>
+      </div>
+    </section>
   );
 }
