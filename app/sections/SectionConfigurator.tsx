@@ -20,6 +20,7 @@ type ProductNode = {
   featuredImage?: {url: string; altText?: string | null} | null;
   model?: {reference?: {sources: Array<{url: string}>} | null} | null;
   variants?: {nodes: VariantNode[]} | null;
+  options?: Array<{name: string; values: string[]}> | null;
 };
 
 type OptionSelection = {size: string | null; color: string | null};
@@ -40,20 +41,16 @@ function normalizeColor(name: string): string | null {
   return lower || null;
 }
 
-function getDistinctOptionValues(
+// Reads directly from product.options — not paginated, always complete.
+function getOptionValues(
   product: ProductNode | null | undefined,
   optionName: string,
 ): string[] {
-  if (!product?.variants?.nodes) return [];
-  const values = new Set<string>();
-  for (const variant of product.variants.nodes) {
-    for (const opt of variant.selectedOptions) {
-      if (opt.name.toLowerCase() === optionName.toLowerCase()) {
-        values.add(opt.value);
-      }
-    }
-  }
-  return Array.from(values);
+  if (!product?.options) return [];
+  const opt = product.options.find(
+    (o) => o.name.toLowerCase() === optionName.toLowerCase(),
+  );
+  return opt?.values ?? [];
 }
 
 function resolveVariant(
@@ -69,7 +66,11 @@ function resolveVariant(
     const opts = Object.fromEntries(
       v.selectedOptions.map((o) => [o.name.toLowerCase(), o.value]),
     );
-    const sizeOk = !size || opts['size'] === size || opts['taille'] === size;
+    const sizeOk =
+      !size ||
+      opts['size'] === size ||
+      opts['taille'] === size ||
+      opts['accessory size'] === size;
     const colorOk =
       !color || opts['color'] === color || opts['couleur'] === color;
     return sizeOk && colorOk;
@@ -142,9 +143,17 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
 
   // ── Category map: one source of truth per category ───────────────
   const categoryMap = {
-    tops:    {products: tops,    urlKey: 'top',    selectedHandle: selectedTopHandle},
-    bottoms: {products: bottoms, urlKey: 'bottom', selectedHandle: selectedBottomHandle},
-    sleeves: {products: sleeves, urlKey: 'sleeve', selectedHandle: selectedSleeveHandle},
+    tops: {products: tops, urlKey: 'top', selectedHandle: selectedTopHandle},
+    bottoms: {
+      products: bottoms,
+      urlKey: 'bottom',
+      selectedHandle: selectedBottomHandle,
+    },
+    sleeves: {
+      products: sleeves,
+      urlKey: 'sleeve',
+      selectedHandle: selectedSleeveHandle,
+    },
   } as const;
 
   function handleSelectProduct(handle: string) {
@@ -154,10 +163,15 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
       next.set(urlKey, handle);
       return next;
     });
-    setAllOptions((prev) => ({...prev, [activeCategory]: {size: null, color: null}}));
+    setAllOptions((prev) => ({
+      ...prev,
+      [activeCategory]: {size: null, color: null},
+    }));
   }
 
-  function setActiveOptions(updater: (prev: OptionSelection) => OptionSelection) {
+  function setActiveOptions(
+    updater: (prev: OptionSelection) => OptionSelection,
+  ) {
     setAllOptions((prev) => ({
       ...prev,
       [activeCategory]: updater(prev[activeCategory]),
@@ -167,25 +181,28 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
   // ── Derived data ─────────────────────────────────────────────────
   // All three selected products needed for the 3D canvas
   const selectedProducts = {
-    tops:    tops.find((p) => p.handle === selectedTopHandle) ?? null,
+    tops: tops.find((p) => p.handle === selectedTopHandle) ?? null,
     bottoms: bottoms.find((p) => p.handle === selectedBottomHandle) ?? null,
     sleeves: sleeves.find((p) => p.handle === selectedSleeveHandle) ?? null,
   };
 
-  const topModelUrl    = selectedProducts.tops?.model?.reference?.sources[0]?.url ?? null;
-  const bottomModelUrl = selectedProducts.bottoms?.model?.reference?.sources[0]?.url ?? null;
-  const sleeveModelUrl = selectedProducts.sleeves?.model?.reference?.sources[0]?.url ?? null;
+  const topModelUrl =
+    selectedProducts.tops?.model?.reference?.sources[0]?.url ?? null;
+  const bottomModelUrl =
+    selectedProducts.bottoms?.model?.reference?.sources[0]?.url ?? null;
+  const sleeveModelUrl =
+    selectedProducts.sleeves?.model?.reference?.sources[0]?.url ?? null;
 
-  const active        = categoryMap[activeCategory];
+  const active = categoryMap[activeCategory];
   const activeOptions = allOptions[activeCategory];
   const activeProduct = selectedProducts[activeCategory];
 
-  // Sizes & colors for active product
-  const sizes = getDistinctOptionValues(activeProduct, 'size').concat(
-    getDistinctOptionValues(activeProduct, 'taille'),
-  );
-  const colors = getDistinctOptionValues(activeProduct, 'color').concat(
-    getDistinctOptionValues(activeProduct, 'couleur'),
+  // Sizes & colors from product.options (always complete, not paginated)
+  const sizes = getOptionValues(activeProduct, 'size')
+    .concat(getOptionValues(activeProduct, 'taille'))
+    .concat(getOptionValues(activeProduct, 'accessory size'));
+  const colors = getOptionValues(activeProduct, 'color').concat(
+    getOptionValues(activeProduct, 'couleur'),
   );
 
   const activeVariant = resolveVariant(
@@ -197,23 +214,27 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
   // ── Sub-renderers ────────────────────────────────────────────────
   function renderProductThumbnails() {
     return (
-      <ul className="flex flex-row gap-3 flex-wrap">
+      <ul className="flex flex-row gap-3 overflow-x-auto no-scrollbar">
         {active.products.map((product) => {
           const isSelected = product.handle === active.selectedHandle;
           const image = product.featuredImage;
           return (
             <li
               key={product.id}
-              className={`w-35 aspect-square overflow-hidden rounded-md flex-shrink-0 transition-all duration-200 ${
-                isSelected
-                  ? 'border-2 border-black'
-                  : 'border-2 border-transparent hover:border-gray-300'
-              }`}
+              /* The magic happens here: 
+                 calc((100% - total_gap) / 3) 
+              */
+              className={`flex-shrink-0 aspect-square overflow-hidden rounded-md transition-all duration-200`}
+              style={{width: 'calc((100% - 24px) / 3)'}}
             >
               <button
                 type="button"
                 onClick={() => handleSelectProduct(product.handle)}
-                className="h-full w-full"
+                className={`h-full w-full border-2 rounded-md ${
+                  isSelected
+                    ? 'border-black'
+                    : 'border-transparent hover:border-gray-300'
+                }`}
                 aria-label={product.title}
               >
                 {image?.url ? (
@@ -268,7 +289,7 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
   function renderSizeSelector() {
     if (!sizes.length) return null;
     return (
-      <div className="flex flex-wrap gap-3 mt-8">
+      <div className="flex flex-wrap gap-3 mt-4 lg:mt-8 justify-center lg:justify-start">
         {sizes.map((size) => {
           const isSelected = activeOptions.size === size;
           return (
@@ -295,18 +316,18 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
   // ── Welcome screen ───────────────────────────────────────────────
   function renderWelcome() {
     return (
-      <div className="flex flex-col items-center justify-center h-full text-center">
-        <h2 className="text-title text-left w-full pt-0 pb-4">
+      <div className="flex flex-col items-center justify-center h-[90vh] lg:h-full text-center">
+        <h2 className="text-title lg:text-left w-full pt-0 pb-4 mt-8">
           {(props as any).title?.value ?? 'Create your outfit'}
         </h2>
-        <p className="text-body w-[80%] text-left self-start">
+        <p className="text-body lg:w-[80%] lg:text-left lg:self-start">
           {(props as any).description?.value ??
             'Mix and match tops, sleeves and bottoms to build your perfect look.'}
         </p>
         <button
           type="button"
           onClick={handleStartCreating}
-          className="bg-[#3eff9d] hover:bg-[#34e58b] text-black text-metalite py-2 px-12 rounded-full transition-all duration-200 mt-8 self-start"
+          className="bg-[#3eff9d] hover:bg-[#34e58b] text-black text-metalite py-2 px-12 rounded-full transition-all duration-200 mt-8 mb-8 lg:self-start"
         >
           Start Creating
         </button>
@@ -317,9 +338,9 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
   // ── Right panel main UI ──────────────────────────────────────────
   function renderRightPanel() {
     return (
-      <div className="flex flex-col gap-5 h-full justify-start pt-16">
+      <div className="flex flex-col gap-5 h-full justify-start mt-4 lg:pt-16">
         {/* 2 — Category tabs */}
-        <div className="flex justify-start gap-12">
+        <div className="flex justify-between md:justify-around lg:justify-start gap-4 lg:gap-12">
           {(
             [
               {key: 'tops', label: 'Tops'},
@@ -331,7 +352,7 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
               key={key}
               type="button"
               onClick={() => setActiveCategory(key)}
-              className={`text-title transition-colors duration-150 ${
+              className={`text-title transition-colors duration-150 cursor-pointer hover:text-black ${
                 activeCategory === key ? 'text-black' : 'text-gray-300'
               }`}
             >
@@ -341,19 +362,22 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
         </div>
 
         {/* 3 — Thumbnails + Color swatches */}
-        <div className="flex gap-4">
+        <div className="flex flex-col-reverse lg:flex-row gap-4">
+          {/* This will be the BOTTOM row on mobile, but the LEFT column on desktop */}
           <div className="flex-1 overflow-x-auto">
             {renderProductThumbnails()}
           </div>
-          {renderColorSwatches()}
-        </div>
 
+          {/* This will be the TOP row on mobile, but the RIGHT column on desktop */}
+          <div className="lg:w-auto lg:self-center">{renderColorSwatches()}</div>
+        </div>
         {/* 1 — Size selector */}
         {renderSizeSelector()}
 
         {/* 4 — Bottom action bar */}
-        <div className="flex items-center justify-between gap-4 pt-2 mt-16">
-          <div className="flex items-center gap-6">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pt-2 lg:mt-16">
+          {/* Row 1 on Mobile: Quantity + Price */}
+          <div className="flex items-center justify-center lg:justify-between lg:justify-start gap-6 w-full lg:w-auto">
             {/* Quantity */}
             <div className="flex items-center gap-3 font-medium">
               <button
@@ -386,44 +410,45 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
             )}
           </div>
 
-          {/* Add to cart */}
-          <AddToCartButton
-            disabled={!activeVariant?.availableForSale}
-            onClick={() => open('cart')}
-            lines={
-              activeVariant
-                ? [
-                    {
-                      merchandiseId: activeVariant.id,
-                      quantity,
-                      selectedVariant: activeVariant as any,
-                    },
-                  ]
-                : []
-            }
-          >
-            <span>
-              {activeVariant
-                ? activeVariant.availableForSale
-                  ? 'Add to cart'
-                  : 'Sold out'
-                : 'Select a product'}
-            </span>
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+          {/* Row 2 on Mobile: Add to cart (Full width & Centered) */}
+          <div className="w-fit lg:w-auto self-center">
+            <AddToCartButton
+              disabled={!activeVariant?.availableForSale}
+              onClick={() => open('cart')}
+              lines={
+                activeVariant
+                  ? [
+                      {
+                        merchandiseId: activeVariant.id,
+                        quantity,
+                      },
+                    ]
+                  : []
+              }
             >
-              <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
-              <path d="M3 6h18" />
-              <path d="M16 10a4 4 0 0 1-8 0" />
-            </svg>
-          </AddToCartButton>
+              <span>
+                {activeVariant
+                  ? activeVariant.availableForSale
+                    ? 'Add to cart'
+                    : 'Sold out'
+                  : 'Select a product'}
+              </span>
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+                <path d="M3 6h18" />
+                <path d="M16 10a4 4 0 0 1-8 0" />
+              </svg>
+            </AddToCartButton>
+          </div>
         </div>
       </div>
     );
@@ -431,11 +456,11 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
 
   // ── Render ───────────────────────────────────────────────────────
   return (
-    <section className="section-configurator section-main grid-rows-[1fr]">
+    <section className="section-configurator section-main h-fit lg:h-[90vh] pb-4 grid-rows-[1fr]">
       {/* Left: 3D preview */}
-      <div className="lg:col-start-2 lg:col-span-4 h-full">
-        <div className="relative w-full aspect-[2/3] bg-gray-200 self-center rounded-[var(--radius-sharp)] overflow-hidden">
-          <div className="absolute inset-0">
+      <div className="col-start-1 col-span-6 row-span-1 lg:col-start-2 lg:col-span-4 h-[60vh] lg:h-full">
+        <div className="relative w-full h-full bg-gray-200 self-center rounded-[var(--radius-sharp)] overflow-hidden">
+          <div className="absolute inset-0 h-full w-full">
             <ConfiguratorCanvas
               topModelUrl={topModelUrl}
               bottomModelUrl={bottomModelUrl}
@@ -446,7 +471,7 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
       </div>
 
       {/* Right: welcome or main UI */}
-      <div className="lg:col-start-7 lg:col-span-5">
+      <div className="col-start-1 col-span-6 row-span-1 lg:col-start-7 lg:col-span-5">
         {showWelcome ? renderWelcome() : renderRightPanel()}
       </div>
     </section>
@@ -498,7 +523,11 @@ export const SECTION_CONFIGURATOR_FRAGMENT = `#graphql
                   }
                 }
               }
-              variants(first: 20) {
+              options {
+                name
+                values
+              }
+              variants(first: 100) {
                 nodes {
                   id
                   availableForSale
@@ -545,7 +574,11 @@ export const SECTION_CONFIGURATOR_FRAGMENT = `#graphql
                   }
                 }
               }
-              variants(first: 20) {
+              options {
+                name
+                values
+              }
+              variants(first: 100) {
                 nodes {
                   id
                   availableForSale
@@ -592,7 +625,11 @@ export const SECTION_CONFIGURATOR_FRAGMENT = `#graphql
                   }
                 }
               }
-              variants(first: 20) {
+              options {
+                name
+                values
+              }
+              variants(first: 100) {
                 nodes {
                   id
                   availableForSale
