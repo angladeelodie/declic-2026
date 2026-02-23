@@ -28,6 +28,29 @@ export default function Policies() {
     <section className="w-full grid grid-cols-6 lg:grid-cols-12 gap-4 px-4 md:px-0 pt-12 pb-20">
       <div className="col-span-6 lg:col-start-3 lg:col-span-8">
 
+        {/* Back to shop */}
+        <Link
+          to="/collections"
+          className="inline-flex items-center gap-2 mb-10 text-sm text-gray-400 hover:text-black transition-colors duration-200 group"
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="group-hover:-translate-x-0.5 transition-transform duration-200"
+            aria-hidden="true"
+          >
+            <path d="M19 12H5" />
+            <path d="m12 19-7-7 7-7" />
+          </svg>
+          Back to shop
+        </Link>
+
         {/* Header */}
         <div className="">
           <h1 className="text-title font-bold">Policies</h1>

@@ -1,4 +1,4 @@
-import {redirect, useLoaderData} from 'react-router';
+import {redirect, useLoaderData, Link} from 'react-router';
 import type {Route} from './+types/products.$handle';
 import {
   getSelectedProductOptions,
@@ -95,27 +95,50 @@ export default function Product() {
   return (
     <Reveal>
       <div className="w-full h-full">
+        {/* Back to shop */}
+        <Link
+          to="/pages/shop"
+          className="inline-flex items-center text-metalite gap-2 mb-6 transition-colors duration-200 group"
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="group-hover:-translate-x-0.5 transition-transform duration-200"
+            aria-hidden="true"
+          >
+            <path d="M19 12H5" />
+            <path d="m12 19-7-7 7-7" />
+          </svg>
+          Back to shop
+        </Link>
+
         <div className="grid grid-rows-2 col-span-1 lg:grid-rows-1 grid-cols-6 lg:grid-cols-12 gap-4 lg:min-h-[80vh] overflow-hidden">
           {/* Thumbnail Column */}
-          <div className="lg:col-start-1 lg:col-span-1 h-full lg:h-[80vh] overflow-y-auto flex flex-col gap-4">
+          <div className="lg:col-start-1 lg:col-span-1 lg:h-[80vh] lg:overflow-y-auto flex flex-col gap-4">
             {product.media.edges.map((media) => (
               <button
                 key={media.node.id}
                 onClick={() => setFeaturedImage(media.node.image)}
-                className={`w-full relative rounded-lg border-2 transition-all ${
+                className={`w-full shrink-0 rounded-lg overflow-hidden group border-2 transition-all ${
                   featuredImage?.url === media.node.image.url
                     ? 'border-black'
                     : 'border-transparent hover:border-gray-300'
                 }`}
               >
-                <Image
-                  src={media.node.image.url}
-                  alt={media.node.image.altText || ''}
-                  aspectRatio="4/5"
-                  className="object-cover rounded-lg"
-                  sizes="(min-width: 10rem) 400px, 20vw"
-                  loading="lazy"
-                />
+                <div className="aspect-[4/5] overflow-hidden">
+                  <img
+                    src={media.node.image.url}
+                    alt={media.node.image.altText || ''}
+                    className="w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-110"
+                    loading="lazy"
+                  />
+                </div>
               </button>
             ))}
           </div>
@@ -123,7 +146,7 @@ export default function Product() {
           {/* Main Image Column */}
           <div className="col-span-5 md:col-span-4 md:col-start-2 lg:col-start-2 lg:col-span-5 h-full lg:h-[80vh] min-h-0 relative">
             <div className="absolute inset-0 w-full h-full">
-              <div className="w-full h-full overflow-hidden rounded-[var(--radius-sharp)_var(--radius-round)_var(--radius-sharp)_var(--radius-round)] bg-[#f9f9f9]">
+              <div className="w-full h-full overflow-hidden rounded-[var(--radius-sharp)_var(--radius-round)_var(--radius-sharp)_var(--radius-round)] bg-[#f9f9f9] product-image-fade" key={featuredImage?.url ?? 'empty'}>
                 <ProductImage image={featuredImage} />
               </div>
             </div>

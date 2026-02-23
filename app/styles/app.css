@@ -355,6 +355,13 @@ body.is-navigating .custom-cursor-dot {
 * routes/products.$handle.tsx
 * --------------------------------------------------
 */
+@keyframes product-img-fadein {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.product-image-fade {
+  animation: product-img-fadein 280ms ease;
+}
 /* .product {
   display: grid;
 
