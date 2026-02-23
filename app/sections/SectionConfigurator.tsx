@@ -99,10 +99,6 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
   const [searchParams, setSearchParams] = useSearchParams();
   const {open} = useAside();
 
-  const selectedTopHandle = searchParams.get('top');
-  const selectedBottomHandle = searchParams.get('bottom');
-  const selectedSleeveHandle = searchParams.get('sleeve');
-
   const tops = (props.tops_collection?.reference?.products?.nodes ??
     []) as ProductNode[];
   const bottoms = (props.bottoms_collection?.reference?.products?.nodes ??
@@ -110,10 +106,19 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
   const sleeves = (props.sleeves_collection?.reference?.products?.nodes ??
     []) as ProductNode[];
 
+  // Fall back to first product in each category when URL has no selection
+  const selectedTopHandle =
+    searchParams.get('top') ?? tops[0]?.handle ?? null;
+  const selectedBottomHandle =
+    searchParams.get('bottom') ?? bottoms[0]?.handle ?? null;
+  const selectedSleeveHandle =
+    searchParams.get('sleeve') ?? sleeves[0]?.handle ?? null;
+
   const [activeCategory, setActiveCategory] = useState<
     'tops' | 'bottoms' | 'sleeves'
   >('tops');
   const [showWelcome, setShowWelcome] = useState(true);
+  const [isFading, setIsFading] = useState(false);
   const [quantity, setQuantity] = useState(1);
 
   // Per-category size + color selection (keyed by category name)
@@ -138,7 +143,7 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
     if (typeof window !== 'undefined') {
       localStorage.setItem(WELCOME_KEY, 'true');
     }
-    setShowWelcome(false);
+    setIsFading(true); // triggers fade-out; onTransitionEnd flips showWelcome
   }, []);
 
   // ── Category map: one source of truth per category ───────────────
@@ -329,7 +334,8 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
           onClick={handleStartCreating}
           className="bg-[#3eff9d] hover:bg-[#34e58b] text-black text-metalite py-2 px-12 rounded-full transition-all duration-200 mt-8 mb-8 lg:self-start"
         >
-          Start Creating
+          {(props as any).button_text?.value ??
+            'Start creating'}
         </button>
       </div>
     );
@@ -471,7 +477,17 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
       </div>
 
       {/* Right: welcome or main UI */}
-      <div className="col-start-1 col-span-6 row-span-1 lg:col-start-7 lg:col-span-5">
+      <div
+        className={`col-start-1 col-span-6 row-span-1 lg:col-start-7 lg:col-span-5 transition-opacity duration-300 ${
+          isFading ? 'opacity-0' : 'opacity-100'
+        }`}
+        onTransitionEnd={() => {
+          if (isFading) {
+            setShowWelcome(false);
+            setIsFading(false);
+          }
+        }}
+      >
         {showWelcome ? renderWelcome() : renderRightPanel()}
       </div>
     </section>
@@ -491,6 +507,12 @@ export const SECTION_CONFIGURATOR_FRAGMENT = `#graphql
     }
 
     description: field(key: "description") {
+      key
+      type
+      value
+    }
+
+    button_text: field(key: "button_text") {
       key
       type
       value

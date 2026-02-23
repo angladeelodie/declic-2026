@@ -107,7 +107,7 @@ function lift<Section, KeyToRemove extends PropertyKey>(
         return [prop, liftedVal];
       });
     const target = Object.fromEntries(entries);
-    const source = key in value ? lift((value as any)[key], key) : {};
+    const source = (value && typeof value === 'object' && key in value) ? lift((value as any)[key], key) : {};
     const lifted = Array.isArray(source)
       ? source
       : Object.assign(target, source);
