@@ -5,6 +5,7 @@ import {useVariantUrl} from '~/lib/variants';
 import {Link} from 'react-router';
 import {ProductPrice} from './ProductPrice';
 import {useAside} from './Aside';
+import {OptionSwatch} from './OptionSwatch';
 import type {CartApiQueryFragment} from 'storefrontapi.generated';
 
 type CartLine = OptimisticCartLine<CartApiQueryFragment>;
@@ -61,25 +62,16 @@ export function CartLineItem({
         <div
           className={`${layout === 'page' ? 'md:col-span-4 md:pb-6 md:flex-row' : 'col-span-3 mt-4'} flex flex-col gap-4 justify-between align-center flex-1`}
           >
-          {/* Circular Detail Badges (Size & Color Only) */}
+          {/* Option Swatches */}
           <div className="flex flex-wrap gap-3 items-center">
-            {selectedOptions.map((option) => {
-              const isColor =
-                option.name.toLowerCase() === 'color' ||
-                option.name.toLowerCase() === 'couleur';
-
-              return (
-                <div
-                  key={option.name}
-                  className="w-10 h-10 rounded-full border flex items-center justify-center text-[10px] font-bold uppercase overflow-hidden border-black"
-                  style={
-                    isColor ? {backgroundColor: option.value.toLowerCase()} : {}
-                  }
-                >
-                  {!isColor && option.value}
-                </div>
-              );
-            })}
+            {selectedOptions.map((option) => (
+              <OptionSwatch
+                key={option.name}
+                optionName={option.name}
+                value={option.value}
+                selected
+              />
+            ))}
           </div>
 
           {/* Quantity Toggle & Price Stack */}

@@ -4,6 +4,7 @@ import type {SectionConfiguratorFragment} from 'storefrontapi.generated';
 import {ConfiguratorCanvas} from '~/components/ConfiguratorCanvas';
 import {AddToCartButton} from '~/components/AddToCartButton';
 import {useAside} from '~/components/Aside';
+import {OptionSwatchGroup} from '~/components/OptionSwatchGroup';
 
 // ─── Local types ────────────────────────────────────────────────────────────
 type VariantNode = {
@@ -27,19 +28,6 @@ type OptionSelection = {size: string | null; color: string | null};
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 const WELCOME_KEY = 'hasSeenConfiguratorWelcome';
-
-const NAME_TO_COLOR: Record<string, string> = {
-  black: '#000000',
-  white: '#ffffff',
-};
-
-function normalizeColor(name: string): string | null {
-  const lower = name.toLowerCase().trim();
-  if (NAME_TO_COLOR[lower]) return NAME_TO_COLOR[lower];
-  // Check if it looks like a valid CSS color (hex, rgb, named)
-  if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(lower)) return lower;
-  return lower || null;
-}
 
 // Reads directly from product.options — not paginated, always complete.
 function getOptionValues(
@@ -261,62 +249,6 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
     );
   }
 
-  function renderColorSwatches() {
-    if (!colors.length) return null;
-    return (
-      <div className="flex flex-row items-center justify-center flex-col gap-3 flex-shrink-0">
-        {colors.map((color) => {
-          const resolved = normalizeColor(color);
-          const isSelected = activeOptions.color === color;
-          return (
-            <button
-              key={color}
-              type="button"
-              aria-label={color}
-              onClick={() => setActiveOptions((prev) => ({...prev, color}))}
-              className={`w-10 h-10 rounded-full border-2 transition-all duration-200 p-0.5 ${
-                isSelected
-                  ? 'border-black scale-110'
-                  : 'border-gray-200 hover:border-gray-400'
-              }`}
-            >
-              <div
-                className="w-full h-full rounded-full border border-black/5"
-                style={{backgroundColor: resolved ?? '#ccc'}}
-              />
-            </button>
-          );
-        })}
-      </div>
-    );
-  }
-
-  function renderSizeSelector() {
-    if (!sizes.length) return null;
-    return (
-      <div className="flex flex-wrap gap-3 mt-4 lg:mt-8 justify-center lg:justify-start">
-        {sizes.map((size) => {
-          const isSelected = activeOptions.size === size;
-          return (
-            <button
-              key={size}
-              type="button"
-              onClick={() => setActiveOptions((prev) => ({...prev, size}))}
-              className={`relative flex items-center justify-center min-w-[40px] h-[40px] rounded-full border transition-all duration-200 ${
-                isSelected
-                  ? 'border-black scale-110'
-                  : 'border-gray-200 hover:border-gray-400'
-              }`}
-            >
-              <span className="text-xs text-metalite font-bold uppercase px-1">
-                {size}
-              </span>
-            </button>
-          );
-        })}
-      </div>
-    );
-  }
 
   // ── Welcome screen ───────────────────────────────────────────────
   function renderWelcome() {
@@ -375,10 +307,23 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
           </div>
 
           {/* This will be the TOP row on mobile, but the RIGHT column on desktop */}
-          <div className="lg:w-auto lg:self-center">{renderColorSwatches()}</div>
+          <OptionSwatchGroup
+            optionName="color"
+            values={colors}
+            selected={activeOptions.color}
+            onSelect={(color) => setActiveOptions((prev) => ({...prev, color}))}
+            orientation="column"
+          />
         </div>
+
         {/* 1 — Size selector */}
-        {renderSizeSelector()}
+        <OptionSwatchGroup
+          optionName="size"
+          values={sizes}
+          selected={activeOptions.size}
+          onSelect={(size) => setActiveOptions((prev) => ({...prev, size}))}
+          className="mt-4 lg:mt-8 justify-center lg:justify-start"
+        />
 
         {/* 4 — Bottom action bar */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pt-2 lg:mt-16">

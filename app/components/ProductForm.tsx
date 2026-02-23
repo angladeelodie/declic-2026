@@ -1,11 +1,8 @@
-import {Link, useNavigate} from 'react-router';
+import {useNavigate} from 'react-router';
 import {type MappedProductOptions} from '@shopify/hydrogen';
-import type {
-  Maybe,
-  ProductOptionValueSwatch,
-} from '@shopify/hydrogen/storefront-api-types';
 import {AddToCartButton} from './AddToCartButton';
 import {useAside} from './Aside';
+import {OptionSwatch} from './OptionSwatch';
 import type {ProductFragment} from 'storefrontapi.generated';
 export function ProductForm({
   productOptions,
@@ -99,47 +96,31 @@ function renderOption(option: any, navigate: ReturnType<typeof useNavigate>) {
             handle,
             variantUriQuery,
             selected,
-            available,
             exists,
             isDifferentProduct,
-            swatch,
           } = value;
-
-          const commonClasses = `
-            relative flex items-center justify-center min-w-[40px] h-[40px] rounded-full border transition-all duration-200
-            ${selected ? 'border-black scale-110' : 'border-gray-200 hover:border-gray-400'}
-            ${!exists ? 'opacity-20 cursor-not-allowed' : 'cursor-pointer'}
-          `;
-
-          const content = (
-            <div className="flex items-center justify-center w-full h-full p-0.5">
-              <ProductOptionSwatch
-                optionName={option.name}
-                name={name}
-                selected={selected}
-              />
-            </div>
-          );
 
           if (isDifferentProduct) {
             return (
-              <Link
+              <OptionSwatch
                 key={option.name + name}
-                prefetch="intent"
-                preventScrollReset
-                replace
+                optionName={option.name}
+                value={name}
+                selected={selected}
+                disabled={!exists}
                 to={`/products/${handle}?${variantUriQuery}`}
-                className={commonClasses}
-              >
-                {content}
-              </Link>
+                replace
+                preventScrollReset
+              />
             );
           }
 
           return (
-            <button
-              type="button"
+            <OptionSwatch
               key={option.name + name}
+              optionName={option.name}
+              value={name}
+              selected={selected}
               disabled={!exists}
               onClick={() => {
                 if (!selected) {
@@ -149,65 +130,10 @@ function renderOption(option: any, navigate: ReturnType<typeof useNavigate>) {
                   });
                 }
               }}
-              className={commonClasses}
-            >
-              {content}
-            </button>
+            />
           );
         })}
       </div>
     </div>
-  );
-}
-
-
-// Optional mapping in case your names aren't valid CSS colors
-const NAME_TO_COLOR: Record<string, string> = {
-  black: '#000000',
-  white: '#ffffff',
-  // add more if needed, e.g.:
-  // 'cream': '#f5f0e6',
-};
-
-function normalizeColorFromName(name: string): string | null {
-  const lower = name.toLowerCase().trim();
-
-  // Try named mapping first
-  if (NAME_TO_COLOR[lower]) return NAME_TO_COLOR[lower];
-
-
-  return lower || null;
-}
-
-export function ProductOptionSwatch({
-  optionName,
-  name,
-  selected,
-}: {
-  optionName: string; // <-- string, not ProductOptionValueSwatch
-  name: string;
-  selected: boolean;
-}) {
-  const isColorOption = optionName.toLowerCase() === 'color';
-  const resolvedColor = isColorOption ? normalizeColorFromName(name) : null;
-
-  // If this isn't the Color option, or we couldn't resolve a color, show text (sizes, other options)
-  if (!resolvedColor) {
-    return (
-      <span className="text-xs text-metalite font-bold uppercase">
-        {name}
-      </span>
-    );
-  }
-
-  // For color-based options (Color option)
-  return (
-    <div
-      aria-label={name}
-      className="w-full h-full rounded-full border border-black/5"
-      style={{
-        backgroundColor: resolvedColor,
-      }}
-    />
   );
 }

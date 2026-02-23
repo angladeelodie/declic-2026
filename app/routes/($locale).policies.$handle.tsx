@@ -45,16 +45,45 @@ export default function Policy() {
   const {policy} = useLoaderData<typeof loader>();
 
   return (
-    <div className="policy">
-      <br />
-      <br />
-      <div>
-        <Link to="/policies">← Back to Policies</Link>
+    <section className="w-full grid grid-cols-6 lg:grid-cols-12 gap-4 px-4 md:px-0 pt-12 pb-20 text-body">
+      <div className="col-span-6 lg:col-start-3 lg:col-span-8">
+
+        {/* Back link */}
+        <Link
+          to="/policies"
+          className="inline-flex items-center gap-2 mb-10 group"
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="group-hover:-translate-x-0.5 transition-transform duration-200"
+            aria-hidden="true"
+          >
+            <path d="M19 12H5" />
+            <path d="m12 19-7-7 7-7" />
+          </svg>
+          Policies
+        </Link>
+
+        {/* Title */}
+        <div className="">
+
+          <h1 className="text-title">{policy.title}</h1>
+        </div>
+
+        {/* Body */}
+        <div
+          className="policy-body"
+          dangerouslySetInnerHTML={{__html: policy.body}}
+        />
       </div>
-      <br />
-      <h1>{policy.title}</h1>
-      <div dangerouslySetInnerHTML={{__html: policy.body}} />
-    </div>
+    </section>
   );
 }
 

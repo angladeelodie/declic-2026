@@ -3,7 +3,6 @@
 @import 'swiper/css/pagination';
 @import 'swiper/css/scrollbar';
 
-
 :root {
   --aside-width: 400px;
   --cart-aside-summary-height-with-discount: 300px;
@@ -27,7 +26,9 @@ body::selection {
    Touch-only devices retain the native cursor.
 ─────────────────────────────────────────────────────────────────────────── */
 @media (pointer: fine) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     cursor: none !important;
   }
 }
@@ -92,24 +93,39 @@ body::selection {
   width: 5px;
   height: 5px;
   background-color: var(--color-accent);
-  transition: width 0.08s ease, height 0.08s ease, background-color 0.08s ease;
+  transition:
+    width 0.08s ease,
+    height 0.08s ease,
+    background-color 0.08s ease;
 }
 .custom-cursor-ring.is-clicking {
   width: 28px;
   height: 28px;
   border-color: rgba(0, 0, 0, 0.55);
-  transition: width 0.08s ease, height 0.08s ease;
+  transition:
+    width 0.08s ease,
+    height 0.08s ease;
 }
 
 /* Navigation loading: pulsing glow — box-shadow doesn't interfere with the
    JS-controlled `transform` used for cursor positioning */
 @keyframes cursor-ring-glow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(38, 255, 151, 0.5); }
-  50%       { box-shadow: 0 0 0 7px rgba(38, 255, 151, 0); }
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(38, 255, 151, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 7px rgba(38, 255, 151, 0);
+  }
 }
 @keyframes cursor-dot-pulse {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.35; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
 }
 
 body.is-navigating .custom-cursor-ring {
@@ -185,7 +201,7 @@ body.is-navigating .custom-cursor-dot {
   margin-left: auto;
 }
 
-.header-ctas>* {
+.header-ctas > * {
   min-width: fit-content;
 }
 
@@ -334,7 +350,6 @@ body.is-navigating .custom-cursor-dot {
   width: 100%;
 }
 
-
 /*
 * --------------------------------------------------
 * routes/products.$handle.tsx
@@ -408,7 +423,7 @@ body.is-navigating .custom-cursor-dot {
 .looks-swiper .custom-slide {
   transition: all 0.7s cubic-bezier(0.21, 0.6, 0.35, 1);
   transform: scale(0.7);
-  
+
   opacity: 0.4;
 }
 
@@ -425,8 +440,6 @@ body.is-navigating .custom-cursor-dot {
 .swiper-slide-active .slide-content {
   opacity: 1;
 }
-
-
 
 /*
 * --------------------------------------------------
@@ -457,6 +470,78 @@ body.is-navigating .custom-cursor-dot {
 .article img {
   height: auto;
   width: 100%;
+}
+
+/*
+* --------------------------------------------------
+* routes/policies.$handle.tsx
+* --------------------------------------------------
+*/
+.policy-body {
+}
+
+.policy-body p {
+  margin-bottom: 1.2em;
+}
+
+.policy-body h1,
+.policy-body h2,
+.policy-body h3,
+.policy-body h4 {
+  font-family: 'Metalite', sans-serif;
+  margin-top: 2em;
+  margin-bottom: 0.6em;
+  line-height: 1.3;
+  font-weight: bold;
+}
+
+.policy-body h1 {
+  font-size: 1.5rem;
+}
+.policy-body h2 {
+  font-size: 1.25rem;
+}
+.policy-body h3 {
+  font-size: 1.1rem;
+}
+
+.policy-body ul,
+.policy-body ol {
+  padding-left: 1.5rem;
+  margin-bottom: 1.2em;
+}
+
+.policy-body ul {
+  list-style-type: disc;
+}
+.policy-body ol {
+  list-style-type: decimal;
+}
+
+.policy-body li {
+  margin-bottom: 0.4em;
+}
+
+.policy-body a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.policy-body strong {
+  font-weight: bold;
+}
+
+
+.policy-body strong {
+}
+.policy-body em {
+  font-style: italic;
+}
+
+.policy-body hr {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 2em 0;
 }
 
 /*

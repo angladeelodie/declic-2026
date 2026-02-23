@@ -54,10 +54,9 @@ export function SectionHero(props: SectionHeroFragment) {
 
         {link?.href?.value && (
           <div className="mt-6">
-            <LinkButton
-              href={link.href.value}
-              target={link?.target?.value !== 'false' ? '_blank' : undefined}
-              text={link?.text?.value ?? ''}
+           <LinkButton
+              href={`/pages/${props.link?.reference?.page?.reference?.handle}`}
+              text={props.link?.reference?.text?.value ?? ''}
               className="text-emphasis"
             />
           </div>
@@ -72,14 +71,18 @@ const HERO_LINK_FRAGMENT = `#graphql
     ... on MetaobjectField {
       reference {
         ... on Metaobject {
-          href: field(key: "href") {
-            value
-          }
           target: field(key: "target") {
             value
           }
           text: field(key: "text") {
             value
+          }
+          page: field(key: "page") {
+            reference {
+              ... on Page {
+                handle
+              }
+            }
           }
         }
       }

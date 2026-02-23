@@ -10,7 +10,6 @@ import {Link} from 'react-router';
 import {useRef, useEffect} from 'react';
 import type {SectionEditorialFragment} from 'storefrontapi.generated';
 
-
 export function SectionEditorial(props: SectionEditorialFragment) {
   const section = parseSection<
     SectionEditorialFragment,
@@ -21,8 +20,9 @@ export function SectionEditorial(props: SectionEditorialFragment) {
   >(props);
 
   const {heading, description, link} = section;
+
   const isReversed = props.order?.value === 'false';
-  // console.log('SectionEditorial props:', props);
+  console.log('SectionEditorial props:', props);
 
   return (
     <section
@@ -54,12 +54,11 @@ export function SectionEditorial(props: SectionEditorialFragment) {
           </div>
         )}
 
-        {link?.href?.value && (
+        {props.link?.reference?.page?.reference?.handle && (
           <div className="flex justify-center lg:justify-start">
             <LinkButton
-              href={link.href.value}
-              target={link?.target?.value !== 'false' ? '_blank' : undefined}
-              text={link?.text?.value ?? ''}
+              href={`/pages/${props.link?.reference?.page?.reference?.handle}`}
+              text={props.link?.reference?.text?.value ?? ''}
               className="text-emphasis"
             />
           </div>
@@ -69,21 +68,23 @@ export function SectionEditorial(props: SectionEditorialFragment) {
   );
 }
 
-
-
 const LINK_FRAGMENT = `#graphql
   fragment EditorialLink on MetaobjectField {
     ... on MetaobjectField {
       reference {
         ... on Metaobject {
-          href: field(key: "href") {
-            value
-          }
           target: field(key: "target") {
             value
           }
           text: field(key: "text") {
             value
+          }
+          page: field(key: "page") {
+            reference {
+              ... on Page {
+                handle
+              }
+            }
           }
         }
       }

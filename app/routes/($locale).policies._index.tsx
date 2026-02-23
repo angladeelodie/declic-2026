@@ -25,16 +25,53 @@ export default function Policies() {
   const {policies} = useLoaderData<typeof loader>();
 
   return (
-    <div className="policies">
-      <h1>Policies</h1>
-      <div>
-        {policies.map((policy) => (
-          <fieldset key={policy.id}>
-            <Link to={`/policies/${policy.handle}`}>{policy.title}</Link>
-          </fieldset>
-        ))}
+    <section className="w-full grid grid-cols-6 lg:grid-cols-12 gap-4 px-4 md:px-0 pt-12 pb-20">
+      <div className="col-span-6 lg:col-start-3 lg:col-span-8">
+
+        {/* Header */}
+        <div className="">
+          <h1 className="text-title font-bold">Policies</h1>
+        </div>
+
+        {/* Policy list */}
+        <nav aria-label="Policies">
+          <ul className="flex flex-col">
+            {policies.map((policy, i) => (
+              <li key={policy.id}>
+                <Link
+                  to={`/policies/${policy.handle}`}
+                  className="group flex items-center justify-between py-5 gap-4 transition-all duration-200"
+                >
+                  {/* Number + Title */}
+                  <div className="flex items-center gap-5">
+                    <span className="font-bold text-lg group-hover:translate-x-1 transition-transform duration-200 inline-block">
+                      {policy.title}
+                    </span>
+                  </div>
+
+                  {/* Arrow */}
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="shrink-0 text-gray-300 group-hover:text-black group-hover:translate-x-1 transition-all duration-200"
+                    aria-hidden="true"
+                  >
+                    <path d="M5 12h14" />
+                    <path d="m12 5 7 7-7 7" />
+                  </svg>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
       </div>
-    </div>
+    </section>
   );
 }
 
