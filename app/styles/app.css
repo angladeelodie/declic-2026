@@ -20,8 +20,86 @@
 body::selection {
   background: var(--color-accent);
   color: var(--color-light);
-} 
+}
 
+/* ─── Custom Cursor ──────────────────────────────────────────────────────────
+   Only activated on devices with a fine pointer (mouse / trackpad).
+   Touch-only devices retain the native cursor.
+─────────────────────────────────────────────────────────────────────────── */
+@media (pointer: fine) {
+  *, *::before, *::after {
+    cursor: none !important;
+  }
+}
+
+.custom-cursor-dot,
+.custom-cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 10000;
+  border-radius: 50%;
+  opacity: 0;
+  will-change: transform;
+}
+
+/* Dot: stays exactly under the pointer */
+.custom-cursor-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #000;
+  transition:
+    opacity 0.3s ease,
+    width 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+    height 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.2s ease;
+}
+
+/* Ring: lerp-trailing halo around the dot */
+.custom-cursor-ring {
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid rgba(0, 0, 0, 0.3);
+  transition:
+    opacity 0.3s ease,
+    width 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    height 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.3s ease,
+    background-color 0.3s ease;
+}
+
+.custom-cursor-dot.is-visible,
+.custom-cursor-ring.is-visible {
+  opacity: 1;
+}
+
+/* Hover: dot turns accent green, ring expands with a tint */
+.custom-cursor-dot.is-hovering {
+  width: 10px;
+  height: 10px;
+  background-color: var(--color-accent);
+}
+.custom-cursor-ring.is-hovering {
+  width: 52px;
+  height: 52px;
+  border-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(38, 255, 151, 0.07);
+}
+
+/* Click: both shrink quickly for tactile feedback */
+.custom-cursor-dot.is-clicking {
+  width: 5px;
+  height: 5px;
+  background-color: var(--color-accent);
+  transition: width 0.08s ease, height 0.08s ease, background-color 0.08s ease;
+}
+.custom-cursor-ring.is-clicking {
+  width: 28px;
+  height: 28px;
+  border-color: rgba(0, 0, 0, 0.55);
+  transition: width 0.08s ease, height 0.08s ease;
+}
 
 /*
 * --------------------------------------------------
@@ -30,7 +108,6 @@ body::selection {
 */
 .link:hover {
   text-decoration: underline;
-  cursor: pointer;
 }
 
 /*

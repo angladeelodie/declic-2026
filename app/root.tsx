@@ -17,6 +17,7 @@ import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
 import tailwindCss from './styles/tailwind.css?url';
 import {PageLayout} from './components/PageLayout';
+import {CustomCursor} from './components/CustomCursor';
 import type {FooterMenus} from '~/components/Footer';
 
 import type {FooterQuery} from 'storefrontapi.generated';
@@ -220,6 +221,7 @@ export function Layout({children}: {children?: React.ReactNode}) {
         <Links />
       </head>
       <body>
+        <CustomCursor />
         {children}
         <ScrollRestoration nonce={nonce} />
         <Scripts nonce={nonce} />
