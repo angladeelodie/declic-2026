@@ -3,8 +3,15 @@ import {Link} from 'react-router';
 // ─── Color normalization ──────────────────────────────────────────────────────
 
 const COLOR_MAP: Record<string, string> = {
+  // English
   black: '#000000',
   white: '#ffffff',
+  // French
+  noir: '#000000',
+  blanc: '#ffffff',
+  // Italian (ready for when it is added)
+  nero: '#000000',
+  bianco: '#ffffff',
 };
 
 export function normalizeSwatchColor(name: string): string | null {

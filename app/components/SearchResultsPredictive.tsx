@@ -7,6 +7,7 @@ import {
   type PredictiveSearchReturn,
 } from '~/lib/search';
 import {useAside} from './Aside';
+import {useTranslation} from '~/lib/useTranslation';
 
 type PredictiveSearchItems = PredictiveSearchReturn['result']['items'];
 
@@ -85,11 +86,12 @@ function SearchResultsPredictiveArticles({
   articles,
   closeSearch,
 }: PartialPredictiveSearchResult<'articles'>) {
+  const {t} = useTranslation();
   if (!articles.length) return null;
 
   return (
     <div className="predictive-search-result" key="articles">
-      <h5>Articles</h5>
+      <h5>{t('search.articles')}</h5>
       <ul>
         {articles.map((article) => {
           const articleUrl = urlWithTrackingParams({
@@ -126,11 +128,12 @@ function SearchResultsPredictiveCollections({
   collections,
   closeSearch,
 }: PartialPredictiveSearchResult<'collections'>) {
+  const {t} = useTranslation();
   if (!collections.length) return null;
 
   return (
     <div className="predictive-search-result" key="collections">
-      <h5>Collections</h5>
+      <h5>{t('search.collections')}</h5>
       <ul>
         {collections.map((collection) => {
           const collectionUrl = urlWithTrackingParams({
@@ -167,11 +170,12 @@ function SearchResultsPredictivePages({
   pages,
   closeSearch,
 }: PartialPredictiveSearchResult<'pages'>) {
+  const {t} = useTranslation();
   if (!pages.length) return null;
 
   return (
     <div className="predictive-search-result" key="pages">
-      <h5>Pages</h5>
+      <h5>{t('search.pages')}</h5>
       <ul>
         {pages.map((page) => {
           const pageUrl = urlWithTrackingParams({
@@ -200,11 +204,12 @@ function SearchResultsPredictiveProducts({
   products,
   closeSearch,
 }: PartialPredictiveSearchResult<'products'>) {
+  const {t} = useTranslation();
   if (!products.length) return null;
 
   return (
     <div className="predictive-search-result" key="products">
-      <h5>Products</h5>
+      <h5>{t('search.products')}</h5>
       <ul>
         {products.map((product) => {
           const productUrl = urlWithTrackingParams({
@@ -263,13 +268,14 @@ function SearchResultsPredictiveEmpty({
 }: {
   term: React.MutableRefObject<string>;
 }) {
+  const {t} = useTranslation();
   if (!term.current) {
     return null;
   }
 
   return (
     <p>
-      No results found for <q>{term.current}</q>
+      {t('search.noResultsFor')} <q>{term.current}</q>
     </p>
   );
 }

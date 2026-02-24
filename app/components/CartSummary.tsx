@@ -4,6 +4,7 @@ import {CartForm, Money, type OptimisticCart} from '@shopify/hydrogen';
 import {useEffect, useRef} from 'react';
 import {useFetcher} from 'react-router';
 import type {FetcherWithComponents} from 'react-router';
+import {useTranslation} from '~/lib/useTranslation';
 
 type CartSummaryProps = {
   cart: OptimisticCart<CartApiQueryFragment | null>;
@@ -11,19 +12,20 @@ type CartSummaryProps = {
 };
 
 export function CartSummary({cart, layout}: CartSummaryProps) {
+  const {t} = useTranslation();
   const className =
     layout === 'page' ? 'cart-summary-page' : 'cart-summary-aside';
 
   return (
     <div aria-labelledby="cart-summary" className={className}>
       <div className={`flex flex-col gap-4 bg-white ${layout === 'aside' ? 'max-w-md mx-auto' : ''}`}>
-        <h2 className="text-2xl font-bold tracking-tight mb-2">Summary</h2>
+        <h2 className="text-2xl font-bold tracking-tight mb-2">{t('cart.summary')}</h2>
 
         {/* 6-Column Grid for Totals */}
         <div className="flex flex-col gap-3 border-b border-gray-100 pb-6">
           {/* Subtotal */}
           <div className="grid grid-cols-6 items-center">
-            <span className="col-span-3">Subtotal</span>
+            <span className="col-span-3">{t('cart.subtotal')}</span>
             <span className="col-span-3 text-right">
               {cart?.cost?.subtotalAmount?.amount ? (
                 <Money data={cart?.cost?.subtotalAmount} />
@@ -41,7 +43,7 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
 
           {/* Total Row */}
           <div className="grid grid-cols-6 items-center mt-2 pt-4 border-t border-gray-100">
-            <span className="col-span-3 text-metaline">Total</span>
+            <span className="col-span-3 text-metaline">{t('cart.total')}</span>
             <span className="col-span-3 text-right text-lg font-bold">
               {cart?.cost?.totalAmount ? (
                 <Money data={cart?.cost?.totalAmount} />
@@ -59,6 +61,7 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
 }
 
 function CartCheckoutActions({checkoutUrl}: {checkoutUrl?: string}) {
+  const {t} = useTranslation();
   if (!checkoutUrl) return null;
 
   return (
@@ -68,7 +71,7 @@ function CartCheckoutActions({checkoutUrl}: {checkoutUrl?: string}) {
         target="_self"
         className="bg-[var(--color-accent)] hover:bg-[#34e58b] text-black font-bold py-3 px-10 rounded-full flex items-center justify-center gap-3 transition-transform active:scale-95 text-base w-full md:w-auto min-w-[180px]"
       >
-        <span>Order</span>
+        <span>{t('cart.order')}</span>
         <svg
           width="20"
           height="20"
@@ -93,6 +96,7 @@ function CartDiscounts({
 }: {
   discountCodes?: CartApiQueryFragment['discountCodes'];
 }) {
+  const {t} = useTranslation();
   const codes: string[] =
     discountCodes?.filter((d) => d.applicable)?.map(({code}) => code) || [];
 
@@ -103,14 +107,14 @@ function CartDiscounts({
           <input
             type="text"
             name="discountCode"
-            placeholder="Coupon code"
+            placeholder={t('cart.couponCode')}
             className="col-span-4 bg-transparent focus:outline-none"
           />
           <button
             type="submit"
             className="col-span-2 text-right hover:text-grey-500"
           >
-            Apply
+            {t('cart.apply')}
           </button>
         </div>
       </UpdateDiscountForm>
@@ -161,6 +165,7 @@ function CartGiftCard({
 }: {
   giftCardCodes: CartApiQueryFragment['appliedGiftCards'] | undefined;
 }) {
+  const {t} = useTranslation();
   const appliedGiftCardCodes = useRef<string[]>([]);
   const giftCardCodeInput = useRef<HTMLInputElement>(null);
   const giftCardAddFetcher = useFetcher({key: 'gift-card-add'});
@@ -184,7 +189,7 @@ function CartGiftCard({
       {/* Display applied gift cards with individual remove buttons */}
       {giftCardCodes && giftCardCodes.length > 0 && (
         <dl>
-          <dt>Applied Gift Card(s)</dt>
+          <dt>{t('cart.appliedGiftCards')}</dt>
           {giftCardCodes.map((giftCard) => (
             <RemoveGiftCardForm key={giftCard.id} giftCardId={giftCard.id}>
               <div className="cart-discount">
@@ -192,7 +197,7 @@ function CartGiftCard({
                 &nbsp;
                 <Money data={giftCard.amountUsed} />
                 &nbsp;
-                <button type="submit">Remove</button>
+                <button type="submit">{t('cart.remove')}</button>
               </div>
             </RemoveGiftCardForm>
           ))}
@@ -209,7 +214,7 @@ function CartGiftCard({
           <input
             type="text"
             name="giftCardCode"
-            placeholder="Gift card code"
+            placeholder={t('cart.giftCardCode')}
             ref={giftCardCodeInput}
             className="col-span-4 bg-transparent focus:outline-none"
           />
@@ -218,7 +223,7 @@ function CartGiftCard({
             disabled={giftCardAddFetcher.state !== 'idle'}
             className="col-span-2 text-right hover:text-grey-500"
           >
-            Apply
+            {t('cart.apply')}
           </button>
         </div>
       </UpdateGiftCardForm>

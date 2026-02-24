@@ -1,9 +1,11 @@
 import {useOptimisticCart} from '@shopify/hydrogen';
-import {Link} from 'react-router';
+import {Link, useLocation} from 'react-router';
 import type {CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
 import {CartLineItem} from '~/components/CartLineItem';
 import {CartSummary} from './CartSummary';
+import {useTranslation} from '~/lib/useTranslation';
+import {getCurrentLocale} from '~/lib/i18n';
 
 export type CartLayout = 'page' | 'aside';
 
@@ -71,16 +73,16 @@ function CartEmpty({
   layout?: CartMainProps['layout'];
 }) {
   const {close} = useAside();
+  const {t} = useTranslation();
+  const {pathname} = useLocation();
+  const {pathPrefix} = getCurrentLocale(pathname);
   return (
     <div hidden={hidden}>
       <br />
-      <p>
-        Looks like you haven&rsquo;t added anything yet, let&rsquo;s get you
-        started!
-      </p>
+      <p>{t('cart.empty')}</p>
       <br />
-      <Link to="/collections" onClick={close} prefetch="viewport">
-        Continue shopping →
+      <Link to={pathPrefix + '/collections'} onClick={close} prefetch="viewport">
+        {t('cart.continueShopping')}
       </Link>
     </div>
   );

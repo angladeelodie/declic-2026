@@ -2,8 +2,9 @@ import type {ParsedMetafields} from '@shopify/hydrogen';
 import {parseSection} from '~/utils/parseSection';
 import {Navigation, Pagination, Scrollbar, A11y} from 'swiper/modules';
 import {Swiper, SwiperSlide} from 'swiper/react';
-import {Link} from 'react-router';
+import {Link, useLocation} from 'react-router';
 import ArrowSvg from '../assets/arrow.svg'; // adjust path as needed
+import {getCurrentLocale} from '~/lib/i18n';
 
 // Import Swiper styles
 
@@ -19,6 +20,8 @@ export function SectionLooksSlider(props: SectionLooksSliderFragment) {
   >(props);
 
   const {title, looks} = section;
+  const {pathname} = useLocation();
+  const {pathPrefix} = getCurrentLocale(pathname);
 
   return (
     <section className="section-looks-slider section-main w-full px-4 md:px-0 h-fit">
@@ -75,7 +78,7 @@ export function SectionLooksSlider(props: SectionLooksSliderFragment) {
               const hasAllProducts = topHandle && bottomHandle && sleeveHandle;
 
               const configuratorUrl = hasAllProducts
-                ? `/pages/configurator?top=${encodeURIComponent(
+                ? `${pathPrefix}/pages/configurator?top=${encodeURIComponent(
                     topHandle,
                   )}&bottom=${encodeURIComponent(
                     bottomHandle,

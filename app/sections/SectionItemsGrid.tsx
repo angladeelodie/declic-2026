@@ -7,6 +7,10 @@ import {useMemo, useState} from 'react';
 
 type CategoryFilter = 'tops' | 'bottoms' | 'sleeves';
 
+// Shopify translates option names per locale — match all known translations.
+// Add the translation for each new language here (e.g. 'colore' for Italian).
+const COLOR_OPTION_NAMES = new Set(['color', 'couleur', 'colore']);
+
 const CATEGORY_FILTER_LABELS: Record<CategoryFilter, string> = {
   tops: 'tops',
   bottoms: 'bottoms',
@@ -68,7 +72,7 @@ export function SectionItemsGrid(props: SectionItemsGridFragment) {
 
         for (const variant of variants) {
           const colorOpt = variant.selectedOptions?.find(
-            (opt) => opt?.name?.toLowerCase() === 'color',
+            (opt) => COLOR_OPTION_NAMES.has(opt?.name?.toLowerCase() ?? ''),
           );
 
           // If this variant has no color option, you can either:
@@ -135,7 +139,7 @@ export function SectionItemsGrid(props: SectionItemsGridFragment) {
 
               // Find the color option for the URL
               const colorOption = variant?.selectedOptions?.find(
-                (opt) => opt?.name?.toLowerCase() === 'color',
+                (opt) => COLOR_OPTION_NAMES.has(opt?.name?.toLowerCase() ?? ''),
               );
 
               const variantUrl = colorOption

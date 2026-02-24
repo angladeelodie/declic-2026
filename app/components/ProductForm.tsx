@@ -4,6 +4,7 @@ import {AddToCartButton} from './AddToCartButton';
 import {useAside} from './Aside';
 import {OptionSwatch} from './OptionSwatch';
 import type {ProductFragment} from 'storefrontapi.generated';
+import {useTranslation} from '~/lib/useTranslation';
 export function ProductForm({
   productOptions,
   selectedVariant,
@@ -13,6 +14,7 @@ export function ProductForm({
 }) {
   const navigate = useNavigate();
   const {open} = useAside();
+  const {t} = useTranslation();
 
   const primaryOptions = productOptions.slice(0, 2);
   const secondaryOptions = productOptions.slice(2);
@@ -65,7 +67,7 @@ export function ProductForm({
           }
         >
           <span>
-            {selectedVariant?.availableForSale ? 'Add to cart' : 'Sold out'}
+          {selectedVariant?.availableForSale ? t('product.addToCart') : t('product.soldOut')}
           </span>
           <svg
             width="18"

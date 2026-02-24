@@ -1,0 +1,46 @@
+{
+  "cart": {
+    "title": "CART",
+    "summary": "Summary",
+    "subtotal": "Subtotal",
+    "total": "Total",
+    "couponCode": "Coupon code",
+    "giftCardCode": "Gift card code",
+    "apply": "Apply",
+    "remove": "Remove",
+    "order": "Order",
+    "empty": "Looks like you haven't added anything yet, let's get you started!",
+    "continueShopping": "Continue shopping →",
+    "loading": "Loading cart ...",
+    "appliedGiftCards": "Applied Gift Card(s)"
+  },
+  "product": {
+    "addToCart": "Add to cart",
+    "soldOut": "Sold out",
+    "backToShop": "Back to shop",
+    "completeYourLook": "Complete your look"
+  },
+  "search": {
+    "title": "SEARCH",
+    "placeholder": "Search",
+    "button": "Search",
+    "loading": "Loading...",
+    "articles": "Articles",
+    "collections": "Collections",
+    "pages": "Pages",
+    "products": "Products",
+    "noResultsFor": "No results found for",
+    "viewAllResultsFor": "View all results for"
+  },
+  "nav": {
+    "menu": "MENU",
+    "backToTop": "Back to top",
+    "close": "Close"
+  },
+  "footer": {
+    "pages": "Pages",
+    "legal": "Legal",
+    "findUs": "Find Us",
+    "contact": "Contact"
+  }
+}

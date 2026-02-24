@@ -1,0 +1,46 @@
+{
+  "cart": {
+    "title": "PANIER",
+    "summary": "Résumé",
+    "subtotal": "Sous-total",
+    "total": "Total",
+    "couponCode": "Code promo",
+    "giftCardCode": "Code carte cadeau",
+    "apply": "Appliquer",
+    "remove": "Supprimer",
+    "order": "Commander",
+    "empty": "Votre panier est vide, commencez vos achats !",
+    "continueShopping": "Continuer mes achats →",
+    "loading": "Chargement du panier...",
+    "appliedGiftCards": "Carte(s) cadeau appliquée(s)"
+  },
+  "product": {
+    "addToCart": "Ajouter au panier",
+    "soldOut": "Épuisé",
+    "backToShop": "Retour à la boutique",
+    "completeYourLook": "Complétez votre look"
+  },
+  "search": {
+    "title": "RECHERCHE",
+    "placeholder": "Rechercher",
+    "button": "Rechercher",
+    "loading": "Chargement...",
+    "articles": "Articles",
+    "collections": "Collections",
+    "pages": "Pages",
+    "products": "Produits",
+    "noResultsFor": "Aucun résultat pour",
+    "viewAllResultsFor": "Voir tous les résultats pour"
+  },
+  "nav": {
+    "menu": "MENU",
+    "backToTop": "Haut de page",
+    "close": "Fermer"
+  },
+  "footer": {
+    "pages": "Pages",
+    "legal": "Légal",
+    "findUs": "Nous trouver",
+    "contact": "Contact"
+  }
+}
