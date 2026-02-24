@@ -9,6 +9,8 @@ import {
   Scripts,
   ScrollRestoration,
   useRouteLoaderData,
+  useLocation,
+  Link,
 } from 'react-router';
 import type {Route} from './+types/root';
 import favicon from '~/assets/favicon.svg';
@@ -19,6 +21,8 @@ import tailwindCss from './styles/tailwind.css?url';
 import {PageLayout} from './components/PageLayout';
 import {CustomCursor} from './components/CustomCursor';
 import type {FooterMenus} from '~/components/Footer';
+import {getCurrentLocale} from '~/lib/i18n';
+import {useTranslation} from '~/lib/useTranslation';
 
 import type {FooterQuery} from 'storefrontapi.generated';
 
@@ -252,25 +256,41 @@ export default function App() {
 
 export function ErrorBoundary() {
   const error = useRouteError();
-  let errorMessage = 'Unknown error';
-  let errorStatus = 500;
+  const {pathname} = useLocation();
+  const {t} = useTranslation();
+  const {pathPrefix} = getCurrentLocale(pathname);
 
+  let errorStatus = 500;
   if (isRouteErrorResponse(error)) {
-    errorMessage = error?.data?.message ?? error.data;
     errorStatus = error.status;
-  } else if (error instanceof Error) {
-    errorMessage = error.message;
+  }
+
+  if (errorStatus === 404) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen px-6 text-center gap-6">
+        <p className="text-[120px] font-metalite font-bold uppercase">404</p>
+        <h1 className="text-title">{t('errors.notFound')}</h1>
+        <p className="text-body max-w-xs">{t('errors.notFoundDescription')}</p>
+        <Link
+          to={pathPrefix + '/'}
+          className="text-[13px] font-black uppercase border-b-2 border-black pb-0.5 leading-none hover:opacity-50 transition-opacity"
+        >
+          {t('errors.backToHome')}
+        </Link>
+      </div>
+    );
   }
 
   return (
-    <div className="route-error">
-      <h1>Oops</h1>
-      <h2>{errorStatus}</h2>
-      {errorMessage && (
-        <fieldset>
-          <pre>{errorMessage}</pre>
-        </fieldset>
-      )}
+    <div className="flex flex-col items-center justify-center min-h-screen px-6 text-center gap-4">
+      <p className="text-[80px] font-metalite uppercase leading-none">{errorStatus}</p>
+      <h1 className="text-title">Something went wrong</h1>
+      <Link
+        to="/"
+        className="text-[13px] font-black uppercase border-b-2 border-black pb-0.5 leading-none hover:opacity-50 transition-opacity"
+      >
+        Back to homepage →
+      </Link>
     </div>
   );
 }

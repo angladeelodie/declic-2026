@@ -133,3 +133,33 @@ export function LanguageSwitcher() {
     </div>
   );
 }
+
+export function MobileLanguageSwitcher() {
+  const {pathname} = useLocation();
+  const currentLocale = getCurrentLocale(pathname);
+  const uniqueLanguages = getUniqueLanguages();
+
+  return (
+    <div className="flex gap-3 pt-4 border-t border-gray-100 mt-4">
+      {uniqueLanguages.map((lang) => {
+        const isActive = lang === currentLocale.label;
+        return (
+          <Link
+            key={lang}
+            to={getNewUrl(pathname, currentLocale, lang)}
+            reloadDocument
+            aria-current={isActive ? 'true' : undefined}
+            className={[
+              'text-[13px] font-black uppercase leading-none',
+              isActive
+                ? 'border-b-2 border-black opacity-40 pointer-events-none'
+                : 'opacity-60 hover:opacity-100',
+            ].join(' ')}
+          >
+            {lang}
+          </Link>
+        );
+      })}
+    </div>
+  );
+}

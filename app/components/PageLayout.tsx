@@ -16,6 +16,7 @@ import {
 } from '~/components/SearchFormPredictive';
 import {SearchResultsPredictive} from '~/components/SearchResultsPredictive';
 import {useTranslation} from '~/lib/useTranslation';
+import {MobileLanguageSwitcher} from '~/components/LanguageSwitcher';
 
 interface PageLayoutProps {
   cart: Promise<CartApiQueryFragment | null>;
@@ -174,6 +175,7 @@ function MobileMenuAside({
           primaryDomainUrl={header.shop.primaryDomain.url}
           publicStoreDomain={publicStoreDomain}
         />
+        <MobileLanguageSwitcher />
       </Aside>
     )
   );

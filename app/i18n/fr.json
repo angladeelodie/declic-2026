@@ -42,5 +42,10 @@
     "legal": "Légal",
     "findUs": "Nous trouver",
     "contact": "Contact"
+  },
+  "errors": {
+    "notFound": "Page introuvable",
+    "notFoundDescription": "La page que vous recherchez n'existe pas.",
+    "backToHome": "Retour à l'accueil →"
   }
 }
