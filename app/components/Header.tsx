@@ -1,5 +1,5 @@
 import {Suspense} from 'react';
-import {Await, NavLink, useAsyncValue} from 'react-router';
+import {Await, NavLink, useAsyncValue, useLocation} from 'react-router';
 import {
   type CartViewPayload,
   useAnalytics,
@@ -7,6 +7,8 @@ import {
 } from '@shopify/hydrogen';
 import type {HeaderQuery, CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
+import {LanguageSwitcher} from '~/components/LanguageSwitcher';
+import {getCurrentLocale} from '~/lib/i18n';
 
 interface HeaderProps {
   header: HeaderQuery;
@@ -24,6 +26,8 @@ export function Header({
   publicStoreDomain,
 }: HeaderProps) {
   const {shop, menu} = header;
+  const {pathname} = useLocation();
+  const currentLocale = getCurrentLocale(pathname);
   return (
     <header className="sticky z-100 top-0 flex items-center justify-between w-full px-4 mb-4 md:px-8 bg-white h-[var(--header-height)] border-b border-gray-100">
       {/* 1. Mobile: Burger Menu (Left) */}
@@ -33,7 +37,7 @@ export function Header({
 
       {/* 2. Logo: Left on Desktop, Centered on Mobile */}
       <div className="flex items-center justify-center flex-1 md:flex-none md:justify-start">
-        <NavLink prefetch="intent" to="/" style={activeLinkStyle} end className="no-underline">
+        <NavLink prefetch="intent" to={currentLocale.pathPrefix + '/'} style={activeLinkStyle} end className="no-underline">
           <strong className="text-xl font-black tracking-tighter text-black uppercase">
             {shop.name}
           </strong>
@@ -68,6 +72,8 @@ export function HeaderMenu({
   publicStoreDomain: HeaderProps['publicStoreDomain'];
 }) {
   const {close} = useAside();
+  const {pathname} = useLocation();
+  const currentLocale = getCurrentLocale(pathname);
 
   const className =
     viewport === 'desktop'
@@ -98,12 +104,17 @@ export function HeaderMenu({
         //   );
         // }
 
-        const url =
+        const rawPath =
           item.url.includes('myshopify.com') ||
           item.url.includes(publicStoreDomain) ||
           item.url.includes(primaryDomainUrl)
             ? new URL(item.url).pathname
             : item.url;
+
+        // Shopify may return paths with its own locale prefix (e.g. /fr/pages/shop).
+        // Strip it, then prepend our locale's pathPrefix so links stay locale-aware.
+        const cleanPath = rawPath.replace(/^\/[a-z]{2}(\/|$)/, '/');
+        const url = currentLocale.pathPrefix + cleanPath;
 
         return (
           <NavLink
@@ -129,9 +140,7 @@ function HeaderCtas({
 }: Pick<HeaderProps, 'isLoggedIn' | 'cart'>) {
   return (
     <nav className="flex items-center gap-4" role="navigation">
-      <button className="hidden md:block text-[13px] font-black border-b-2 border-black pb-0.5 leading-none uppercase">
-        EN
-      </button>
+      <LanguageSwitcher />
       <CartToggle cart={cart} />
     </nav>
   );

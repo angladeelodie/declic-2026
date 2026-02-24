@@ -26,7 +26,7 @@ function isColorOption(optionName: string): boolean {
 function outerCls(selected: boolean, disabled = false) {
   return [
     'w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all duration-200 overflow-hidden shrink-0',
-    selected ? 'border-black scale-110' : 'border-gray-200 hover:border-gray-400',
+    selected ? 'border-black scale-105' : 'border-gray-200 hover:border-gray-400',
     disabled ? 'opacity-20 cursor-not-allowed' : '',
   ]
     .filter(Boolean)
@@ -51,7 +51,7 @@ function SwatchInner({optionName, value}: {optionName: string; value: string}) {
   }
 
   return (
-    <span className="text-[10px] font-bold uppercase leading-none text-center">
+    <span className="text-md text-metalite uppercase leading-none text-center">
       {value}
     </span>
   );

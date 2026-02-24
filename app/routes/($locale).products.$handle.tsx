@@ -120,7 +120,7 @@ export default function Product() {
 
         <div className="grid grid-rows-2 col-span-1 lg:grid-rows-1 grid-cols-6 lg:grid-cols-12 gap-4 lg:min-h-[80vh] overflow-hidden">
           {/* Thumbnail Column */}
-          <div className="lg:col-start-1 lg:col-span-1 lg:h-[80vh] lg:overflow-y-auto flex flex-col gap-4">
+          <div className="lg:col-start-1 lg:col-span-1 lg:h-[80vh] lg:overflow-y-auto flex flex-col gap-2">
             {product.media.edges.map((media) => (
               <button
                 key={media.node.id}
