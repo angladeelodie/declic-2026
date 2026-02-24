@@ -24,7 +24,7 @@ export function Footer({
     <Suspense>
       <Await resolve={footerPromise}>
         {(footer: FooterMenus) => (
-          <footer className="w-full bg-white text-slate-900 py-12 border-t border-slate-100">
+          <footer className="w-full bg-white text-slate-900 py-12 px-4 border-t border-slate-100">
             <FooterMenu
               pagesMenu={footer.pages}
               legalMenu={footer.legal}

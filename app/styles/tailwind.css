@@ -54,7 +54,7 @@
     }
 
     .section-main {
-        @apply w-full grid h-[90vh] md:h-[90vh] grid-cols-6 lg:grid-cols-12 pb-16 gap-4 px-4 md:px-0;
+        @apply w-full grid h-[90vh] md:h-[90vh] grid-cols-6 lg:grid-cols-12 pb-16 gap-4 px-4;
     }
 }
 

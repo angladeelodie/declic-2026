@@ -5,6 +5,7 @@ import {ConfiguratorCanvas} from '~/components/ConfiguratorCanvas';
 import {AddToCartButton} from '~/components/AddToCartButton';
 import {useAside} from '~/components/Aside';
 import {OptionSwatchGroup} from '~/components/OptionSwatchGroup';
+import {normalizeSwatchColor} from '~/components/OptionSwatch';
 
 // ─── Local types ────────────────────────────────────────────────────────────
 type VariantNode = {
@@ -186,6 +187,10 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
   const sleeveModelUrl =
     selectedProducts.sleeves?.model?.reference?.sources[0]?.url ?? null;
 
+  const topColor    = normalizeSwatchColor(allOptions.tops.color    ?? '');
+  const bottomColor = normalizeSwatchColor(allOptions.bottoms.color ?? '');
+  const sleeveColor = normalizeSwatchColor(allOptions.sleeves.color ?? '');
+
   const active = categoryMap[activeCategory];
   const activeOptions = allOptions[activeCategory];
   const activeProduct = selectedProducts[activeCategory];
@@ -223,7 +228,7 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
               <button
                 type="button"
                 onClick={() => handleSelectProduct(product.handle)}
-                className={`h-full w-full border-2 rounded-md ${
+                className={`h-full w-full border-2 rounded-xl overflow-hidden ${
                   isSelected
                     ? 'border-black'
                     : 'border-transparent hover:border-gray-300'
@@ -312,7 +317,8 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
             values={colors}
             selected={activeOptions.color}
             onSelect={(color) => setActiveOptions((prev) => ({...prev, color}))}
-            orientation="column"
+            orientation="row"
+            className='self-center'
           />
         </div>
 
@@ -416,6 +422,9 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
               topModelUrl={topModelUrl}
               bottomModelUrl={bottomModelUrl}
               sleeveModelUrl={sleeveModelUrl}
+              topColor={topColor}
+              bottomColor={bottomColor}
+              sleeveColor={sleeveColor}
             />
           </div>
         </div>

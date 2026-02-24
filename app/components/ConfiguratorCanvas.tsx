@@ -7,17 +7,44 @@ type ConfiguratorCanvasProps = {
   topModelUrl: string | null;
   bottomModelUrl: string | null;
   sleeveModelUrl: string | null;
+  topColor: string | null;
+  bottomColor: string | null;
+  sleeveColor: string | null;
 };
 
 export function ConfiguratorCanvas({
   topModelUrl,
   bottomModelUrl,
   sleeveModelUrl,
+  topColor,
+  bottomColor,
+  sleeveColor,
 }: ConfiguratorCanvasProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
   const loaderRef = useRef(new GLTFLoader());
   const garmentRefs = useRef<{ top?: THREE.Object3D; bottom?: THREE.Object3D; sleeve?: THREE.Object3D }>({});
+  const colorRefs = useRef<{top: string | null; bottom: string | null; sleeve: string | null}>({top: null, bottom: null, sleeve: null});
+
+  // Keep color refs in sync with props so async load callbacks can read the latest value
+  colorRefs.current.top    = topColor;
+  colorRefs.current.bottom = bottomColor;
+  colorRefs.current.sleeve = sleeveColor;
+
+  function applyColorToGarment(garment: THREE.Object3D, hexColor: string) {
+    const color = new THREE.Color(hexColor);
+    garment.traverse((child) => {
+      if ((child as THREE.Mesh).isMesh) {
+        const mesh = child as THREE.Mesh;
+        const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+        mats.forEach((mat) => {
+          if ((mat as THREE.MeshStandardMaterial).color) {
+            (mat as THREE.MeshStandardMaterial).color.set(color);
+          }
+        });
+      }
+    });
+  }
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -48,18 +75,18 @@ export function ConfiguratorCanvas({
     scene.add(new THREE.AmbientLight(0xffffff, 0.4)); // Soft overall light
 
     // Key Light: Main source
-    const keyLight = new THREE.DirectionalLight(0xffffff, 1.2);
+    const keyLight = new THREE.DirectionalLight(0xffffff, 3.2);
     keyLight.position.set(5, 5, 5);
     keyLight.castShadow = true;
     scene.add(keyLight);
 
     // Fill Light: Softens shadows from the other side
-    const fillLight = new THREE.DirectionalLight(0xffffff, 0.6);
+    const fillLight = new THREE.DirectionalLight(0xffffff, 1.6);
     fillLight.position.set(-5, 2, 2);
     scene.add(fillLight);
 
     // Back Light: Creates a "rim" effect to separate model from background
-    const rimLight = new THREE.DirectionalLight(0xffffff, 1.0);
+    const rimLight = new THREE.DirectionalLight(0xffffff, 2.0);
     rimLight.position.set(0, 5, -5);
     scene.add(rimLight);
 
@@ -158,6 +185,10 @@ export function ConfiguratorCanvas({
 
       garmentRefs.current[key] = model;
       scene.add(model);
+
+      // Apply color immediately if one is already selected
+      const hex = colorRefs.current[key];
+      if (hex) applyColorToGarment(model, hex);
     });
   }
 };
@@ -165,6 +196,10 @@ export function ConfiguratorCanvas({
   useEffect(() => { updateGarment(topModelUrl, 'top'); }, [topModelUrl]);
   useEffect(() => { updateGarment(bottomModelUrl, 'bottom'); }, [bottomModelUrl]);
   useEffect(() => { updateGarment(sleeveModelUrl, 'sleeve'); }, [sleeveModelUrl]);
+
+  useEffect(() => { if (topColor    && garmentRefs.current.top)    applyColorToGarment(garmentRefs.current.top,    topColor);    }, [topColor]);
+  useEffect(() => { if (bottomColor && garmentRefs.current.bottom) applyColorToGarment(garmentRefs.current.bottom, bottomColor); }, [bottomColor]);
+  useEffect(() => { if (sleeveColor && garmentRefs.current.sleeve) applyColorToGarment(garmentRefs.current.sleeve, sleeveColor); }, [sleeveColor]);
 
   return <div ref={containerRef} className="w-full h-full" />;
 }
