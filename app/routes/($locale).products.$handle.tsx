@@ -1,4 +1,4 @@
-import {redirect, useLoaderData, Link} from 'react-router';
+import {redirect, useLoaderData, Link, Await} from 'react-router';
 import type {Route} from './+types/products.$handle';
 import {
   getSelectedProductOptions,
@@ -17,7 +17,7 @@ import {Accordion, AccordionItem} from '~/components/Accordion';
 import {ProductImage} from '~/components/ProductImage';
 import {ProductForm} from '~/components/ProductForm';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
-import {useState, useEffect} from 'react';
+import {useState, useEffect, Suspense} from 'react';
 import {RichText} from '@shopify/hydrogen';
 import ArrowSvg from '../assets/arrow.svg'; // adjust path as needed
 import {STYLE_MAP, STYLE_MAP_LENGTH} from '~/lib/styleMap';
@@ -59,8 +59,19 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
 
   redirectIfHandleIsLocalized(request, {handle, data: product});
 
+  const recommendations = storefront
+    .query(CYL_PRODUCTS_QUERY, {
+      variables: {
+        country: storefront.i18n.country,
+        language: storefront.i18n.language,
+      },
+    })
+    .then((d) => (d.products?.nodes ?? []).filter((p: any) => p.id !== product.id))
+    .catch(() => []);
+
   return {
     product,
+    recommendations,
   };
 }
 
@@ -69,7 +80,7 @@ function loadDeferredData({context, params}: Route.LoaderArgs) {
 }
 
 export default function Product() {
-  const {product} = useLoaderData<typeof loader>();
+  const {product, recommendations} = useLoaderData<typeof loader>();
 
   const selectedVariant = useOptimisticVariant(
     product.selectedOrFirstAvailableVariant,
@@ -214,16 +225,65 @@ export default function Product() {
               <h3 className="text-metalite text-emphasis font-bold mb-4">
                 Complete your look
               </h3>
-              <div className="grid grid-cols-4 gap-3">
-                {[1, 2, 3, 4].map((i) => (
-                  <div
-                    key={i}
-                    className="aspect-square bg-gray-100 rounded-[30px] overflow-hidden"
-                  >
-                    <div className="w-full h-full bg-[#dcdcdc]" />
-                  </div>
-                ))}
-              </div>
+              <Suspense fallback={
+                <div className="grid grid-cols-4 gap-3">
+                  {[0, 1, 2, 3].map((i) => (
+                    <div key={i} className="aspect-square bg-gray-100 rounded-[30px] overflow-hidden">
+                      <div className="w-full h-full bg-[#dcdcdc] animate-pulse" />
+                    </div>
+                  ))}
+                </div>
+              }>
+                <Await resolve={recommendations}>
+                  {(recs: any[]) => {
+                    const COLOR_NAMES = new Set(['color', 'couleur', 'colore']);
+                    const BLACK_TERMS = new Set(['black', 'noir', 'nero']);
+                    const WHITE_TERMS = new Set(['white', 'blanc', 'bianco']);
+
+                    const tiles = recs.slice(0, 8).map((rec: any, i: number) => {
+                      const variants = rec.variants?.nodes ?? [];
+                      let blackImg = null, whiteImg = null;
+                      for (const v of variants) {
+                        const colorOpt = v.selectedOptions?.find(
+                          (o: any) => COLOR_NAMES.has(o.name?.toLowerCase() ?? ''),
+                        );
+                        const colorVal = colorOpt?.value?.toLowerCase() ?? '';
+                        if (!blackImg && BLACK_TERMS.has(colorVal) && v.image) blackImg = v.image;
+                        if (!whiteImg && WHITE_TERMS.has(colorVal) && v.image) whiteImg = v.image;
+                      }
+                      // Alternate: even index prefers black, odd prefers white
+                      const img =
+                        (i % 2 === 0 ? blackImg ?? whiteImg : whiteImg ?? blackImg)
+                        ?? rec.featuredImage
+                        ?? variants[0]?.image
+                        ?? null;
+                      return {rec, img};
+                    }).filter(({img}: any) => img !== null).slice(0, 4);
+
+                    return tiles.length > 0 ? (
+                      <div className="grid grid-cols-4 gap-3">
+                        {tiles.map(({rec, img}: any) => (
+                            <Link
+                              key={rec.id}
+                              to={`/products/${rec.handle}`}
+                              prefetch="intent"
+                              className="aspect-square overflow-hidden rounded-[30px] bg-[#f9f9f9] block hover:opacity-80 transition-opacity"
+                            >
+                              {img && (
+                                <img
+                                  src={img.url}
+                                  alt={img.altText || rec.title}
+                                  className="w-full h-full object-cover"
+                                  loading="lazy"
+                                />
+                              )}
+                            </Link>
+                          ))}
+                      </div>
+                    ) : null;
+                  }}
+                </Await>
+              </Suspense>
             </footer>
           </div>
         </div>
@@ -397,4 +457,36 @@ const PRODUCT_QUERY = `#graphql
     }
   }
   ${PRODUCT_FRAGMENT}
+` as const;
+
+const CYL_PRODUCTS_QUERY = `#graphql
+  query CYLProducts(
+    $country: CountryCode
+    $language: LanguageCode
+  ) @inContext(country: $country, language: $language) {
+    products(first: 20, sortKey: BEST_SELLING) {
+      nodes {
+        id
+        title
+        handle
+        featuredImage {
+          url
+          altText
+        }
+        variants(first: 10) {
+          nodes {
+            id
+            image {
+              url
+              altText
+            }
+            selectedOptions {
+              name
+              value
+            }
+          }
+        }
+      }
+    }
+  }
 ` as const;
