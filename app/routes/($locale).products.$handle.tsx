@@ -19,6 +19,9 @@ import {ProductForm} from '~/components/ProductForm';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {useState, useEffect} from 'react';
 import {RichText} from '@shopify/hydrogen';
+import ArrowSvg from '../assets/arrow.svg'; // adjust path as needed
+import {STYLE_MAP, STYLE_MAP_LENGTH} from '~/lib/styleMap';
+import {AnimatePresence, motion} from 'framer-motion';
 
 export const meta: Route.MetaFunction = ({data}) => {
   return [
@@ -89,32 +92,31 @@ export default function Product() {
 
   const {title, descriptionHtml} = product;
 
+  const [currentStyle, setCurrentStyle] = useState(5);
+
+  const handleThumbnailClick = (image: typeof selectedVariant.image) => {
+    setFeaturedImage(image);
+    setCurrentStyle((s) => (s + 1) % STYLE_MAP_LENGTH);
+  };
+
   // --- Information panels from metafield ---
   const informationPanels = product.informationPanels?.references?.nodes ?? [];
 
   return (
     <Reveal>
-      <div className="w-full h-full">
+      <div className="w-full h-full p-4">
         {/* Back to shop */}
         <Link
           to="/pages/shop"
-          className="inline-flex items-center text-metalite gap-2 mb-6 transition-colors duration-200 group"
+          className="inline-flex items-center text-metalite gap-2 mb-6 transition-transform duration-200 group"
         >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="group-hover:-translate-x-0.5 transition-transform duration-200"
-            aria-hidden="true"
-          >
-            <path d="M19 12H5" />
-            <path d="m12 19-7-7 7-7" />
-          </svg>
+           <img
+              src={ArrowSvg}
+              alt="arrow"
+              className="w-4 h-4 scale-x-[-1]
+          transition-transform duration-200 ease-out
+          group-hover:translate-x-[-5px]"
+            />
           Back to shop
         </Link>
 
@@ -124,7 +126,7 @@ export default function Product() {
             {product.media.edges.map((media) => (
               <button
                 key={media.node.id}
-                onClick={() => setFeaturedImage(media.node.image)}
+                onClick={() => handleThumbnailClick(media.node.image)}
                 className={`w-full shrink-0 rounded-lg overflow-hidden group border-2 transition-all ${
                   featuredImage?.url === media.node.image.url
                     ? 'border-black'
@@ -146,8 +148,19 @@ export default function Product() {
           {/* Main Image Column */}
           <div className="col-span-5 md:col-span-4 md:col-start-2 lg:col-start-2 lg:col-span-5 h-full lg:h-[80vh] min-h-0 relative">
             <div className="absolute inset-0 w-full h-full">
-              <div className="w-full h-full overflow-hidden rounded-[var(--radius-sharp)_var(--radius-round)_var(--radius-sharp)_var(--radius-round)] bg-[#f9f9f9] product-image-fade" key={featuredImage?.url ?? 'empty'}>
-                <ProductImage image={featuredImage} />
+              <div className={`w-full h-full overflow-hidden ${STYLE_MAP[currentStyle]} bg-[#f9f9f9] transition-[border-radius] duration-700 ease-in-out`}>
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={featuredImage?.url ?? 'empty'}
+                    className="w-full h-full"
+                    initial={{opacity: 0}}
+                    animate={{opacity: 1}}
+                    exit={{opacity: 0}}
+                    transition={{duration: 0.25, ease: 'easeInOut'}}
+                  >
+                    <ProductImage image={featuredImage} />
+                  </motion.div>
+                </AnimatePresence>
               </div>
             </div>
           </div>
@@ -205,9 +218,9 @@ export default function Product() {
                 {[1, 2, 3, 4].map((i) => (
                   <div
                     key={i}
-                    className="aspect-square bg-gray-100 rounded-tr-2xl rounded-bl-2xl overflow-hidden cursor-pointer hover:opacity-80 transition-opacity"
+                    className="aspect-square bg-gray-100 rounded-[30px] overflow-hidden"
                   >
-                    <div className="w-full h-full bg-[#dcdcdc] animate-pulse" />
+                    <div className="w-full h-full bg-[#dcdcdc]" />
                   </div>
                 ))}
               </div>
