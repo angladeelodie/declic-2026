@@ -6,6 +6,7 @@ import {CartLineItem} from '~/components/CartLineItem';
 import {CartSummary} from './CartSummary';
 import {useTranslation} from '~/lib/useTranslation';
 import {getCurrentLocale} from '~/lib/i18n';
+import {LinkButton} from './LinkButton';
 
 export type CartLayout = 'page' | 'aside';
 
@@ -79,11 +80,14 @@ function CartEmpty({
   return (
     <div hidden={hidden}>
       <br />
-      <p>{t('cart.empty')}</p>
+      <p className='text-body leading-tight'>{t('cart.empty')}</p>
       <br />
-      <Link to={pathPrefix + '/collections'} onClick={close} prefetch="viewport">
-        {t('cart.continueShopping')}
-      </Link>
+      <LinkButton
+        onClick={close}
+        href={pathPrefix + '/pages/shop'}
+        text={t('cart.continueShopping')}
+        className="text-emphasis"
+      />
     </div>
   );
 }

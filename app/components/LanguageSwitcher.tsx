@@ -1,5 +1,6 @@
 import {useState, useEffect, useRef} from 'react';
 import {Link, useLocation} from 'react-router';
+import {motion, AnimatePresence} from 'framer-motion';
 import {SUPPORTED_LOCALES, getCurrentLocale} from '~/lib/i18n';
 import type {LocaleEntry} from '~/lib/i18n';
 
@@ -91,7 +92,7 @@ export function LanguageSwitcher() {
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="text-[13px] font-black border-b-2 border-black pb-0.5 leading-none uppercase"
+        className="text-[13px] font-black leading-none uppercase"
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         aria-label="Select language"
@@ -99,37 +100,43 @@ export function LanguageSwitcher() {
         {currentLocale.label}
       </button>
 
-      {isOpen && (
-        <ul
-          role="listbox"
-          aria-label="Language options"
-          className="absolute right-0 top-full mt-2 bg-white border border-black min-w-[3rem] z-50"
-        >
-          {uniqueLanguages.map((lang) => {
-            const newUrl = getNewUrl(pathname, currentLocale, lang);
-            const isActive = lang === currentLocale.label;
+      <AnimatePresence>
+        {isOpen && (
+          <motion.ul
+            role="listbox"
+            aria-label="Language options"
+            initial={{opacity: 0, y: -6}}
+            animate={{opacity: 1, y: 0}}
+            exit={{opacity: 0, y: -6}}
+            transition={{duration: 0.15, ease: 'easeOut'}}
+            className="absolute right-0 top-full mt-2 bg-white shadow-md min-w-[3rem] z-50"
+          >
+            {uniqueLanguages.map((lang) => {
+              const newUrl = getNewUrl(pathname, currentLocale, lang);
+              const isActive = lang === currentLocale.label;
 
-            return (
-              <li key={lang} role="option" aria-selected={isActive}>
-                <Link
-                  to={newUrl}
-                  reloadDocument
-                  onClick={() => setIsOpen(false)}
-                  className={[
-                    'block px-3 py-2 text-[13px] font-black uppercase leading-none no-underline',
-                    'transition-colors hover:bg-black hover:text-white',
-                    isActive ? 'opacity-40 pointer-events-none' : '',
-                  ]
-                    .join(' ')
-                    .trim()}
-                >
-                  {lang}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-      )}
+              return (
+                <li key={lang} role="option" aria-selected={isActive}>
+                  <Link
+                    to={newUrl}
+                    reloadDocument
+                    onClick={() => setIsOpen(false)}
+                    className={[
+                      'block px-3 py-2 text-[13px] font-black uppercase leading-none no-underline',
+                      'transition-colors hover:bg-black hover:text-white',
+                      isActive ? 'opacity-40 pointer-events-none' : '',
+                    ]
+                      .join(' ')
+                      .trim()}
+                  >
+                    {lang}
+                  </Link>
+                </li>
+              );
+            })}
+          </motion.ul>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

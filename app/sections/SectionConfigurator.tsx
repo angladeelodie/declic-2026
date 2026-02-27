@@ -419,13 +419,13 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
                     {activeVariant?.price && (
                       <div className="flex flex-col items-end shrink-0 pl-4">
                         {activeProduct?.title && (
-                          <div className="uppercase text-xs tracking-wide text-gray-400 leading-tight">
+                          <div className="uppercase text-metalite leading-tight">
                             {activeProduct.title}
                           </div>
                         )}
-                        <div className="uppercase tabular-nums text-right">
+                        <div className="uppercase tabular-nums font-bold leading-tight">
                           {parseFloat(activeVariant.price.amount).toFixed(0)}{' '}
-                          {activeVariant.price.currencyCode === 'CHF' ? 'chf.' : activeVariant.price.currencyCode}
+                          {activeVariant.price.currencyCode}
                         </div>
                       </div>
                     )}
@@ -441,12 +441,12 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
           {/* Total price */}
           {outfitTotalPrice > 0 && (
             <div className="flex flex-col items-center lg:items-start">
-              <div className="uppercase text-xs tracking-wide text-gray-400 leading-tight">
+              <div className="uppercase text-metalite leading-tight">
                 Total
               </div>
-              <div className="uppercase tabular-nums font-bold">
+              <div className="uppercase tabular-nums font-bold leading-tight">
                 {outfitTotalPrice.toFixed(0)}{' '}
-                {outfitCurrency === 'CHF' ? 'chf.' : outfitCurrency}
+                {outfitCurrency}
               </div>
             </div>
           )}
