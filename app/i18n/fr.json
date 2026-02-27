@@ -23,6 +23,9 @@
   "collection": {
     "all": "Tous"
   },
+  "configurator": {
+    "selectCategory": "Sélectionnez une catégorie pour personnaliser votre tenue"
+  },
   "search": {
     "title": "RECHERCHE",
     "placeholder": "Rechercher",

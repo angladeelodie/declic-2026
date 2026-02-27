@@ -1,11 +1,13 @@
 import {useSearchParams} from 'react-router';
 import {useState, useEffect, useCallback} from 'react';
+import {motion, AnimatePresence} from 'framer-motion';
 import type {SectionConfiguratorFragment} from 'storefrontapi.generated';
 import {ConfiguratorCanvas} from '~/components/ConfiguratorCanvas';
 import {AddToCartButton} from '~/components/AddToCartButton';
 import {useAside} from '~/components/Aside';
 import {OptionSwatchGroup} from '~/components/OptionSwatchGroup';
 import {normalizeSwatchColor} from '~/components/OptionSwatch';
+import {useTranslation} from '~/lib/useTranslation';
 
 // ─── Local types ────────────────────────────────────────────────────────────
 type VariantNode = {
@@ -29,6 +31,9 @@ type OptionSelection = {size: string | null; color: string | null};
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 const WELCOME_KEY = 'hasSeenConfiguratorWelcome';
+
+// Option names that represent a color — everything else is treated as a size.
+const COLOR_OPT_NAMES = new Set(['color', 'couleur', 'colore']);
 
 // Reads directly from product.options — not paginated, always complete.
 function getOptionValues(
@@ -55,25 +60,24 @@ function resolveVariant(
     const opts = Object.fromEntries(
       v.selectedOptions.map((o) => [o.name.toLowerCase(), o.value]),
     );
+    // Size: match against any non-color option
     const sizeOk =
       !size ||
-      opts['size'] === size ||
-      opts['taille'] === size ||
-      opts['accessory size'] === size;
+      Object.entries(opts).some(
+        ([key, val]) => !COLOR_OPT_NAMES.has(key) && val === size,
+      );
     const colorOk =
-      !color || opts['color'] === color || opts['couleur'] === color;
+      !color || opts['color'] === color || opts['couleur'] === color || opts['colore'] === color;
     return sizeOk && colorOk;
   });
 
   if (match) return match;
 
-  // Fall back: match size only
+  // Fall back: match size only (against any non-color option)
   if (size) {
     const sizeOnly = nodes.find((v) =>
       v.selectedOptions.some(
-        (o) =>
-          o.name.toLowerCase() === 'size' ||
-          (o.name.toLowerCase() === 'taille' && o.value === size),
+        (o) => !COLOR_OPT_NAMES.has(o.name.toLowerCase()) && o.value === size,
       ),
     );
     if (sizeOnly) return sizeOnly;
@@ -87,6 +91,7 @@ function resolveVariant(
 export function SectionConfigurator(props: SectionConfiguratorFragment) {
   const [searchParams, setSearchParams] = useSearchParams();
   const {open} = useAside();
+  const {t} = useTranslation();
 
   const tops = (props.tops_collection?.reference?.products?.nodes ??
     []) as ProductNode[];
@@ -95,28 +100,29 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
   const sleeves = (props.sleeves_collection?.reference?.products?.nodes ??
     []) as ProductNode[];
 
-  // Fall back to first product in each category when URL has no selection
-  const selectedTopHandle =
-    searchParams.get('top') ?? tops[0]?.handle ?? null;
-  const selectedBottomHandle =
-    searchParams.get('bottom') ?? bottoms[0]?.handle ?? null;
-  const selectedSleeveHandle =
-    searchParams.get('sleeve') ?? sleeves[0]?.handle ?? null;
+  // 'none' is the sentinel written to the URL when a user explicitly deselects a product.
+  // Without it, the absence of a param would fall back to the first product.
+  const rawTop    = searchParams.get('top');
+  const rawBottom = searchParams.get('bottom');
+  const rawSleeve = searchParams.get('sleeve');
+
+  const selectedTopHandle    = rawTop    === 'none' ? null : (rawTop    ?? tops[0]?.handle    ?? null);
+  const selectedBottomHandle = rawBottom === 'none' ? null : (rawBottom ?? bottoms[0]?.handle ?? null);
+  const selectedSleeveHandle = rawSleeve === 'none' ? null : (rawSleeve ?? sleeves[0]?.handle ?? null);
 
   const [activeCategory, setActiveCategory] = useState<
     'tops' | 'bottoms' | 'sleeves' | null
   >(null);
   const [showWelcome, setShowWelcome] = useState(true);
   const [isFading, setIsFading] = useState(false);
-  const [quantity, setQuantity] = useState(1);
 
-  // Per-category size + color selection (keyed by category name)
+  // Per-category size + color selection — XS pre-selected as default
   const [allOptions, setAllOptions] = useState<
     Record<'tops' | 'bottoms' | 'sleeves', OptionSelection>
   >({
-    tops: {size: null, color: null},
-    bottoms: {size: null, color: null},
-    sleeves: {size: null, color: null},
+    tops:    {size: 'XS', color: null},
+    bottoms: {size: 'XS', color: null},
+    sleeves: {size: 'XS', color: null},
   });
 
   // ── localStorage welcome check ──────────────────────────────────
@@ -157,15 +163,16 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
 
   function handleSelectProduct(handle: string) {
     if (!activeCategory) return;
-    const {urlKey} = categoryMap[activeCategory];
+    const {urlKey, selectedHandle: currentHandle} = categoryMap[activeCategory];
+    const deselecting = handle === currentHandle;
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
-      next.set(urlKey, handle);
+      next.set(urlKey, deselecting ? 'none' : handle);
       return next;
     });
     setAllOptions((prev) => ({
       ...prev,
-      [activeCategory]: {size: null, color: null},
+      [activeCategory]: {size: 'XS', color: null},
     }));
   }
 
@@ -202,19 +209,50 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
   const activeOptions = activeCategory ? allOptions[activeCategory] : {size: null, color: null};
   const activeProduct = activeCategory ? selectedProducts[activeCategory] : null;
 
-  // Sizes & colors from product.options (always complete, not paginated)
-  const sizes = getOptionValues(activeProduct, 'size')
-    .concat(getOptionValues(activeProduct, 'taille'))
-    .concat(getOptionValues(activeProduct, 'accessory size'));
-  const colors = getOptionValues(activeProduct, 'color').concat(
-    getOptionValues(activeProduct, 'couleur'),
-  );
+  // Sizes = all option values that are NOT a color option (handles any option name)
+  const sizes = (activeProduct?.options ?? [])
+    .filter((o) => !COLOR_OPT_NAMES.has(o.name.toLowerCase()))
+    .flatMap((o) => o.values);
+  const colors = getOptionValues(activeProduct, 'color')
+    .concat(getOptionValues(activeProduct, 'couleur'))
+    .concat(getOptionValues(activeProduct, 'colore'));
+
+  // Default to the first available color when none is explicitly chosen
+  const effectiveColor = activeOptions.color ?? colors[0] ?? null;
 
   const activeVariant = resolveVariant(
     activeProduct,
     activeOptions.size,
-    activeOptions.color,
+    effectiveColor,
   );
+
+  // ── Outfit-wide cart logic ────────────────────────────────────────
+  // Resolve a variant for every selected product across all three categories.
+  const outfitVariants = (
+    [
+      {product: selectedProducts.tops,    opts: allOptions.tops},
+      {product: selectedProducts.bottoms, opts: allOptions.bottoms},
+      {product: selectedProducts.sleeves, opts: allOptions.sleeves},
+    ] as const
+  )
+    .map(({product, opts}) => {
+      const productColors = getOptionValues(product, 'color')
+        .concat(getOptionValues(product, 'couleur'))
+        .concat(getOptionValues(product, 'colore'));
+      const color = opts.color ?? productColors[0] ?? null;
+      return resolveVariant(product, opts.size, color);
+    })
+    .filter((v): v is VariantNode => v !== null);
+
+  const outfitCartLines = outfitVariants
+    .filter((v) => v.availableForSale)
+    .map((v) => ({merchandiseId: v.id, quantity: 1}));
+  const outfitAvailable = outfitVariants.some((v) => v.availableForSale);
+  const outfitTotalPrice = outfitVariants.reduce(
+    (sum, v) => sum + parseFloat(v.price.amount),
+    0,
+  );
+  const outfitCurrency = outfitVariants[0]?.price.currencyCode ?? '';
 
   // ── Sub-renderers ────────────────────────────────────────────────
   function renderProductThumbnails() {
@@ -313,90 +351,119 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
         </div>
 
         {/* 3 & 1 — Thumbnails, colour swatches and size selector (hidden when no category selected) */}
-        {activeCategory && (
-          <>
-            <div className="flex flex-col-reverse lg:flex-row gap-4">
-              <div className="flex-1 overflow-x-auto">
-                {renderProductThumbnails()}
-              </div>
-              <OptionSwatchGroup
-                optionName="color"
-                values={colors}
-                selected={activeOptions.color}
-                onSelect={(color) => setActiveOptions((prev) => ({...prev, color}))}
-                orientation="row"
-                className='self-center'
-              />
-            </div>
+        <AnimatePresence mode="wait">
+          {!activeCategory ? (
+            <motion.p
+              key="hint"
+              initial={{opacity: 0}}
+              animate={{opacity: 1}}
+              exit={{opacity: 0}}
+              transition={{duration: 0.18}}
+              className="text-center lg:text-left py-2"
+            >
+              {t('configurator.selectCategory')}
+            </motion.p>
+          ) : (
+            <motion.div
+              key={activeCategory}
+              initial={{opacity: 0, y: 10}}
+              animate={{opacity: 1, y: 0}}
+              exit={{opacity: 0, y: -6}}
+              transition={{duration: 0.18, ease: 'easeOut'}}
+              className="flex flex-col gap-4"
+            >
+              <motion.div layout className="flex flex-col-reverse lg:flex-row gap-4">
+                <motion.div layout className="flex-1 overflow-x-auto">
+                  {renderProductThumbnails()}
+                </motion.div>
+                <AnimatePresence>
+                  {colors.length > 0 && (
+                    <motion.div
+                      layout
+                      key="product-colors"
+                      initial={{opacity: 0}}
+                      animate={{opacity: 1}}
+                      exit={{opacity: 0}}
+                      transition={{duration: 0.2}}
+                      className="self-center"
+                    >
+                      <OptionSwatchGroup
+                        optionName="color"
+                        values={colors}
+                        selected={effectiveColor}
+                        onSelect={(color) => setActiveOptions((prev) => ({...prev, color}))}
+                        orientation="row"
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
 
-            <OptionSwatchGroup
-              optionName="size"
-              values={sizes}
-              selected={activeOptions.size}
-              onSelect={(size) => setActiveOptions((prev) => ({...prev, size}))}
-              className="mt-4 lg:mt-8 justify-center lg:justify-start"
-            />
-          </>
-        )}
+              <AnimatePresence>
+                {sizes.length > 0 && (
+                  <motion.div
+                    key="product-sizes"
+                    initial={{opacity: 0}}
+                    animate={{opacity: 1}}
+                    exit={{opacity: 0}}
+                    transition={{duration: 0.2}}
+                    className="flex items-center justify-between mt-4 lg:mt-8"
+                  >
+                    <OptionSwatchGroup
+                      optionName="size"
+                      values={sizes}
+                      selected={activeOptions.size}
+                      onSelect={(size) => setActiveOptions((prev) => ({...prev, size}))}
+                      className="justify-center lg:justify-start"
+                    />
+                    {activeVariant?.price && (
+                      <div className="flex flex-col items-end shrink-0 pl-4">
+                        {activeProduct?.title && (
+                          <div className="uppercase text-xs tracking-wide text-gray-400 leading-tight">
+                            {activeProduct.title}
+                          </div>
+                        )}
+                        <div className="uppercase tabular-nums text-right">
+                          {parseFloat(activeVariant.price.amount).toFixed(0)}{' '}
+                          {activeVariant.price.currencyCode === 'CHF' ? 'chf.' : activeVariant.price.currencyCode}
+                        </div>
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* 4 — Bottom action bar */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pt-2 lg:mt-16">
-          {/* Row 1 on Mobile: Quantity + Price */}
-          <div className="flex items-center justify-center lg:justify-between lg:justify-start gap-6 w-full lg:w-auto">
-            {/* Quantity */}
-            <div className="flex items-center gap-3 font-medium">
-              <button
-                type="button"
-                onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 hover:border-gray-400 transition-colors"
-                aria-label="Decrease quantity"
-              >
-                <span className="text-gray-500 leading-none">-</span>
-              </button>
-              <span className="w-4 text-center tabular-nums">{quantity}</span>
-              <button
-                type="button"
-                onClick={() => setQuantity((q) => q + 1)}
-                className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 hover:border-gray-400 transition-colors"
-                aria-label="Increase quantity"
-              >
-                <span className="text-gray-500 leading-none">+</span>
-              </button>
-            </div>
-
-            {/* Price */}
-            {activeVariant && (
-              <div className="text-lg font-bold tabular-nums">
-                {parseFloat(activeVariant.price.amount).toFixed(0)}{' '}
-                {activeVariant.price.currencyCode === 'CHF'
-                  ? 'chf.'
-                  : activeVariant.price.currencyCode}
+          {/* Total price */}
+          {outfitTotalPrice > 0 && (
+            <div className="flex flex-col items-center lg:items-start">
+              <div className="uppercase text-xs tracking-wide text-gray-400 leading-tight">
+                Total
               </div>
-            )}
-          </div>
+              <div className="uppercase tabular-nums font-bold">
+                {outfitTotalPrice.toFixed(0)}{' '}
+                {outfitCurrency === 'CHF' ? 'chf.' : outfitCurrency}
+              </div>
+            </div>
+          )}
 
-          {/* Row 2 on Mobile: Add to cart (Full width & Centered) */}
+          {/* Add whole outfit to cart */}
           <div className="w-fit lg:w-auto self-center">
             <AddToCartButton
-              disabled={!activeVariant?.availableForSale}
+              disabled={!outfitAvailable || outfitCartLines.length === 0}
               onClick={() => open('cart')}
-              lines={
-                activeVariant
-                  ? [
-                      {
-                        merchandiseId: activeVariant.id,
-                        quantity,
-                      },
-                    ]
-                  : []
-              }
+              lines={outfitCartLines}
             >
               <span>
-                {activeVariant
-                  ? activeVariant.availableForSale
+                {outfitCartLines.length === 0
+                  ? 'Select a product'
+                  : outfitAvailable
                     ? 'Add to cart'
-                    : 'Sold out'
-                  : 'Select a product'}
+                    : 'Sold out'}
               </span>
               <svg
                 width="18"

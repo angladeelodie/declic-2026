@@ -67,8 +67,13 @@ export function ConfiguratorCanvas({
         const mesh = child as THREE.Mesh;
         const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
         mats.forEach((mat) => {
-          if ((mat as THREE.MeshStandardMaterial).color) {
-            (mat as THREE.MeshStandardMaterial).color.set(color);
+          const m = mat as THREE.MeshStandardMaterial;
+          if (m.color) {
+            m.color.set(color);
+            // Lower roughness so directional lights reflect off dark surfaces,
+            // revealing shape details. Slight metalness adds a subtle sheen.
+            m.roughness = 0.7;
+            m.metalness = 0.1;
           }
         });
       }
@@ -244,6 +249,7 @@ export function ConfiguratorCanvas({
             const m = mat as THREE.Material;
             m.transparent = true;
             m.opacity     = 0;
+            m.side        = THREE.DoubleSide;
           });
         }
       });

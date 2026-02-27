@@ -23,6 +23,9 @@
   "collection": {
     "all": "All"
   },
+  "configurator": {
+    "selectCategory": "Select a category to start customizing your outfit"
+  },
   "search": {
     "title": "SEARCH",
     "placeholder": "Search",
