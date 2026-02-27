@@ -20,6 +20,9 @@
     "backToShop": "Retour à la boutique",
     "completeYourLook": "Complétez votre look"
   },
+  "collection": {
+    "all": "Tous"
+  },
   "search": {
     "title": "RECHERCHE",
     "placeholder": "Rechercher",

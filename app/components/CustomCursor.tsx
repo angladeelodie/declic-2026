@@ -40,8 +40,8 @@ export function CustomCursor() {
     const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
     const animate = () => {
-      ringX = lerp(ringX, mouseX, 0.1);
-      ringY = lerp(ringY, mouseY, 0.1);
+      ringX = lerp(ringX, mouseX, 0.25);
+      ringY = lerp(ringY, mouseY, 0.25);
       ring.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%, -50%)`;
       rafId = requestAnimationFrame(animate);
     };

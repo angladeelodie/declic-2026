@@ -20,6 +20,9 @@
     "backToShop": "Back to shop",
     "completeYourLook": "Complete your look"
   },
+  "collection": {
+    "all": "All"
+  },
   "search": {
     "title": "SEARCH",
     "placeholder": "Search",

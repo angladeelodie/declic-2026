@@ -135,6 +135,11 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
     setIsFading(true); // triggers fade-out; onTransitionEnd flips showWelcome
   }, []);
 
+  // ── Collection labels (pulled from Shopify, so they translate automatically)
+  const topsLabel = props.tops_collection?.reference?.title ?? 'Tops';
+  const bottomsLabel = props.bottoms_collection?.reference?.title ?? 'Bottoms';
+  const sleevesLabel = props.sleeves_collection?.reference?.title ?? 'Sleeves';
+
   // ── Category map: one source of truth per category ───────────────
   const categoryMap = {
     tops: {products: tops, urlKey: 'top', selectedHandle: selectedTopHandle},
@@ -286,9 +291,9 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
         <div className="flex justify-between md:justify-around lg:justify-start gap-4 lg:gap-12">
           {(
             [
-              {key: 'tops', label: 'Tops'},
-              {key: 'sleeves', label: 'Sleeves'},
-              {key: 'bottoms', label: 'Bottoms'},
+              {key: 'tops', label: topsLabel},
+              {key: 'sleeves', label: sleevesLabel},
+              {key: 'bottoms', label: bottomsLabel},
             ] as const
           ).map(({key, label}) => (
             <button

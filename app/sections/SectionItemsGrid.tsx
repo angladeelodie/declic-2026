@@ -4,6 +4,7 @@ import {motion, AnimatePresence} from 'framer-motion';
 import {Link} from 'react-router';
 import type {SectionItemsGridFragment} from 'storefrontapi.generated';
 import {useMemo, useState} from 'react';
+import {useTranslation} from '~/lib/useTranslation';
 
 type CategoryFilter = 'tops' | 'bottoms' | 'sleeves';
 
@@ -11,46 +12,55 @@ type CategoryFilter = 'tops' | 'bottoms' | 'sleeves';
 // Add the translation for each new language here (e.g. 'colore' for Italian).
 const COLOR_OPTION_NAMES = new Set(['color', 'couleur', 'colore']);
 
-const CATEGORY_FILTER_LABELS: Record<CategoryFilter, string> = {
-  tops: 'tops',
-  bottoms: 'bottoms',
-  sleeves: 'sleeves',
-};
-
 export function SectionItemsGrid(props: SectionItemsGridFragment) {
   const section = parseSection<SectionItemsGridFragment, {}>(props);
+  const {t} = useTranslation();
 
   const topsCollection = section.topsCollection;
   const bottomsCollection = section.bottomsCollection;
   const sleevesCollection = section.sleevesCollection;
 
-  const defaultCollection =
-    topsCollection || bottomsCollection || sleevesCollection;
+  const categoryLabels: Record<CategoryFilter, string> = {
+    tops: (topsCollection as any)?.title ?? 'Tops',
+    bottoms: (bottomsCollection as any)?.title ?? 'Bottoms',
+    sleeves: (sleevesCollection as any)?.title ?? 'Sleeves',
+  };
 
-  const [activeCategory, setActiveCategory] = useState<CategoryFilter>('tops');
+  const [selectedCategories, setSelectedCategories] = useState<
+    Set<CategoryFilter>
+  >(new Set());
 
-  const activeCollection = useMemo(() => {
-    switch (activeCategory) {
-      case 'tops':
-        return topsCollection ?? null;
-      case 'bottoms':
-        return bottomsCollection ?? null;
-      case 'sleeves':
-        return sleevesCollection ?? null;
-      default:
-        return defaultCollection ?? null;
-    }
-  }, [
-    activeCategory,
-    defaultCollection,
-    topsCollection,
-    bottomsCollection,
-    sleevesCollection,
-  ]);
+  function toggleCategory(category: CategoryFilter) {
+    setSelectedCategories((prev) => {
+      const next = new Set(prev);
+      if (next.has(category)) {
+        next.delete(category);
+      } else {
+        next.add(category);
+      }
+      return next;
+    });
+  }
 
-  if (!activeCollection) return null;
+  const allProducts = useMemo(() => {
+    const cats =
+      selectedCategories.size > 0
+        ? Array.from(selectedCategories)
+        : (['tops', 'bottoms', 'sleeves'] as CategoryFilter[]);
 
-  const products = activeCollection.products?.nodes ?? [];
+    return cats.flatMap((cat) => {
+      switch (cat) {
+        case 'tops':
+          return topsCollection?.products?.nodes ?? [];
+        case 'bottoms':
+          return bottomsCollection?.products?.nodes ?? [];
+        case 'sleeves':
+          return sleevesCollection?.products?.nodes ?? [];
+      }
+    });
+  }, [selectedCategories, topsCollection, bottomsCollection, sleevesCollection]);
+
+  if (!topsCollection && !bottomsCollection && !sleevesCollection) return null;
 
   /**
    * Build tiles:
@@ -61,7 +71,7 @@ export function SectionItemsGrid(props: SectionItemsGridFragment) {
    */
   const tiles = useMemo(
     () =>
-      products.flatMap((product) => {
+      allProducts.flatMap((product) => {
         const variants = product.variants?.nodes ?? [];
 
         if (!variants.length) {
@@ -93,24 +103,38 @@ export function SectionItemsGrid(props: SectionItemsGridFragment) {
           colorKey,
         }));
       }),
-    [products],
+    [allProducts],
   );
 
   return (
     <section className="section-items-grid section-main relative h-fit">
       {/* Filters */}
       <div className="col-span-6 lg:col-span-12 flex gap-8 flex-row justify-center pb-8">
+        {/* All button */}
+        <button
+          onClick={() => setSelectedCategories(new Set())}
+          className={[
+            'text-title uppercase transition-colors cursor-pointer',
+            selectedCategories.size === 0 ? 'text-black' : 'text-gray-300',
+          ].join(' ')}
+        >
+          {t('collection.all')}
+        </button>
+
+        {/* Per-category toggles */}
         {(['tops', 'bottoms', 'sleeves'] as CategoryFilter[]).map(
           (category) => (
             <button
               key={category}
-              onClick={() => setActiveCategory(category)}
+              onClick={() => toggleCategory(category)}
               className={[
                 'text-title uppercase transition-colors cursor-pointer',
-                activeCategory === category ? 'text-black' : 'text-gray-300',
+                selectedCategories.has(category)
+                  ? 'text-black'
+                  : 'text-gray-300',
               ].join(' ')}
             >
-              {CATEGORY_FILTER_LABELS[category]}
+              {categoryLabels[category]}
             </button>
           ),
         )}
