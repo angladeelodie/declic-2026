@@ -3,6 +3,25 @@ import * as THREE from 'three';
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
 
+type ActiveCategory = 'tops' | 'bottoms' | 'sleeves' | null;
+
+// ─── Camera target positions per category ────────────────────────────────────
+// Adjust these values to dial in the framing for each category.
+// y        = camera height
+// lookAtY  = the Y point the camera looks at (orbit target)
+// radius   = orbit distance (smaller = more zoomed in)
+const CAMERA_TARGETS: Record<NonNullable<ActiveCategory>, {y: number; lookAtY: number; radius: number}> = {
+  tops: {y: 1.5,  lookAtY: 1.3, radius: 1.6},
+  sleeves:    {y: 1.6,  lookAtY: 1.4, radius: 2.2},
+  bottoms: {y: 0.6,  lookAtY: 0.5, radius: 2.5},
+};
+
+// Full-body shot when no category is selected
+const CAMERA_FULL_BODY = {y: 1.0, lookAtY: 0.9, radius: 3.2};
+
+// Easing speed for the camera transition (0 = instant, 1 = no movement)
+const CAMERA_LERP_SPEED = 0.04;
+
 type ConfiguratorCanvasProps = {
   topModelUrl: string | null;
   bottomModelUrl: string | null;
@@ -10,6 +29,7 @@ type ConfiguratorCanvasProps = {
   topColor: string | null;
   bottomColor: string | null;
   sleeveColor: string | null;
+  activeCategory: ActiveCategory;
 };
 
 export function ConfiguratorCanvas({
@@ -19,6 +39,7 @@ export function ConfiguratorCanvas({
   topColor,
   bottomColor,
   sleeveColor,
+  activeCategory,
 }: ConfiguratorCanvasProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
@@ -26,10 +47,18 @@ export function ConfiguratorCanvas({
   const garmentRefs = useRef<{ top?: THREE.Object3D; bottom?: THREE.Object3D; sleeve?: THREE.Object3D }>({});
   const colorRefs = useRef<{top: string | null; bottom: string | null; sleeve: string | null}>({top: null, bottom: null, sleeve: null});
 
-  // Keep color refs in sync with props so async load callbacks can read the latest value
+  // Keep refs in sync so the animation loop always reads the latest values
   colorRefs.current.top    = topColor;
   colorRefs.current.bottom = bottomColor;
   colorRefs.current.sleeve = sleeveColor;
+
+  const activeCategoryRef = useRef<ActiveCategory>(activeCategory);
+  activeCategoryRef.current = activeCategory;
+
+  // Live camera state — lerped toward the target each frame (start at full-body)
+  const camYRef     = useRef(CAMERA_FULL_BODY.y);
+  const lookAtYRef  = useRef(CAMERA_FULL_BODY.lookAtY);
+  const radiusRef   = useRef(CAMERA_FULL_BODY.radius);
 
   function applyColorToGarment(garment: THREE.Object3D, hexColor: string) {
     const color = new THREE.Color(hexColor);
@@ -55,19 +84,17 @@ export function ConfiguratorCanvas({
     sceneRef.current = scene;
 
     const camera = new THREE.PerspectiveCamera(40, container.clientWidth / container.clientHeight, 0.1, 100);
-    // Initial position
-    camera.position.set(0, 1, 1.5);
+    // Initial position — full-body view (no category selected on load)
+    camera.position.set(0, CAMERA_FULL_BODY.y, CAMERA_FULL_BODY.radius);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     container.appendChild(renderer.domElement);
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
-    controls.target.set(0, 1, 0);
+    controls.target.set(0, CAMERA_FULL_BODY.lookAtY, 0);
     // Disable auto-rotate here because we will control the camera manually for the 180 swing
     controls.enablePan = false; 
 
@@ -77,7 +104,6 @@ export function ConfiguratorCanvas({
     // Key Light: Main source
     const keyLight = new THREE.DirectionalLight(0xffffff, 3.2);
     keyLight.position.set(5, 5, 5);
-    keyLight.castShadow = true;
     scene.add(keyLight);
 
     // Fill Light: Softens shadows from the other side
@@ -90,6 +116,31 @@ export function ConfiguratorCanvas({
     rimLight.position.set(0, 5, -5);
     scene.add(rimLight);
 
+    // Blob shadow — a radial gradient painted onto a canvas, always perfectly smooth
+    const blobCanvas = document.createElement('canvas');
+    blobCanvas.width  = 256;
+    blobCanvas.height = 256;
+    const blobCtx = blobCanvas.getContext('2d')!;
+    const grad = blobCtx.createRadialGradient(128, 128, 0, 128, 128, 128);
+    grad.addColorStop(0,   'rgba(0,0,0,0.35)');
+    grad.addColorStop(0.5, 'rgba(0,0,0,0.12)');
+    grad.addColorStop(1,   'rgba(0,0,0,0)');
+    blobCtx.fillStyle = grad;
+    blobCtx.fillRect(0, 0, 256, 256);
+    const blobTexture = new THREE.CanvasTexture(blobCanvas);
+
+    const blobShadow = new THREE.Mesh(
+      new THREE.PlaneGeometry(1.6, 1.6),
+      new THREE.MeshBasicMaterial({
+        map: blobTexture,
+        transparent: true,
+        depthWrite: false,
+      }),
+    );
+    blobShadow.rotation.x = -Math.PI / 2;
+    blobShadow.position.y = 0.001; // just above floor to avoid z-fighting
+    scene.add(blobShadow);
+
     // Load Mannequin
     // loaderRef.current.load('/avatar.glb', (gltf) => {
     //   gltf.scene.traverse((node) => { if ((node as any).isMesh) node.receiveShadow = true; });
@@ -98,8 +149,7 @@ export function ConfiguratorCanvas({
 
     // --- CINEMATIC CAMERA LOGIC ---
     let frameId: number;
-    let angle = 0; 
-    const radius = 2.5; // Distance from center
+    let angle = 0;
     const speed = 0.008; // Adjust for slower/faster rotation
 
  const animate = () => {
@@ -117,10 +167,12 @@ export function ConfiguratorCanvas({
       // Update Opacity
       model.traverse((node) => {
         if ((node as any).isMesh) {
-          const mat = (node as THREE.Mesh).material as THREE.Material;
-          if (mat.opacity < 1) {
-            mat.opacity += (1 - mat.opacity) * lerpSpeed;
-          }
+          const mats = Array.isArray((node as THREE.Mesh).material)
+            ? ((node as THREE.Mesh).material as THREE.Material[])
+            : [(node as THREE.Mesh).material as THREE.Material];
+          mats.forEach((mat) => {
+            if (mat.opacity < 1) mat.opacity += (1 - mat.opacity) * lerpSpeed;
+          });
         }
       });
     }
@@ -128,9 +180,21 @@ export function ConfiguratorCanvas({
 
   // --- CAMERA SWING ---
   angle += speed;
-  const swingAngle = Math.sin(angle) * (Math.PI / 2); 
-  camera.position.x = Math.sin(swingAngle) * radius;
-  camera.position.z = Math.cos(swingAngle) * radius;
+  const swingAngle = Math.sin(angle) * (Math.PI / 2);
+
+  // Lerp toward the target camera position for the active category
+  const target = activeCategoryRef.current
+    ? CAMERA_TARGETS[activeCategoryRef.current]
+    : CAMERA_FULL_BODY;
+  camYRef.current    += (target.y       - camYRef.current)    * CAMERA_LERP_SPEED;
+  lookAtYRef.current += (target.lookAtY - lookAtYRef.current) * CAMERA_LERP_SPEED;
+  radiusRef.current  += (target.radius  - radiusRef.current)  * CAMERA_LERP_SPEED;
+
+  camera.position.x = Math.sin(swingAngle) * radiusRef.current;
+  camera.position.z = Math.cos(swingAngle) * radiusRef.current;
+  camera.position.y = camYRef.current;
+
+  controls.target.set(0, lookAtYRef.current, 0);
   
   controls.update();
   renderer.render(scene, camera);
@@ -173,13 +237,14 @@ export function ConfiguratorCanvas({
       
       model.traverse((node) => {
         if ((node as any).isMesh) {
-          node.castShadow = true;
           // Prepare for fade-in
           const mesh = node as THREE.Mesh;
-          if (mesh.material) {
-            (mesh.material as THREE.Material).transparent = true;
-            (mesh.material as THREE.Material).opacity = 0;
-          }
+          const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+          mats.forEach((mat) => {
+            const m = mat as THREE.Material;
+            m.transparent = true;
+            m.opacity     = 0;
+          });
         }
       });
 

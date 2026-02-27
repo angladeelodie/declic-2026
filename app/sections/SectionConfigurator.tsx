@@ -104,8 +104,8 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
     searchParams.get('sleeve') ?? sleeves[0]?.handle ?? null;
 
   const [activeCategory, setActiveCategory] = useState<
-    'tops' | 'bottoms' | 'sleeves'
-  >('tops');
+    'tops' | 'bottoms' | 'sleeves' | null
+  >(null);
   const [showWelcome, setShowWelcome] = useState(true);
   const [isFading, setIsFading] = useState(false);
   const [quantity, setQuantity] = useState(1);
@@ -156,6 +156,7 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
   } as const;
 
   function handleSelectProduct(handle: string) {
+    if (!activeCategory) return;
     const {urlKey} = categoryMap[activeCategory];
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
@@ -171,6 +172,7 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
   function setActiveOptions(
     updater: (prev: OptionSelection) => OptionSelection,
   ) {
+    if (!activeCategory) return;
     setAllOptions((prev) => ({
       ...prev,
       [activeCategory]: updater(prev[activeCategory]),
@@ -196,9 +198,9 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
   const bottomColor = normalizeSwatchColor(allOptions.bottoms.color ?? '');
   const sleeveColor = normalizeSwatchColor(allOptions.sleeves.color ?? '');
 
-  const active = categoryMap[activeCategory];
-  const activeOptions = allOptions[activeCategory];
-  const activeProduct = selectedProducts[activeCategory];
+  const active        = activeCategory ? categoryMap[activeCategory] : null;
+  const activeOptions = activeCategory ? allOptions[activeCategory] : {size: null, color: null};
+  const activeProduct = activeCategory ? selectedProducts[activeCategory] : null;
 
   // Sizes & colors from product.options (always complete, not paginated)
   const sizes = getOptionValues(activeProduct, 'size')
@@ -216,6 +218,7 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
 
   // ── Sub-renderers ────────────────────────────────────────────────
   function renderProductThumbnails() {
+    if (!active) return null;
     return (
       <ul className="flex flex-row gap-3 overflow-x-auto no-scrollbar">
         {active.products.map((product) => {
@@ -299,7 +302,7 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
             <button
               key={key}
               type="button"
-              onClick={() => setActiveCategory(key)}
+              onClick={() => setActiveCategory(activeCategory === key ? null : key)}
               className={`text-title transition-colors duration-150 cursor-pointer hover:text-black ${
                 activeCategory === key ? 'text-black' : 'text-gray-300'
               }`}
@@ -309,32 +312,32 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
           ))}
         </div>
 
-        {/* 3 — Thumbnails + Color swatches */}
-        <div className="flex flex-col-reverse lg:flex-row gap-4">
-          {/* This will be the BOTTOM row on mobile, but the LEFT column on desktop */}
-          <div className="flex-1 overflow-x-auto">
-            {renderProductThumbnails()}
-          </div>
+        {/* 3 & 1 — Thumbnails, colour swatches and size selector (hidden when no category selected) */}
+        {activeCategory && (
+          <>
+            <div className="flex flex-col-reverse lg:flex-row gap-4">
+              <div className="flex-1 overflow-x-auto">
+                {renderProductThumbnails()}
+              </div>
+              <OptionSwatchGroup
+                optionName="color"
+                values={colors}
+                selected={activeOptions.color}
+                onSelect={(color) => setActiveOptions((prev) => ({...prev, color}))}
+                orientation="row"
+                className='self-center'
+              />
+            </div>
 
-          {/* This will be the TOP row on mobile, but the RIGHT column on desktop */}
-          <OptionSwatchGroup
-            optionName="color"
-            values={colors}
-            selected={activeOptions.color}
-            onSelect={(color) => setActiveOptions((prev) => ({...prev, color}))}
-            orientation="row"
-            className='self-center'
-          />
-        </div>
-
-        {/* 1 — Size selector */}
-        <OptionSwatchGroup
-          optionName="size"
-          values={sizes}
-          selected={activeOptions.size}
-          onSelect={(size) => setActiveOptions((prev) => ({...prev, size}))}
-          className="mt-4 lg:mt-8 justify-center lg:justify-start"
-        />
+            <OptionSwatchGroup
+              optionName="size"
+              values={sizes}
+              selected={activeOptions.size}
+              onSelect={(size) => setActiveOptions((prev) => ({...prev, size}))}
+              className="mt-4 lg:mt-8 justify-center lg:justify-start"
+            />
+          </>
+        )}
 
         {/* 4 — Bottom action bar */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pt-2 lg:mt-16">
@@ -430,6 +433,7 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
               topColor={topColor}
               bottomColor={bottomColor}
               sleeveColor={sleeveColor}
+              activeCategory={activeCategory}
             />
           </div>
         </div>
