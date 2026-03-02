@@ -6,9 +6,10 @@ import {parseSection} from '~/utils/parseSection';
 import {LinkButton} from '~/components/LinkButton';
 import {Video} from '@shopify/hydrogen';
 import {RichText} from '@shopify/hydrogen';
-import {Link} from 'react-router';
+import {Link, useLocation} from 'react-router';
 import {useRef, useEffect} from 'react';
 import type {SectionEditorialFragment} from 'storefrontapi.generated';
+import {getCurrentLocale} from '~/lib/i18n';
 
 export function SectionEditorial(props: SectionEditorialFragment) {
   const section = parseSection<
@@ -20,9 +21,9 @@ export function SectionEditorial(props: SectionEditorialFragment) {
   >(props);
 
   const {heading, description, link} = section;
-
   const isReversed = props.order?.value === 'false';
-  console.log('SectionEditorial props:', props);
+  const {pathname} = useLocation();
+  const {pathPrefix} = getCurrentLocale(pathname);
 
   return (
     <section
@@ -57,7 +58,7 @@ export function SectionEditorial(props: SectionEditorialFragment) {
         {props.link?.reference?.page?.reference?.handle && (
           <div className="flex justify-center lg:justify-start">
             <LinkButton
-              href={`/pages/${props.link?.reference?.page?.reference?.handle}`}
+              href={`${pathPrefix}/pages/${props.link?.reference?.page?.reference?.handle}`}
               text={props.link?.reference?.text?.value ?? ''}
               className="text-emphasis"
             />

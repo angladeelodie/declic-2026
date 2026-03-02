@@ -2,14 +2,14 @@ import {useLocation} from 'react-router';
 import {getCurrentLocale} from '~/lib/i18n';
 import en from '~/i18n/en.json';
 import fr from '~/i18n/fr.json';
+import it from '~/i18n/it.json';
 
 type Messages = typeof en;
 
 const localeMessages: Record<string, Messages> = {
   EN: en,
   FR: fr,
-  // To add Italian: create app/i18n/it.json, import it above, then add:
-  // IT: it,
+  IT: it,
 };
 
 export function useTranslation() {

@@ -131,14 +131,14 @@ export default function Product() {
           Back to shop
         </Link>
 
-        <div className="grid grid-rows-2 col-span-1 lg:grid-rows-1 grid-cols-6 lg:grid-cols-12 gap-4 lg:min-h-[80vh] overflow-hidden">
+        <div className="grid grid-cols-6 lg:grid-cols-12 gap-4 h-auto lg:min-h-[80vh] lg:overflow-hidden">
           {/* Thumbnail Column */}
-          <div className="lg:col-start-1 lg:col-span-1 lg:h-[80vh] lg:overflow-y-auto flex flex-col gap-2">
+          <div className="row-start-2 col-span-6 flex flex-row overflow-x-auto gap-2 lg:row-start-1 lg:col-start-1 lg:col-span-1 lg:h-[80vh] lg:overflow-x-hidden lg:overflow-y-auto lg:flex-col">
             {product.media.edges.map((media) => (
               <button
                 key={media.node.id}
                 onClick={() => handleThumbnailClick(media.node.image)}
-                className={`w-full shrink-0 rounded-lg overflow-hidden group border-2 transition-all ${
+                className={`w-16 lg:w-full shrink-0 rounded-lg overflow-hidden group border-2 transition-all ${
                   featuredImage?.url === media.node.image.url
                     ? 'border-black'
                     : 'border-transparent hover:border-gray-300'
@@ -157,7 +157,7 @@ export default function Product() {
           </div>
 
           {/* Main Image Column */}
-          <div className="col-span-5 md:col-span-4 md:col-start-2 lg:col-start-2 lg:col-span-5 h-full lg:h-[80vh] min-h-0 relative">
+          <div className="row-start-1 col-span-6 md:col-span-4 md:col-start-2 lg:col-start-2 lg:col-span-5 aspect-[4/5] lg:aspect-auto lg:h-[80vh] min-h-0 relative">
             <div className="absolute inset-0 w-full h-full">
               <div className={`w-full h-full overflow-hidden ${STYLE_MAP[currentStyle]} bg-[#f9f9f9] transition-[border-radius] duration-700 ease-in-out`}>
                 <AnimatePresence mode="wait">
@@ -177,7 +177,7 @@ export default function Product() {
           </div>
 
           {/* Info Column */}
-          <div className="col-span-6 md:col-span-4 lg:col-span-4 md:col-start-2 lg:col-start-8 flex flex-col pt-4">
+          <div className="row-start-3 col-span-6 md:col-span-4 lg:row-start-1 lg:col-span-4 md:col-start-2 lg:col-start-8 flex flex-col pt-4">
             <header className="mb-8">
               <h1 className="text-title">{title}</h1>
               <div

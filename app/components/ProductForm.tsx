@@ -22,7 +22,7 @@ export function ProductForm({
   return (
     <div className="flex flex-col gap-8">
       {/* First row: first two options side by side */}
-      <div className="flex flex-wrap gap-6">
+      <div className="flex flex-wrap gap-6 justify-center lg:justify-start">
         {primaryOptions.map((option) => (
           <div key={option.name} className="flex-auto">
             {renderOption(option, navigate)}
@@ -35,9 +35,9 @@ export function ProductForm({
         <div key={option.name}>{renderOption(option, navigate)}</div>
       ))}
 
-      {/* Price and Add to Cart Row */}
-      <div className="flex items-center justify-between gap-4 mt-4">
-        <div className="flex items-center gap-6">
+      {/* Price and Add to Cart */}
+      <div className="flex flex-col gap-4 mt-4">
+      <div className="flex items-center gap-6 justify-center lg:justify-start">
           <div className="flex items-center gap-3 font-medium">
             <span className="text-gray-400">-</span>
             <span>1</span>
@@ -54,6 +54,7 @@ export function ProductForm({
         <AddToCartButton
           disabled={!selectedVariant || !selectedVariant.availableForSale}
           onClick={() => open('cart')}
+          className="w-full justify-center"
           lines={
             selectedVariant
               ? [
@@ -91,7 +92,7 @@ export function ProductForm({
 function renderOption(option: any, navigate: ReturnType<typeof useNavigate>) {
   return (
     <div key={option.name} className="flex flex-col gap-4">
-      <div className="flex flex-wrap gap-4">
+      <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
         {option.optionValues.map((value: any) => {
           const {
             name,

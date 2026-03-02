@@ -7,12 +7,14 @@ export function AddToCartButton({
   disabled,
   lines,
   onClick,
+  className,
 }: {
   analytics?: unknown;
   children: React.ReactNode;
   disabled?: boolean;
   lines: Array<OptimisticCartLineInput>;
   onClick?: () => void;
+  className?: string;
 }) {
   return (
     <CartForm route="/cart" inputs={{lines}} action={CartForm.ACTIONS.LinesAdd}>
@@ -24,7 +26,7 @@ export function AddToCartButton({
             value={JSON.stringify(analytics)}
             />
           <button
-            className="bg-[#3eff9d] hover:bg-[#34e58b] text-black text-metalite py-2 px-12 rounded-full flex items-center gap-4 transition-transform"
+            className={`bg-[#3eff9d] hover:bg-[#34e58b] text-black text-metalite py-2 px-12 rounded-full flex items-center gap-4 transition-transform ${className ?? ''}`}
             type="submit"
             onClick={onClick}
             disabled={disabled ?? fetcher.state !== 'idle'}

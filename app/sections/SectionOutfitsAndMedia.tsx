@@ -52,14 +52,17 @@ export function SectionOutfitsAndMedia(props: SectionOutfitsAndMediaFragment) {
 
     for (const variant of variants) {
       const colorOpt = variant.selectedOptions?.find((opt) =>
-        ['color', 'colour', 'couleur'].includes(opt?.name?.toLowerCase() ?? ''),
+        ['color', 'colour', 'couleur', 'colore'].includes(opt?.name?.toLowerCase() ?? ''),
       );
 
       const rawColor = colorOpt?.value?.toLowerCase();
 
-      if (rawColor === 'black') {
+      const isBlack = rawColor === 'black' || rawColor === 'noir' || rawColor === 'nero';
+      const isWhite = rawColor === 'white' || rawColor === 'blanc' || rawColor === 'bianco';
+
+      if (isBlack) {
         blackTiles.push({product, variant, colorKey: 'black'});
-      } else if (rawColor === 'white') {
+      } else if (isWhite) {
         whiteTiles.push({product, variant, colorKey: 'white'});
       }
     }

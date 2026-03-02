@@ -92,7 +92,7 @@ export function LanguageSwitcher() {
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="text-[13px] font-black leading-none uppercase"
+        className="text-metalite font-black leading-none uppercase"
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         aria-label="Select language"
@@ -122,7 +122,7 @@ export function LanguageSwitcher() {
                     reloadDocument
                     onClick={() => setIsOpen(false)}
                     className={[
-                      'block px-3 py-2 text-[13px] font-black uppercase leading-none no-underline',
+                      'text-metalite block px-3 py-2 font-black uppercase leading-none no-underline',
                       'transition-colors hover:bg-black hover:text-white',
                       isActive ? 'opacity-40 pointer-events-none' : '',
                     ]
@@ -157,10 +157,10 @@ export function MobileLanguageSwitcher() {
             reloadDocument
             aria-current={isActive ? 'true' : undefined}
             className={[
-              'text-[13px] font-black uppercase leading-none',
+              'text-metalite font-black uppercase leading-none',
               isActive
-                ? 'border-b-2 border-black opacity-40 pointer-events-none'
-                : 'opacity-60 hover:opacity-100',
+                ? 'border-b-2 border-black opacity-100 pointer-events-none'
+                : 'opacity-40 hover:opacity-100',
             ].join(' ')}
           >
             {lang}

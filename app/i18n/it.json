@@ -1,0 +1,57 @@
+{
+  "cart": {
+    "title": "CARRELLO",
+    "summary": "Riepilogo",
+    "subtotal": "Subtotale",
+    "total": "Totale",
+    "couponCode": "Codice sconto",
+    "giftCardCode": "Codice carta regalo",
+    "apply": "Applica",
+    "remove": "Rimuovi",
+    "order": "Ordina",
+    "empty": "Il tuo carrello è vuoto, inizia lo shopping!",
+    "continueShopping": "Continua gli acquisti",
+    "loading": "Caricamento carrello...",
+    "appliedGiftCards": "Carta/e regalo applicata/e"
+  },
+  "product": {
+    "addToCart": "Aggiungi al carrello",
+    "soldOut": "Esaurito",
+    "backToShop": "Torna al negozio",
+    "completeYourLook": "Completa il tuo look"
+  },
+  "collection": {
+    "all": "Tutti"
+  },
+  "configurator": {
+    "selectCategory": "Seleziona una categoria per personalizzare il tuo outfit"
+  },
+  "search": {
+    "title": "RICERCA",
+    "placeholder": "Cerca",
+    "button": "Cerca",
+    "loading": "Caricamento...",
+    "articles": "Articoli",
+    "collections": "Collezioni",
+    "pages": "Pagine",
+    "products": "Prodotti",
+    "noResultsFor": "Nessun risultato per",
+    "viewAllResultsFor": "Vedi tutti i risultati per"
+  },
+  "nav": {
+    "menu": "MENU",
+    "backToTop": "Torna su",
+    "close": "Chiudi"
+  },
+  "footer": {
+    "pages": "Pagine",
+    "legal": "Legale",
+    "findUs": "Trovaci",
+    "contact": "Contatto"
+  },
+  "errors": {
+    "notFound": "Pagina non trovata",
+    "notFoundDescription": "La pagina che stai cercando non esiste.",
+    "backToHome": "Torna alla home →"
+  }
+}

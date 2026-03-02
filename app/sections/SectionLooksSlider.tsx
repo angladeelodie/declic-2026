@@ -43,7 +43,7 @@ export function SectionLooksSlider(props: SectionLooksSliderFragment) {
         </div>
 
         {/* Columns 3 to 10: The Swiper Stage */}
-        <div className="col-span-6 lg:col-span-10 lg:col-start-2">
+        <div className="col-span-6 lg:col-span-10 lg:col-start-2 -mx-4 md:mx-0">
           <Swiper
             modules={[Navigation, Pagination]}
             navigation={{

@@ -15,6 +15,7 @@ export interface LocaleEntry extends I18nLocale {
 export const SUPPORTED_LOCALES: LocaleEntry[] = [
   {language: 'EN', country: 'CH', pathPrefix: '',       label: 'EN'},
   {language: 'FR', country: 'CH', pathPrefix: '/FR-CH', label: 'FR'},
+  {language: 'IT', country: 'CH', pathPrefix: '/IT-CH', label: 'IT'},
 ];
 
 /**

@@ -70,7 +70,6 @@ export function links() {
       rel: 'preconnect',
       href: 'https://shop.app',
     },
-    {rel: 'icon', type: 'image/svg+xml', href: favicon},
   ];
 }
 
@@ -191,6 +190,8 @@ function loadDeferredData({context}: Route.LoaderArgs) {
 
 export function Layout({children}: {children?: React.ReactNode}) {
   const nonce = useNonce();
+  const data = useRouteLoaderData<RootLoader>('root');
+  const squareLogoUrl = data?.header?.shop?.brand?.squareLogo?.image?.url;
 
   return (
     <html lang="en">
@@ -200,6 +201,11 @@ export function Layout({children}: {children?: React.ReactNode}) {
         <link rel="stylesheet" href={tailwindCss}></link>
         <link rel="stylesheet" href={resetStyles}></link>
         <link rel="stylesheet" href={appStyles}></link>
+        {squareLogoUrl ? (
+          <link rel="icon" href={squareLogoUrl} />
+        ) : (
+          <link rel="icon" type="image/svg+xml" href={favicon} />
+        )}
         <link
           rel="preload"
           href="/fonts/Metalite-Regular.woff2"

@@ -60,7 +60,7 @@ function FooterMenu({
   // console.log("socialLinks:", socialLinks);
   return (
     <nav
-      className="grid grid-rows-2 md:grid-rows-1 grid-cols-6 lg:grid-cols-12 gap-4"
+      className="grid md:grid-rows-1 grid-cols-6 lg:grid-cols-12 gap-4"
       role="navigation"
     >
       {/* Col 1-2: Contact from metafield */}
@@ -86,7 +86,7 @@ function FooterMenu({
                   end
                   to={url}
                   prefetch="intent"
-                  className="font-bold"
+                  className="font-bold capitalize"
                 >
                   {item.title}
                 </NavLink>
@@ -117,7 +117,7 @@ function FooterMenu({
                     end
                     to={url}
                     prefetch="intent"
-                    className="hover:text-gray-500"
+                    className="hover:text-gray-500 capitalize"
                   >
                     {item.title}
                   </NavLink>
@@ -129,7 +129,7 @@ function FooterMenu({
               {/* Fallback if the footer-legal menu isn’t configured */}
               <li>
                 <NavLink
-                  className="hover:text-gray-500"
+                  className="hover:text-gray-500 capitalize"
                   to="/policies/privacy-policy"
                 >
                   Privacy Policy
@@ -137,7 +137,7 @@ function FooterMenu({
               </li>
               <li>
                 <NavLink
-                  className="hover:text-gray-500"
+                  className="hover:text-gray-500 capitalize"
                   to="/policies/terms-of-service"
                 >
                   Terms of Service

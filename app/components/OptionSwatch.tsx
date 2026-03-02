@@ -22,7 +22,7 @@ export function normalizeSwatchColor(name: string): string | null {
   return lower || null;
 }
 
-const COLOR_OPTION_NAMES = ['color', 'couleur'];
+const COLOR_OPTION_NAMES = ['color', 'couleur', 'colore'];
 
 function isColorOption(optionName: string): boolean {
   return COLOR_OPTION_NAMES.includes(optionName.toLowerCase());

@@ -490,7 +490,7 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
   return (
     <section className="section-configurator section-main h-fit lg:h-[90vh] pb-4 grid-rows-[1fr]">
       {/* Left: 3D preview */}
-      <div className="col-start-1 col-span-6 row-span-1 lg:col-start-2 lg:col-span-4 h-[60vh] lg:h-full">
+      <div className="col-start-1 col-span-6 row-span-1 lg:col-start-2 lg:col-span-4 h-[40vh] md:h-[60vh] lg:h-full">
         <div className="relative w-full h-full bg-gray-200 self-center rounded-[var(--radius-sharp)] overflow-hidden">
           <div className="absolute inset-0 h-full w-full">
             <ConfiguratorCanvas

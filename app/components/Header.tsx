@@ -38,9 +38,17 @@ export function Header({
       {/* 2. Logo: Left on Desktop, Centered on Mobile */}
       <div className="flex items-center justify-center flex-1 md:flex-none md:justify-start">
         <NavLink prefetch="intent" to={currentLocale.pathPrefix + '/'} style={activeLinkStyle} end className="no-underline">
-          <strong className="text-xl font-black tracking-tighter text-black uppercase">
-            {shop.name}
-          </strong>
+          {shop.brand?.logo?.image?.url ? (
+            <img
+              src={shop.brand.logo.image.url}
+              alt={shop.name}
+              className="h-8 w-auto"
+            />
+          ) : (
+            <strong className="text-xl font-black tracking-tighter text-black uppercase">
+              {shop.name}
+            </strong>
+          )}
         </NavLink>
       </div>
 

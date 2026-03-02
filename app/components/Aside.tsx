@@ -48,9 +48,9 @@ export function Aside({
     <div
       aria-modal
       role="dialog"
-      className={`fixed inset-0 z-50 transition-all duration-300 ease-in-out ${
-        expanded 
-          ? 'opacity-100 visible pointer-events-auto' 
+      className={`fixed inset-0 z-50 overflow-hidden transition-all duration-300 ease-in-out ${
+        expanded
+          ? 'opacity-100 visible pointer-events-auto'
           : 'opacity-0 invisible pointer-events-none'
       }`}
     >

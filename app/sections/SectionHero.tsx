@@ -22,7 +22,9 @@ export function SectionHero(props: SectionHeroFragment) {
 
   return (
     /* Swap to [1fr_auto] so images stretch and text fits content */
-    <section className="section-hero section-main grid-rows-[1fr_auto] h-[100vh]">
+    <section
+      className={`section-hero section-main grid-rows-[1fr_auto] pb-4 md:pb-12 ${mediaImages.length > 1 ? 'h-[90vh]' : 'h-[50vh] md:h-[90vh]'}`}
+    >
       {/* ROW 1: Media Images (Stretches) */}
       {/* 1 Image: Spans the full width (col-span-full)
   2 Images: Centered with gutters (lg:col-span-10 lg:col-start-2)
@@ -45,23 +47,23 @@ export function SectionHero(props: SectionHeroFragment) {
         ))}
       </div>
       {/* ROW 2: Heading & Button (Fits Content) */}
-      <div className="row-start-2 col-span-full md:col-span-4 md:col-start-2 flex flex-col items-center lg:items-start pt-8">
-        {heading && (
+      {heading && (
+        <div className="row-start-2 col-span-full md:col-span-4 md:col-start-2 flex flex-col items-center lg:items-start pt-8">
           <h1 className="text-title text-center lg:text-left m-0 pb-0">
             {heading.parsedValue}
           </h1>
-        )}
 
-        {link?.href?.value && (
-          <div className="mt-6">
-           <LinkButton
-              href={`/pages/${props.link?.reference?.page?.reference?.handle}`}
-              text={props.link?.reference?.text?.value ?? ''}
-              className="text-emphasis"
-            />
-          </div>
-        )}
-      </div>
+          {link?.href?.value && (
+            <div className="mt-6">
+              <LinkButton
+                href={`/pages/${props.link?.reference?.page?.reference?.handle}`}
+                text={props.link?.reference?.text?.value ?? ''}
+                className="text-emphasis"
+              />
+            </div>
+          )}
+        </div>
+      )}
     </section>
   );
 }

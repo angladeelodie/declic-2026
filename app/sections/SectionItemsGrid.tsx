@@ -109,12 +109,12 @@ export function SectionItemsGrid(props: SectionItemsGridFragment) {
   return (
     <section className="section-items-grid section-main relative h-fit">
       {/* Filters */}
-      <div className="col-span-6 lg:col-span-12 flex gap-8 flex-row justify-center pb-8">
+      <div className="col-span-6 lg:col-span-12 flex flex-wrap gap-4 md:gap-8 flex-row justify-center pb-8">
         {/* All button */}
         <button
           onClick={() => setSelectedCategories(new Set())}
           className={[
-            'text-title uppercase transition-colors cursor-pointer',
+            'text-title uppercase transition-colors cursor-pointer  pb-0 pt-0',
             selectedCategories.size === 0 ? 'text-black' : 'text-gray-300',
           ].join(' ')}
         >
@@ -128,7 +128,7 @@ export function SectionItemsGrid(props: SectionItemsGridFragment) {
               key={category}
               onClick={() => toggleCategory(category)}
               className={[
-                'text-title uppercase transition-colors cursor-pointer',
+                'text-title uppercase transition-colors cursor-pointer pb-0 pt-0',
                 selectedCategories.has(category)
                   ? 'text-black'
                   : 'text-gray-300',
