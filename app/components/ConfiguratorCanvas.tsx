@@ -10,10 +10,13 @@ type ActiveCategory = 'tops' | 'bottoms' | 'sleeves' | null;
 // y        = camera height
 // lookAtY  = the Y point the camera looks at (orbit target)
 // radius   = orbit distance (smaller = more zoomed in)
-const CAMERA_TARGETS: Record<NonNullable<ActiveCategory>, {y: number; lookAtY: number; radius: number}> = {
-  tops: {y: 1.5,  lookAtY: 1.3, radius: 1.6},
-  sleeves:    {y: 1.6,  lookAtY: 1.4, radius: 2.2},
-  bottoms: {y: 0.6,  lookAtY: 0.5, radius: 2.5},
+const CAMERA_TARGETS: Record<
+  NonNullable<ActiveCategory>,
+  {y: number; lookAtY: number; radius: number}
+> = {
+  tops: {y: 1.5, lookAtY: 1.3, radius: 1.6},
+  sleeves: {y: 1.6, lookAtY: 1.4, radius: 2.2},
+  bottoms: {y: 0.6, lookAtY: 0.5, radius: 2.5},
 };
 
 // Full-body shot when no category is selected
@@ -44,17 +47,25 @@ export function ConfiguratorCanvas({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
   const loaderRef = useRef(new GLTFLoader());
-  const garmentRefs = useRef<{ top?: THREE.Object3D; bottom?: THREE.Object3D; sleeve?: THREE.Object3D }>({});
-  const colorRefs = useRef<{top: string | null; bottom: string | null; sleeve: string | null}>({top: null, bottom: null, sleeve: null});
+  const garmentRefs = useRef<{
+    top?: THREE.Object3D;
+    bottom?: THREE.Object3D;
+    sleeve?: THREE.Object3D;
+  }>({});
+  const colorRefs = useRef<{
+    top: string | null;
+    bottom: string | null;
+    sleeve: string | null;
+  }>({top: null, bottom: null, sleeve: null});
 
   // Keep refs in sync so the animation loop always reads the latest values
-  colorRefs.current.top    = topColor;
+  colorRefs.current.top = topColor;
   colorRefs.current.bottom = bottomColor;
   colorRefs.current.sleeve = sleeveColor;
 
   // Per-garment lerp state: from = current rendered color, to = target color
   const lerpColorsRef = useRef({
-    top:    {from: new THREE.Color(1, 1, 1), to: new THREE.Color(1, 1, 1)},
+    top: {from: new THREE.Color(1, 1, 1), to: new THREE.Color(1, 1, 1)},
     bottom: {from: new THREE.Color(1, 1, 1), to: new THREE.Color(1, 1, 1)},
     sleeve: {from: new THREE.Color(1, 1, 1), to: new THREE.Color(1, 1, 1)},
   });
@@ -63,47 +74,83 @@ export function ConfiguratorCanvas({
   activeCategoryRef.current = activeCategory;
 
   // Live camera state — lerped toward the target each frame (start at full-body)
-  const camYRef     = useRef(CAMERA_FULL_BODY.y);
-  const lookAtYRef  = useRef(CAMERA_FULL_BODY.lookAtY);
-  const radiusRef   = useRef(CAMERA_FULL_BODY.radius);
+  const camYRef = useRef(CAMERA_FULL_BODY.y);
+  const lookAtYRef = useRef(CAMERA_FULL_BODY.lookAtY);
+  const radiusRef = useRef(CAMERA_FULL_BODY.radius);
 
   // Called on first load — sets color immediately (no lerp from wrong color)
-  function initGarmentColor(garment: THREE.Object3D, key: keyof typeof lerpColorsRef.current, hexColor: string) {
+  function initGarmentColor(
+    garment: THREE.Object3D,
+    key: keyof typeof lerpColorsRef.current,
+    hexColor: string,
+  ) {
     const color = new THREE.Color(hexColor);
+
+    // Set the lerp references so the animation loop knows where to start
     lerpColorsRef.current[key].from.copy(color);
     lerpColorsRef.current[key].to.copy(color);
+
     garment.traverse((child) => {
       if ((child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.Mesh;
-        const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-        mats.forEach((mat) => {
+        const materials = Array.isArray(mesh.material)
+          ? mesh.material
+          : [mesh.material];
+
+        materials.forEach((mat) => {
           const m = mat as THREE.MeshStandardMaterial;
-          if (m.color) { m.color.copy(color); m.roughness = 0.7; m.metalness = 0.1; }
+
+          // 1. Check the material name you set in Blender
+          if (m.name === 'metal') {
+            m.color.set('#ff0000'); // Standard Silver
+            m.metalness = 0.5; // High metalness for reflections
+            m.roughness = 0.1; // Smooth/Shiny
+          } else {
+            // 2. This is the fabric/configurable part
+            m.color.copy(color);
+            m.roughness = 0.7;
+            m.metalness = 0.1;
+          }
         });
       }
     });
   }
 
   // Called on swatch change — only moves the target; animation loop lerps toward it
-  function setGarmentColorTarget(key: keyof typeof lerpColorsRef.current, hexColor: string) {
+  function setGarmentColorTarget(
+    key: keyof typeof lerpColorsRef.current,
+    hexColor: string,
+  ) {
     lerpColorsRef.current[key].to.set(hexColor);
-    // Also update roughness/metalness so they stay correct across model reloads
+
     const model = garmentRefs.current[key];
     if (model) {
       model.traverse((child) => {
         if ((child as THREE.Mesh).isMesh) {
-          const mats = Array.isArray((child as THREE.Mesh).material)
-            ? ((child as THREE.Mesh).material as THREE.Material[])
-            : [(child as THREE.Mesh).material as THREE.Material];
+          const mesh = child as THREE.Mesh;
+          const mats = Array.isArray(mesh.material)
+            ? (mesh.material as THREE.Material[])
+            : [mesh.material as THREE.Material];
+
           mats.forEach((mat) => {
             const m = mat as THREE.MeshStandardMaterial;
-            m.roughness = 0.7; m.metalness = 0.1;
+
+            // Re-apply metal settings if the model was just reloaded or swapped
+            if (m.name === 'metal') {
+              m.color.set('#ff0000'); // Your red placeholder
+              m.metalness = 0.5;
+              m.roughness = 0.1;
+            } else {
+              // Keep fabric settings for the rest
+              m.roughness = 0.7;
+              m.metalness = 0.1;
+            }
           });
         }
       });
     }
   }
-
+  
   useEffect(() => {
     if (!containerRef.current) return;
 
@@ -112,11 +159,16 @@ export function ConfiguratorCanvas({
     scene.background = new THREE.Color(0xf3f4f6);
     sceneRef.current = scene;
 
-    const camera = new THREE.PerspectiveCamera(40, container.clientWidth / container.clientHeight, 0.1, 100);
+    const camera = new THREE.PerspectiveCamera(
+      40,
+      container.clientWidth / container.clientHeight,
+      0.1,
+      100,
+    );
     // Initial position — full-body view (no category selected on load)
     camera.position.set(0, CAMERA_FULL_BODY.y, CAMERA_FULL_BODY.radius);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    const renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     container.appendChild(renderer.domElement);
@@ -125,7 +177,7 @@ export function ConfiguratorCanvas({
     controls.enableDamping = true;
     controls.target.set(0, CAMERA_FULL_BODY.lookAtY, 0);
     // Disable auto-rotate here because we will control the camera manually for the 180 swing
-    controls.enablePan = false; 
+    controls.enablePan = false;
 
     // --- ENHANCED LIGHT SETUP (Studio Style) ---
     scene.add(new THREE.AmbientLight(0xffffff, 0.4)); // Soft overall light
@@ -147,13 +199,13 @@ export function ConfiguratorCanvas({
 
     // Blob shadow — a radial gradient painted onto a canvas, always perfectly smooth
     const blobCanvas = document.createElement('canvas');
-    blobCanvas.width  = 256;
+    blobCanvas.width = 256;
     blobCanvas.height = 256;
     const blobCtx = blobCanvas.getContext('2d')!;
     const grad = blobCtx.createRadialGradient(128, 128, 0, 128, 128, 128);
-    grad.addColorStop(0,   'rgba(0,0,0,0.35)');
+    grad.addColorStop(0, 'rgba(0,0,0,0.35)');
     grad.addColorStop(0.5, 'rgba(0,0,0,0.12)');
-    grad.addColorStop(1,   'rgba(0,0,0,0)');
+    grad.addColorStop(1, 'rgba(0,0,0,0)');
     blobCtx.fillStyle = grad;
     blobCtx.fillRect(0, 0, 256, 256);
     const blobTexture = new THREE.CanvasTexture(blobCanvas);
@@ -181,70 +233,88 @@ export function ConfiguratorCanvas({
     let angle = 0;
     const speed = 0.008; // Adjust for slower/faster rotation
 
- const animate = () => {
-  frameId = requestAnimationFrame(animate);
+    const animate = () => {
+      frameId = requestAnimationFrame(animate);
 
-  // --- GARMENT TRANSITIONS ---
-  Object.values(garmentRefs.current).forEach((model) => {
-    if (model && model.userData.targetScale) {
-      // Smoothly scale up
-      const lerpSpeed = 0.1; // Adjust for "snappiness" (0.1 is smooth)
+      // --- GARMENT TRANSITIONS ---
+      Object.values(garmentRefs.current).forEach((model) => {
+        if (model && model.userData.targetScale) {
+          // Smoothly scale up
+          const lerpSpeed = 0.1; // Adjust for "snappiness" (0.1 is smooth)
 
-      // Update Scale
-      model.scale.lerp(new THREE.Vector3(1, 1, 1), lerpSpeed);
+          // Update Scale
+          model.scale.lerp(new THREE.Vector3(1, 1, 1), lerpSpeed);
 
-      // Update Opacity
-      model.traverse((node) => {
-        if ((node as any).isMesh) {
-          const mats = Array.isArray((node as THREE.Mesh).material)
-            ? ((node as THREE.Mesh).material as THREE.Material[])
-            : [(node as THREE.Mesh).material as THREE.Material];
-          mats.forEach((mat) => {
-            if (mat.opacity < 1) mat.opacity += (1 - mat.opacity) * lerpSpeed;
+          // Update Opacity
+          model.traverse((node) => {
+            if ((node as any).isMesh) {
+              const mats = Array.isArray((node as THREE.Mesh).material)
+                ? ((node as THREE.Mesh).material as THREE.Material[])
+                : [(node as THREE.Mesh).material as THREE.Material];
+              mats.forEach((mat) => {
+                if (mat.opacity < 1)
+                  mat.opacity += (1 - mat.opacity) * lerpSpeed;
+              });
+            }
           });
         }
       });
-    }
-  });
 
-  // --- COLOR LERP ---
-  (Object.keys(lerpColorsRef.current) as Array<keyof typeof lerpColorsRef.current>).forEach((key) => {
-    const lc = lerpColorsRef.current[key];
-    if (lc.from.equals(lc.to)) return;
-    lc.from.lerp(lc.to, 0.07);
-    const model = garmentRefs.current[key];
-    if (!model) return;
-    model.traverse((node) => {
-      if ((node as THREE.Mesh).isMesh) {
-        const mats = Array.isArray((node as THREE.Mesh).material)
-          ? ((node as THREE.Mesh).material as THREE.Material[])
-          : [(node as THREE.Mesh).material as THREE.Material];
-        mats.forEach((mat) => { (mat as THREE.MeshStandardMaterial).color?.copy(lc.from); });
-      }
-    });
-  });
+      // --- COLOR LERP (Inside the animate function) ---
+      (
+        Object.keys(lerpColorsRef.current) as Array<
+          keyof typeof lerpColorsRef.current
+        >
+      ).forEach((key) => {
+        const lc = lerpColorsRef.current[key];
+        if (lc.from.equals(lc.to)) return;
 
-  // --- CAMERA SWING ---
-  angle += speed;
-  const swingAngle = Math.sin(angle) * (Math.PI / 2);
+        lc.from.lerp(lc.to, 0.07);
+        const model = garmentRefs.current[key];
+        if (!model) return;
 
-  // Lerp toward the target camera position for the active category
-  const target = activeCategoryRef.current
-    ? CAMERA_TARGETS[activeCategoryRef.current]
-    : CAMERA_FULL_BODY;
-  camYRef.current    += (target.y       - camYRef.current)    * CAMERA_LERP_SPEED;
-  lookAtYRef.current += (target.lookAtY - lookAtYRef.current) * CAMERA_LERP_SPEED;
-  radiusRef.current  += (target.radius  - radiusRef.current)  * CAMERA_LERP_SPEED;
+        model.traverse((node) => {
+          if ((node as THREE.Mesh).isMesh) {
+            const mesh = node as THREE.Mesh;
+            const mats = Array.isArray(mesh.material)
+              ? mesh.material
+              : [mesh.material];
 
-  camera.position.x = Math.sin(swingAngle) * radiusRef.current;
-  camera.position.z = Math.cos(swingAngle) * radiusRef.current;
-  camera.position.y = camYRef.current;
+            mats.forEach((mat) => {
+              const m = mat as THREE.MeshStandardMaterial;
 
-  controls.target.set(0, lookAtYRef.current, 0);
-  
-  controls.update();
-  renderer.render(scene, camera);
-};
+              // PROTECT THE METAL: Only lerp color if it's NOT the metal part
+              if (m.name !== 'metal') {
+                m.color?.copy(lc.from);
+              }
+            });
+          }
+        });
+      });
+
+      // --- CAMERA SWING ---
+      angle += speed;
+      const swingAngle = Math.sin(angle) * (Math.PI * 0.75);
+
+      // Lerp toward the target camera position for the active category
+      const target = activeCategoryRef.current
+        ? CAMERA_TARGETS[activeCategoryRef.current]
+        : CAMERA_FULL_BODY;
+      camYRef.current += (target.y - camYRef.current) * CAMERA_LERP_SPEED;
+      lookAtYRef.current +=
+        (target.lookAtY - lookAtYRef.current) * CAMERA_LERP_SPEED;
+      radiusRef.current +=
+        (target.radius - radiusRef.current) * CAMERA_LERP_SPEED;
+
+      camera.position.x = Math.sin(swingAngle) * radiusRef.current;
+      camera.position.z = Math.cos(swingAngle) * radiusRef.current;
+      camera.position.y = camYRef.current;
+
+      controls.target.set(0, lookAtYRef.current, 0);
+
+      controls.update();
+      renderer.render(scene, camera);
+    };
     animate();
 
     const handleResize = () => {
@@ -258,60 +328,78 @@ export function ConfiguratorCanvas({
       cancelAnimationFrame(frameId);
       window.removeEventListener('resize', handleResize);
       renderer.dispose();
-      if (container.contains(renderer.domElement)) container.removeChild(renderer.domElement);
+      if (container.contains(renderer.domElement))
+        container.removeChild(renderer.domElement);
     };
   }, []);
 
- const updateGarment = (url: string | null, key: keyof typeof garmentRefs.current) => {
-  const scene = sceneRef.current;
-  if (!scene) return;
+  const updateGarment = (
+    url: string | null,
+    key: keyof typeof garmentRefs.current,
+  ) => {
+    const scene = sceneRef.current;
+    if (!scene) return;
 
-  // 1. Remove old garment
-  if (garmentRefs.current[key]) {
-    scene.remove(garmentRefs.current[key]!);
-    // (Dispose logic here as before...)
-  }
+    // 1. Remove old garment
+    if (garmentRefs.current[key]) {
+      scene.remove(garmentRefs.current[key]!);
+      // (Dispose logic here as before...)
+    }
 
-  // 2. Load new garment
-  if (url) {
-    loaderRef.current.load(url, (gltf) => {
-      const model = gltf.scene;
-      
-      // PREPARE FOR ANIMATION
-      model.scale.set(0.8, 0.8, 0.8); // Start slightly smaller
-      model.userData.targetScale = 1.0; // The goal
-      
-      model.traverse((node) => {
-        if ((node as any).isMesh) {
-          // Prepare for fade-in
-          const mesh = node as THREE.Mesh;
-          const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-          mats.forEach((mat) => {
-            const m = mat as THREE.Material;
-            m.transparent = true;
-            m.opacity     = 0;
-            m.side        = THREE.DoubleSide;
-          });
-        }
+    // 2. Load new garment
+    if (url) {
+      loaderRef.current.load(url, (gltf) => {
+        const model = gltf.scene;
+
+        // PREPARE FOR ANIMATION
+        model.scale.set(0.8, 0.8, 0.8); // Start slightly smaller
+        model.userData.targetScale = 1.0; // The goal
+
+        model.traverse((node) => {
+          if ((node as any).isMesh) {
+            // Prepare for fade-in
+            const mesh = node as THREE.Mesh;
+            const mats = Array.isArray(mesh.material)
+              ? mesh.material
+              : [mesh.material];
+            mats.forEach((mat) => {
+              const m = mat as THREE.Material;
+              m.transparent = true;
+              m.opacity = 0;
+              m.side = THREE.DoubleSide;
+            });
+          }
+        });
+
+        garmentRefs.current[key] = model;
+        scene.add(model);
+
+        // Apply color immediately — default to white when no color is selected yet
+        const hex = colorRefs.current[key];
+        initGarmentColor(model, key, hex ?? '#ffffff');
       });
+    }
+  };
 
-      garmentRefs.current[key] = model;
-      scene.add(model);
+  useEffect(() => {
+    updateGarment(topModelUrl, 'top');
+  }, [topModelUrl]);
+  useEffect(() => {
+    updateGarment(bottomModelUrl, 'bottom');
+  }, [bottomModelUrl]);
+  useEffect(() => {
+    updateGarment(sleeveModelUrl, 'sleeve');
+  }, [sleeveModelUrl]);
 
-      // Apply color immediately — default to white when no color is selected yet
-      const hex = colorRefs.current[key];
-      initGarmentColor(model, key, hex ?? '#ffffff');
-    });
-  }
-};
-
-  useEffect(() => { updateGarment(topModelUrl, 'top'); }, [topModelUrl]);
-  useEffect(() => { updateGarment(bottomModelUrl, 'bottom'); }, [bottomModelUrl]);
-  useEffect(() => { updateGarment(sleeveModelUrl, 'sleeve'); }, [sleeveModelUrl]);
-
-  useEffect(() => { if (topColor)    setGarmentColorTarget('top',    topColor);    }, [topColor]);
-  useEffect(() => { if (bottomColor) setGarmentColorTarget('bottom', bottomColor); }, [bottomColor]);
-  useEffect(() => { if (sleeveColor) setGarmentColorTarget('sleeve', sleeveColor); }, [sleeveColor]);
+  useEffect(() => {
+    if (topColor) setGarmentColorTarget('top', topColor);
+  }, [topColor]);
+  useEffect(() => {
+    if (bottomColor) setGarmentColorTarget('bottom', bottomColor);
+  }, [bottomColor]);
+  useEffect(() => {
+    if (sleeveColor) setGarmentColorTarget('sleeve', sleeveColor);
+  }, [sleeveColor]);
 
   return <div ref={containerRef} className="w-full h-full" />;
 }
