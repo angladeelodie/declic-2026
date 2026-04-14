@@ -38,7 +38,7 @@ export function Sections({sections}: {sections: SectionsFragment}) {
           case 'section_hero':
             sectionComponent = <SectionHero {...section} />;
             break;
-          case 'section_editorial':
+          case 'page_home_editorial':
             sectionComponent = <SectionEditorial {...section} />;
             break;
           case 'section_featured_products':
@@ -47,19 +47,19 @@ export function Sections({sections}: {sections: SectionsFragment}) {
           case 'section_featured_collections':
             sectionComponent = <SectionFeaturedCollections {...section} />;
             break;
-          case 'section_looks_slider':
+          case 'page_shop_looks_slider':
             sectionComponent = <SectionLooksSlider {...section} />;
             break;
-          case 'section_outfits_and_media':
+          case 'page_home_products_and_media':
             sectionComponent = <SectionOutfitsAndMedia {...section} />;
             break;
-          case 'section_items_grid':
+          case 'page_shop_items_grid':
             sectionComponent = <SectionItemsGrid {...section} />;
             break;
-          case 'section_configurator':
+          case 'page_configurator':
             sectionComponent = <SectionConfigurator {...section} />;
             break;
-          case 'section_basic_page':
+          case 'pages_other':
             sectionComponent = <SectionBasicPage {...section} />;
             break;
           default:
