@@ -231,7 +231,7 @@ export function ConfiguratorCanvas({
     // --- CINEMATIC CAMERA LOGIC ---
     let frameId: number;
     let angle = 0;
-    const speed = 0.008; // Adjust for slower/faster rotation
+    const speed = 0.007; // Adjust for slower/faster rotation
 
     const animate = () => {
       frameId = requestAnimationFrame(animate);

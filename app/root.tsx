@@ -13,7 +13,8 @@ import {
   Link,
 } from 'react-router';
 import type {Route} from './+types/root';
-import favicon from '~/assets/favicon.svg';
+import faviconLight from '~/assets/favicon-light.svg';
+import faviconDark from '~/assets/favicon.svg';
 import {FOOTER_QUERY, HEADER_QUERY} from '~/lib/fragments';
 import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
@@ -154,14 +155,13 @@ function loadDeferredData({context}: Route.LoaderArgs) {
 
       // Normalize socials metaobjects into {label, url}[]
       const socials =
-        data.shop.socials?.references?.nodes
-          ?.flatMap((node) => {
-            if (node.__typename !== 'Metaobject') return [];
-            const name = node.name?.value?.trim();
-            const url = node.url?.value?.trim();
-            if (!name || !url) return [];
-            return [{label: name, url}];
-          }) ?? [];
+        data.shop.socials?.references?.nodes?.flatMap((node) => {
+          if (node.__typename !== 'Metaobject') return [];
+          const name = node.name?.value?.trim();
+          const url = node.url?.value?.trim();
+          if (!name || !url) return [];
+          return [{label: name, url}];
+        }) ?? [];
 
       return {
         pages: data.pages,
@@ -191,7 +191,6 @@ function loadDeferredData({context}: Route.LoaderArgs) {
 export function Layout({children}: {children?: React.ReactNode}) {
   const nonce = useNonce();
   const data = useRouteLoaderData<RootLoader>('root');
-  const squareLogoUrl = data?.header?.shop?.brand?.squareLogo?.image?.url;
 
   return (
     <html lang="en">
@@ -201,11 +200,18 @@ export function Layout({children}: {children?: React.ReactNode}) {
         <link rel="stylesheet" href={tailwindCss}></link>
         <link rel="stylesheet" href={resetStyles}></link>
         <link rel="stylesheet" href={appStyles}></link>
-        {squareLogoUrl ? (
-          <link rel="icon" href={squareLogoUrl} />
-        ) : (
-          <link rel="icon" type="image/svg+xml" href={favicon} />
-        )}
+        <link
+          rel="icon"
+          type="image/svg+xml"
+          href={faviconDark}
+          media="(prefers-color-scheme: light)"
+        />
+        <link
+          rel="icon"
+          type="image/svg+xml"
+          href={faviconLight}
+          media="(prefers-color-scheme: dark)"
+        />{' '}
         <link
           rel="preload"
           href="/fonts/Metalite-Regular.woff2"
@@ -289,7 +295,9 @@ export function ErrorBoundary() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen px-6 text-center gap-4">
-      <p className="text-[80px] font-metalite uppercase leading-none">{errorStatus}</p>
+      <p className="text-[80px] font-metalite uppercase leading-none">
+        {errorStatus}
+      </p>
       <h1 className="text-title">Something went wrong</h1>
       <Link
         to="/"

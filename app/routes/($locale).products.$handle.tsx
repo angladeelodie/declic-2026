@@ -25,7 +25,7 @@ import {AnimatePresence, motion} from 'framer-motion';
 
 export const meta: Route.MetaFunction = ({data}) => {
   return [
-    {title: `Hydrogen | ${data?.product.title ?? ''}`},
+    {title: `DECLIC | ${data?.product.title ?? ''}`},
     {
       rel: 'canonical',
       href: `/products/${data?.product.handle}`,

@@ -105,7 +105,6 @@ export function Media({
           loop
           playsInline
           controls={false}
-          defaultMuted // Extra insurance for Chrome/Safari
           poster={actualMediaData.previewImage?.url}
           className="w-full h-full object-cover"
         >

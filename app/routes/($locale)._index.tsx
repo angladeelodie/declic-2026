@@ -5,9 +5,8 @@ import type {Route} from './+types/($locale)._index';
 import {Sections, SECTIONS_FRAGMENT} from '~/sections/Sections';
 
 export const meta: Route.MetaFunction = ({data}) => {
-  const title = data?.shop?.name
-    ? `${data.shop.name} | Home`
-    : 'Hydrogen Metaobject | Home';
+  const title = `${data.shop.name}`;
+
   return [{title}];
 };
 

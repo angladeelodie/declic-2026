@@ -7,7 +7,7 @@ import {SECTIONS_FRAGMENT, Sections} from '~/sections/Sections';
 
 
 export const meta: Route.MetaFunction = ({data}) => {
-  return [{title: `Hydrogen | ${data?.page.title ?? ''}`}];
+  return [{title: `DECLIC | ${data?.page.title ?? ''}`}];
 };
 
 export async function loader(args: Route.LoaderArgs) {

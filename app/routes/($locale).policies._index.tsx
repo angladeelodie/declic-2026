@@ -30,7 +30,7 @@ export default function Policies() {
 
         {/* Back to shop */}
         <Link
-          to="/collections"
+          to="/"
           className="inline-flex items-center gap-2 mb-10 text-sm text-gray-400 hover:text-black transition-colors duration-200 group"
         >
           <svg
