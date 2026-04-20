@@ -103,8 +103,8 @@ export function ConfiguratorCanvas({
           // 1. Check the material name you set in Blender
           if (m.name === 'metal') {
             m.color.set('#ffffff'); // Standard Silver
-            m.metalness = 0.8; // High metalness for reflections
-            m.roughness = 0.1; // Smooth/Shiny
+            m.metalness = .9; // High metalness for reflections
+            m.roughness = 0.05; // Smooth/Shiny
           } else {
             // 2. This is the fabric/configurable part
             m.color.copy(color);
@@ -138,8 +138,8 @@ export function ConfiguratorCanvas({
             // Re-apply metal settings if the model was just reloaded or swapped
             if (m.name === 'metal') {
               m.color.set('#ffffff'); // Your red placeholder
-              m.metalness = 0.8;
-              m.roughness = 0.1;
+              m.metalness = .9;
+              m.roughness = .05;
             } else {
               // Keep fabric settings for the rest
               m.roughness = 0.7;
@@ -175,9 +175,12 @@ export function ConfiguratorCanvas({
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
     controls.target.set(0, CAMERA_FULL_BODY.lookAtY, 0);
     // Disable auto-rotate here because we will control the camera manually for the 180 swing
     controls.enablePan = false;
+    controls.enableZoom = false;
+    controls.rotateSpeed = 0.9;
 
     // --- ENHANCED LIGHT SETUP (Studio Style) ---
     scene.add(new THREE.AmbientLight(0xffffff, 0.4)); // Soft overall light
@@ -231,7 +234,39 @@ export function ConfiguratorCanvas({
     // --- CINEMATIC CAMERA LOGIC ---
     let frameId: number;
     let angle = 0;
+    let swingAngleCurrent = 0;
+    let isUserDragging = false;
     const speed = 0.007; // Adjust for slower/faster rotation
+    const SWING_MAX_ANGLE = Math.PI * 0.75;
+
+    const syncAutoOrbitFromCamera = () => {
+      const dx = camera.position.x - controls.target.x;
+      const dz = camera.position.z - controls.target.z;
+      const dist = Math.sqrt(dx * dx + dz * dz);
+      const swingFromCamera = Math.atan2(dx, dz);
+
+      radiusRef.current = dist || radiusRef.current;
+      camYRef.current = camera.position.y;
+      lookAtYRef.current = controls.target.y;
+      swingAngleCurrent = swingFromCamera;
+
+      const normalized = THREE.MathUtils.clamp(
+        swingFromCamera / SWING_MAX_ANGLE,
+        -1,
+        1,
+      );
+      angle = Math.asin(normalized);
+    };
+
+    controls.addEventListener('start', () => {
+      isUserDragging = true;
+      syncAutoOrbitFromCamera();
+    });
+
+    controls.addEventListener('end', () => {
+      isUserDragging = false;
+      syncAutoOrbitFromCamera();
+    });
 
     const animate = () => {
       frameId = requestAnimationFrame(animate);
@@ -292,10 +327,6 @@ export function ConfiguratorCanvas({
         });
       });
 
-      // --- CAMERA SWING ---
-      angle += speed;
-      const swingAngle = Math.sin(angle) * (Math.PI * 0.75);
-
       // Lerp toward the target camera position for the active category
       const target = activeCategoryRef.current
         ? CAMERA_TARGETS[activeCategoryRef.current]
@@ -306,11 +337,18 @@ export function ConfiguratorCanvas({
       radiusRef.current +=
         (target.radius - radiusRef.current) * CAMERA_LERP_SPEED;
 
-      camera.position.x = Math.sin(swingAngle) * radiusRef.current;
-      camera.position.z = Math.cos(swingAngle) * radiusRef.current;
-      camera.position.y = camYRef.current;
+      if (!isUserDragging) {
+        // --- CAMERA SWING (auto) ---
+        angle += speed;
+        const swingTarget = Math.sin(angle) * SWING_MAX_ANGLE;
+        swingAngleCurrent += (swingTarget - swingAngleCurrent) * 0.08;
 
-      controls.target.set(0, lookAtYRef.current, 0);
+        camera.position.x = Math.sin(swingAngleCurrent) * radiusRef.current;
+        camera.position.z = Math.cos(swingAngleCurrent) * radiusRef.current;
+        camera.position.y += (camYRef.current - camera.position.y) * 0.08;
+
+        controls.target.y += (lookAtYRef.current - controls.target.y) * 0.08;
+      }
 
       controls.update();
       renderer.render(scene, camera);
@@ -327,6 +365,7 @@ export function ConfiguratorCanvas({
     return () => {
       cancelAnimationFrame(frameId);
       window.removeEventListener('resize', handleResize);
+      controls.dispose();
       renderer.dispose();
       if (container.contains(renderer.domElement))
         container.removeChild(renderer.domElement);

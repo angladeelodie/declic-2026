@@ -13,6 +13,7 @@ import {useTranslation} from '~/lib/useTranslation';
 type VariantNode = {
   id: string;
   availableForSale: boolean;
+  image?: {url: string; altText?: string | null} | null;
   price: {amount: string; currencyCode: string};
   selectedOptions: Array<{name: string; value: string}>;
 };
@@ -88,6 +89,36 @@ function resolveVariant(
 
   // Final fallback: first variant
   return nodes[0];
+}
+
+function hasAvailableVariant(
+  product: ProductNode | null | undefined,
+  size: string | null,
+  color: string | null,
+): boolean {
+  if (!product?.variants?.nodes?.length) return false;
+
+  return product.variants.nodes.some((variant) => {
+    if (!variant.availableForSale) return false;
+
+    const opts = Object.fromEntries(
+      variant.selectedOptions.map((o) => [o.name.toLowerCase(), o.value]),
+    );
+
+    const sizeOk =
+      !size ||
+      Object.entries(opts).some(
+        ([key, val]) => !COLOR_OPT_NAMES.has(key) && val === size,
+      );
+
+    const colorOk =
+      !color ||
+      opts['color'] === color ||
+      opts['couleur'] === color ||
+      opts['colore'] === color;
+
+    return sizeOk && colorOk;
+  });
 }
 
 // ─── Main Component ──────────────────────────────────────────────────────────
@@ -169,16 +200,38 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
 
   function handleSelectProduct(handle: string) {
     if (!activeCategory) return;
-    const {urlKey, selectedHandle: currentHandle} = categoryMap[activeCategory];
+    const {
+      urlKey,
+      selectedHandle: currentHandle,
+      products,
+    } = categoryMap[activeCategory];
     const deselecting = handle === currentHandle;
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
       next.set(urlKey, deselecting ? 'none' : handle);
       return next;
     });
+
+    const nextProduct = products.find((p) => p.handle === handle) ?? null;
+    const nextProductSizes = (nextProduct?.options ?? [])
+      .filter((o) => !COLOR_OPT_NAMES.has(o.name.toLowerCase()))
+      .flatMap((o) => o.values);
+    const nextProductColors = getOptionValues(nextProduct, 'color')
+      .concat(getOptionValues(nextProduct, 'couleur'))
+      .concat(getOptionValues(nextProduct, 'colore'));
+
     setAllOptions((prev) => ({
       ...prev,
-      [activeCategory]: {size: 'XS', color: null},
+      [activeCategory]: {
+        size: nextProductSizes.includes(prev[activeCategory].size ?? '')
+          ? prev[activeCategory].size
+          : (nextProductSizes.includes('XS')
+              ? 'XS'
+              : (nextProductSizes[0] ?? null)),
+        color: nextProductColors.includes(prev[activeCategory].color ?? '')
+          ? prev[activeCategory].color
+          : (nextProductColors[0] ?? null),
+      },
     }));
   }
 
@@ -236,6 +289,13 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
     effectiveColor,
   );
 
+  const disabledSizes = sizes.filter(
+    (size) => !hasAvailableVariant(activeProduct, size, effectiveColor),
+  );
+  const disabledColors = colors.filter(
+    (color) => !hasAvailableVariant(activeProduct, activeOptions.size, color),
+  );
+
   // ── Outfit-wide cart logic ────────────────────────────────────────
   // Resolve a variant for every selected product across all three categories.
   const outfitVariants = (
@@ -271,7 +331,12 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
       <ul className="flex flex-row gap-3 overflow-x-auto no-scrollbar">
         {active.products.map((product) => {
           const isSelected = product.handle === active.selectedHandle;
-          const image = product.featuredImage;
+          const productColors = getOptionValues(product, 'color')
+            .concat(getOptionValues(product, 'couleur'))
+            .concat(getOptionValues(product, 'colore'));
+          const previewColor = activeOptions.color ?? productColors[0] ?? null;
+          const previewVariant = resolveVariant(product, null, previewColor);
+          const image = previewVariant?.image ?? product.featuredImage;
           return (
             <li
               key={product.id}
@@ -404,6 +469,7 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
                         optionName="color"
                         values={colors}
                         selected={effectiveColor}
+                        disabledValues={disabledColors}
                         onSelect={(color) =>
                           setActiveOptions((prev) => ({...prev, color}))
                         }
@@ -428,6 +494,7 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
                       optionName="size"
                       values={sizes}
                       selected={activeOptions.size}
+                      disabledValues={disabledSizes}
                       onSelect={(size) =>
                         setActiveOptions((prev) => ({...prev, size}))
                       }
@@ -600,6 +667,10 @@ export const SECTION_CONFIGURATOR_FRAGMENT = `#graphql
                 nodes {
                   id
                   availableForSale
+                  image {
+                    url
+                    altText
+                  }
                   price {
                     amount
                     currencyCode
@@ -651,6 +722,10 @@ export const SECTION_CONFIGURATOR_FRAGMENT = `#graphql
                 nodes {
                   id
                   availableForSale
+                  image {
+                    url
+                    altText
+                  }
                   price {
                     amount
                     currencyCode
@@ -702,6 +777,10 @@ export const SECTION_CONFIGURATOR_FRAGMENT = `#graphql
                 nodes {
                   id
                   availableForSale
+                  image {
+                    url
+                    altText
+                  }
                   price {
                     amount
                     currencyCode

@@ -9,6 +9,8 @@ type OptionSwatchGroupProps = {
   selected: string | null;
   /** Provide to make the group interactive; omit for display-only */
   onSelect?: (value: string) => void;
+  /** Option values that should render disabled (e.g. out of stock) */
+  disabledValues?: string[];
   /** 'row' (default) lays swatches out horizontally; 'column' stacks them */
   orientation?: 'row' | 'column';
   className?: string;
@@ -19,6 +21,7 @@ export function OptionSwatchGroup({
   values,
   selected,
   onSelect,
+  disabledValues = [],
   orientation = 'row',
   className = '',
 }: OptionSwatchGroupProps) {
@@ -38,6 +41,7 @@ export function OptionSwatchGroup({
             optionName={optionName}
             value={value}
             selected={selected === value}
+            disabled={disabledValues.includes(value)}
             onClick={() => onSelect(value)}
           />
         ) : (
@@ -46,6 +50,7 @@ export function OptionSwatchGroup({
             optionName={optionName}
             value={value}
             selected={selected === value}
+            disabled={disabledValues.includes(value)}
           />
         ),
       )}

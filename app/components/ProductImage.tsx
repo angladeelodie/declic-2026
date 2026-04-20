@@ -3,8 +3,10 @@ import {Image} from '@shopify/hydrogen';
 
 export function ProductImage({
   image,
+  isPrimaryVariantImage = false,
 }: {
   image: ProductVariantFragment['image'];
+  isPrimaryVariantImage?: boolean;
 }) {
   if (!image) {
     return <div className="product-image" />;
@@ -16,7 +18,12 @@ export function ProductImage({
         data={image}
         key={image.id}
         sizes="(min-width: 45em) 50vw, 100vw"
-        className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+        className={[
+          'w-full h-full transition-transform duration-500 ease-out',
+          isPrimaryVariantImage
+            ? 'object-contain object-center scale-[0.9] group-hover:scale-[0.94]'
+            : 'object-cover group-hover:scale-[1.04]',
+        ].join(' ')}
       />
     </div>
   );
