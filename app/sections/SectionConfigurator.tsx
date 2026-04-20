@@ -416,7 +416,7 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
               onClick={() =>
                 setActiveCategory(activeCategory === key ? null : key)
               }
-              className={`text-title transition-colors duration-150 cursor-pointer hover:text-black ${
+              className={`text-title transition-colors duration-150 cursor-pointer hover:text-gray-600 ${
                 activeCategory === key ? 'text-black' : 'text-gray-300'
               }`}
             >

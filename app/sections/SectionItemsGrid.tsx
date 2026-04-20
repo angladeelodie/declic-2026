@@ -103,7 +103,7 @@ export function SectionItemsGrid(props: SectionItemsGridFragment) {
           onClick={() => setSelectedCategory('all')}
           className={[
             'text-title text-title uppercase transition-colors cursor-pointer  pb-0 pt-0',
-            selectedCategory === 'all' ? 'font-bold' : 'font-normal',
+            selectedCategory === 'all' ? 'font-bold' : 'font-normal text-gray-300',
           ].join(' ')}
         >
           {t('collection.all')}
@@ -117,7 +117,7 @@ export function SectionItemsGrid(props: SectionItemsGridFragment) {
               onClick={() => setSelectedCategory(category)}
               className={[
                 'text-title text-title uppercase transition-colors cursor-pointer pb-0 pt-0',
-                selectedCategory === category ? 'font-bold' : 'font-normal',
+                selectedCategory === category ? 'font-bold' : 'text-gray-300',
               ].join(' ')}
             >
               {categoryLabels[category]}

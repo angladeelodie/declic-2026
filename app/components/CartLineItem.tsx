@@ -83,15 +83,16 @@ export function CartLineItem({
       </div>
 
       {/* 3. Remove Column (1/6) - Simple X */}
-      <div className="col-span-1 flex h-full items-center justify-end">
+      {/* <div className="col-span-1 flex h-full items-center justify-end">
         <CartLineRemoveButton lineIds={[id]} disabled={!!line.isOptimistic} />
-      </div>
+      </div> */}
     </li>
   );
 }
 
 /**
  * Quantity Toggle: - 1 +
+ * When quantity is 1 and minus is clicked, the item is removed from cart.
  */
 function CartLineQuantity({line}: {line: CartLine}) {
   if (!line || typeof line?.quantity === 'undefined') return null;
@@ -99,16 +100,33 @@ function CartLineQuantity({line}: {line: CartLine}) {
 
   return (
     <div className="flex items-center gap-4 font-bold text-sm">
-      <CartLineUpdateButton
-        lines={[{id: lineId, quantity: Math.max(0, quantity - 1)}]}
-      >
-        <button
-          disabled={quantity <= 1 || !!isOptimistic}
-          className="text-gray-400 hover:text-black transition-colors"
+      {quantity === 1 ? (
+        <CartForm
+          fetcherKey={getUpdateKey([lineId])}
+          route="/cart"
+          action={CartForm.ACTIONS.LinesRemove}
+          inputs={{lineIds: [lineId]}}
         >
-          &#8722;
-        </button>
-      </CartLineUpdateButton>
+          <button
+            disabled={!!isOptimistic}
+            type="submit"
+            className="text-gray-400 hover:text-black transition-colors"
+          >
+            &#8722;
+          </button>
+        </CartForm>
+      ) : (
+        <CartLineUpdateButton
+          lines={[{id: lineId, quantity: quantity - 1}]}
+        >
+          <button
+            disabled={!!isOptimistic}
+            className="text-gray-400 hover:text-black transition-colors"
+          >
+            &#8722;
+          </button>
+        </CartLineUpdateButton>
+      )}
 
       <span className="tabular-nums min-w-[12px] text-center">{quantity}</span>
 
