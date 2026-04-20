@@ -60,14 +60,14 @@ function FooterMenu({
   // console.log("socialLinks:", socialLinks);
   return (
     <nav
-      className="grid md:grid-rows-1 grid-cols-6 lg:grid-cols-12 gap-4"
+      className="grid md:grid-rows-1 grid-cols-6 lg:grid-cols-12 gap-2 text-sm"
       role="navigation"
     >
       {/* Col 1-2: Contact from metafield */}
       
 
       {/* Col 3-4: Pages */}
-      <div className="col-span-3 md:col-span-1 md:col-start-2 lg:col-start-3 lg:col-span-2 flex flex-col gap-4">
+      <div className="col-span-3 md:col-span-1 md:col-start-2 lg:col-start-3 lg:col-span-2 flex flex-col gap-2">
         <h3 className="font-metalite">Pages</h3>
         <ul className="flex flex-col">
           {pagesItems.map((item) => {
@@ -86,7 +86,7 @@ function FooterMenu({
                   end
                   to={url}
                   prefetch="intent"
-                  className="font-bold capitalize"
+                  className="capitalize"
                 >
                   {item.title}
                 </NavLink>
@@ -97,9 +97,9 @@ function FooterMenu({
       </div>
 
       {/* Col 5-6: Legal */}
-      <div className="col-span-3 md:col-span-1 lg:col-span-2 flex flex-col gap-4">
+      <div className="col-span-3 md:col-span-1 lg:col-span-2 flex flex-col gap-2">
         <h3 className="font-metalite">Legal</h3>
-        <ul className="flex flex-col font-bold">
+        <ul className="flex flex-col">
           {legalItems.length > 0 ? (
             legalItems.map((item) => {
               if (!item?.url) return null;
@@ -157,9 +157,9 @@ function FooterMenu({
       </div>
 
       {/* Col 7-8: Find Us from metaobjects */}
-      <div className="col-span-3 md:col-span-1 lg:col-span-2 flex flex-col gap-4">
+      <div className="col-span-3 md:col-span-1 lg:col-span-2 flex flex-col gap-2">
         <h3 className="font-metalite">Find Us</h3>
-        <ul className="flex flex-col font-bold">
+        <ul className="flex flex-col">
           {socialLinks.map((link) => (
             <li key={link.label}>
               <a
@@ -175,13 +175,13 @@ function FooterMenu({
         </ul>
       </div>
       
-      <div className="col-span-3 md:col-span-1 lg:col-span-2 flex flex-col gap-4">
+      <div className="col-span-3 md:col-span-1 lg:col-span-2 flex flex-col gap-2">
         <h3 className="font-metalite">Contact</h3>
-        <address className="not-italic flex flex-col font-bold">
+        <address className="not-italic flex flex-col">
           {contactEmail && (
             <a
               href={`mailto:${contactEmail}`}
-              className="text-slate-900 font-medium underline underline-offset-4"
+              className="underline underline-offset-4"
             >
               {contactEmail}
             </a>

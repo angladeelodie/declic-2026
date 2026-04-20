@@ -23,7 +23,15 @@ export function SectionHero(props: SectionHeroFragment) {
   return (
     /* Swap to [1fr_auto] so images stretch and text fits content */
     <section
-      className={`section-hero section-main grid-rows-[1fr_auto] pb-4 md:pb-12 ${mediaImages.length > 1 ? 'h-[90vh]' : 'h-[50vh] md:h-[90vh]'}`}
+      className={`section-hero section-main grid-rows-[1fr_auto] pb-4 md:pb-12 ${
+        mediaImages.length > 1
+          ? heading
+            ? 'h-[90vh]'
+            : 'h-[70vh]'
+          : heading
+            ? 'h-[50vh] md:h-[90vh]'
+            : 'h-[50vh] md:h-[70vh]'
+      }`}
     >
       {/* ROW 1: Media Images (Stretches) */}
       {/* 1 Image: Spans the full width (col-span-full)

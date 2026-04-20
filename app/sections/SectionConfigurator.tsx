@@ -439,7 +439,7 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
         {/* 4 — Bottom action bar */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pt-2 lg:mt-16">
           {/* Total price */}
-          {outfitTotalPrice > 0 && (
+          {/* {outfitTotalPrice > 0 && (
             <div className="flex flex-col items-center lg:items-start">
               <div className="uppercase text-metalite leading-tight">
                 Total
@@ -449,7 +449,7 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
                 {outfitCurrency}
               </div>
             </div>
-          )}
+          )} */}
 
           {/* Add whole outfit to cart */}
           <div className="w-fit lg:w-auto self-center">

@@ -114,7 +114,7 @@ export function SectionItemsGrid(props: SectionItemsGridFragment) {
         <button
           onClick={() => setSelectedCategories(new Set())}
           className={[
-            'text-title uppercase transition-colors cursor-pointer  pb-0 pt-0',
+            'text-title text-[18px] uppercase transition-colors cursor-pointer  pb-0 pt-0',
             selectedCategories.size === 0 ? 'text-black' : 'text-gray-300',
           ].join(' ')}
         >
@@ -128,7 +128,7 @@ export function SectionItemsGrid(props: SectionItemsGridFragment) {
               key={category}
               onClick={() => toggleCategory(category)}
               className={[
-                'text-title uppercase transition-colors cursor-pointer pb-0 pt-0',
+                'text-title text-[18px] uppercase transition-colors cursor-pointer pb-0 pt-0',
                 selectedCategories.has(category)
                   ? 'text-black'
                   : 'text-gray-300',
@@ -184,7 +184,7 @@ export function SectionItemsGrid(props: SectionItemsGridFragment) {
                     ease: [0.21, 0.6, 0.35, 1],
                     delay: index * 0.05,
                   }}
-                  className={index >= 4 ? 'hidden md:block' : ''}
+                  className={index >= 20 ? 'hidden md:block' : ''}
                 >
                   <Link
                     to={variantUrl}
