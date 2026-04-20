@@ -33,7 +33,7 @@ export function LinkButton({
         ${className}
       `}
     >
-      <h4 className="m-0">{text}</h4>
+      <h4 className="m-0 leading-none">{text}</h4>
 
       <img
         src={ArrowSvg}
