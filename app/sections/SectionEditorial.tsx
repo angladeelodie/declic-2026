@@ -44,13 +44,13 @@ export function SectionEditorial(props: SectionEditorialFragment) {
         `}
       >
         {heading?.parsedValue && (
-          <h2 className="text-title text-3xl lg:text-5xl">
+          <h2 className="text-title">
             {heading.parsedValue}
           </h2>
         )}
 
         {props.description?.value && (
-          <div className="mb-6">
+          <div className="mb-6 text-body">
             <RichText data={props.description.value} />
           </div>
         )}

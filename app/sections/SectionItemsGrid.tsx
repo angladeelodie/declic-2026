@@ -6,7 +6,8 @@ import type {SectionItemsGridFragment} from 'storefrontapi.generated';
 import {useMemo, useState} from 'react';
 import {useTranslation} from '~/lib/useTranslation';
 
-type CategoryFilter = 'tops' | 'bottoms' | 'sleeves';
+type ItemCategory = 'tops' | 'bottoms' | 'sleeves';
+type CategoryFilter = 'all' | ItemCategory;
 
 // Shopify translates option names per locale — match all known translations.
 // Add the translation for each new language here (e.g. 'colore' for Italian).
@@ -20,45 +21,32 @@ export function SectionItemsGrid(props: SectionItemsGridFragment) {
   const bottomsCollection = section.bottomsCollection;
   const sleevesCollection = section.sleevesCollection;
 
-  const categoryLabels: Record<CategoryFilter, string> = {
+  const categoryLabels: Record<ItemCategory, string> = {
     tops: (topsCollection as any)?.title ?? 'Tops',
     bottoms: (bottomsCollection as any)?.title ?? 'Bottoms',
     sleeves: (sleevesCollection as any)?.title ?? 'Sleeves',
   };
 
-  const [selectedCategories, setSelectedCategories] = useState<
-    Set<CategoryFilter>
-  >(new Set());
-
-  function toggleCategory(category: CategoryFilter) {
-    setSelectedCategories((prev) => {
-      const next = new Set(prev);
-      if (next.has(category)) {
-        next.delete(category);
-      } else {
-        next.add(category);
-      }
-      return next;
-    });
-  }
+  const [selectedCategory, setSelectedCategory] =
+    useState<CategoryFilter>('all');
 
   const allProducts = useMemo(() => {
-    const cats =
-      selectedCategories.size > 0
-        ? Array.from(selectedCategories)
-        : (['tops', 'bottoms', 'sleeves'] as CategoryFilter[]);
-
-    return cats.flatMap((cat) => {
-      switch (cat) {
-        case 'tops':
-          return topsCollection?.products?.nodes ?? [];
-        case 'bottoms':
-          return bottomsCollection?.products?.nodes ?? [];
-        case 'sleeves':
-          return sleevesCollection?.products?.nodes ?? [];
-      }
-    });
-  }, [selectedCategories, topsCollection, bottomsCollection, sleevesCollection]);
+    switch (selectedCategory) {
+      case 'tops':
+        return topsCollection?.products?.nodes ?? [];
+      case 'bottoms':
+        return bottomsCollection?.products?.nodes ?? [];
+      case 'sleeves':
+        return sleevesCollection?.products?.nodes ?? [];
+      case 'all':
+      default:
+        return [
+          ...(topsCollection?.products?.nodes ?? []),
+          ...(bottomsCollection?.products?.nodes ?? []),
+          ...(sleevesCollection?.products?.nodes ?? []),
+        ];
+    }
+  }, [selectedCategory, topsCollection, bottomsCollection, sleevesCollection]);
 
   if (!topsCollection && !bottomsCollection && !sleevesCollection) return null;
 
@@ -112,26 +100,24 @@ export function SectionItemsGrid(props: SectionItemsGridFragment) {
       <div className="col-span-6 lg:col-span-12 flex flex-wrap gap-4 md:gap-8 flex-row justify-center pb-8">
         {/* All button */}
         <button
-          onClick={() => setSelectedCategories(new Set())}
+          onClick={() => setSelectedCategory('all')}
           className={[
-            'text-title text-[18px] uppercase transition-colors cursor-pointer  pb-0 pt-0',
-            selectedCategories.size === 0 ? 'text-black' : 'text-gray-300',
+            'text-title text-title uppercase transition-colors cursor-pointer  pb-0 pt-0',
+            selectedCategory === 'all' ? 'font-bold' : 'font-normal',
           ].join(' ')}
         >
           {t('collection.all')}
         </button>
 
         {/* Per-category toggles */}
-        {(['tops', 'bottoms', 'sleeves'] as CategoryFilter[]).map(
+        {(['tops', 'bottoms', 'sleeves'] as ItemCategory[]).map(
           (category) => (
             <button
               key={category}
-              onClick={() => toggleCategory(category)}
+              onClick={() => setSelectedCategory(category)}
               className={[
-                'text-title text-[18px] uppercase transition-colors cursor-pointer pb-0 pt-0',
-                selectedCategories.has(category)
-                  ? 'text-black'
-                  : 'text-gray-300',
+                'text-title text-title uppercase transition-colors cursor-pointer pb-0 pt-0',
+                selectedCategory === category ? 'font-bold' : 'font-normal',
               ].join(' ')}
             >
               {categoryLabels[category]}

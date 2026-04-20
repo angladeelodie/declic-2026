@@ -110,7 +110,7 @@ export function ProductForm({
               : []
           }
         >
-          <span>
+          <span className="font-bold">
             {selectedVariant?.availableForSale
               ? t('product.addToCart')
               : t('product.soldOut')}

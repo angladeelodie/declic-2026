@@ -6,58 +6,62 @@
 @import 'tailwindcss';
 
 @font-face {
-    font-family: 'Metalite';
-    src: url('/fonts/Metalite-Regular.woff2') format('woff2');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
+  font-family: 'Metalite';
+  src: url('/fonts/Metalite-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
-    font-family: 'Metalite';
-    src: url('/fonts/Metalite-Bold.woff2') format('woff2');
-    font-weight: 700;
-    font-style: normal;
-    font-display: swap;
+  font-family: 'Metalite';
+  src: url('/fonts/Metalite-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
-    font-family: 'SourceSansPro';
-    src: url('/fonts/sourcesanspro-Regular.woff') format('woff');
-    src: url();
+  font-family: 'SourceSansPro';
+  src: url('/fonts/sourcesanspro-Regular.woff') format('woff');
+  src: url();
+}
+
+@theme {
+  --font-sans: "Metalite", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
 @layer components {
-    .text-body {
-        @apply font-normal text-base;
-        font-family: 'SourceSansPro', Arial, Helvetica, sans-serif;
-    }
+  .text-body {
+    @apply font-normal text-base;
+    /* font-family: 'SourceSansPro', Arial, Helvetica, sans-serif; */
+    font-family: 'Metalite', sans-serif;
+  }
 
-    .text-metalite {
-        @apply font-normal text-base;
-        font-family: 'Metalite', sans-serif;
-    }
+  .text-metalite {
+    @apply font-normal text-base;
+    font-family: 'Metalite', sans-serif;
+  }
 
-    .text-emphasis {
-        @apply font-normal text-lg;
-        font-family: 'Metalite', sans-serif;
-    }
+  .text-emphasis {
+    @apply font-normal;
+    font-family: 'Metalite', sans-serif;
+  }
 
-    .text-title {
-        @apply uppercase font-bold leading-none text-3xl pt-8 pb-8;
-        font-family: 'Metalite', sans-serif;
-    }
+  .text-title {
+    @apply uppercase font-bold leading-none text-[24px] pt-8 pb-8;
+    font-family: 'Metalite', sans-serif;
+  }
 
-    .text-nav {
-        @apply font-normal text-base;
-        font-family: 'Metalite', sans-serif;
-    }
+  .text-nav {
+    @apply font-normal text-base;
+    font-family: 'Metalite', sans-serif;
+  }
 
-    .section-main {
-        @apply w-full grid h-[90vh] md:h-[90vh] grid-cols-6 lg:grid-cols-12 pb-16 gap-4 px-4;
-    }
+  .section-main {
+    @apply w-full grid h-[90vh] md:h-[90vh] grid-cols-6 lg:grid-cols-12 pb-16 gap-4 px-4;
+  }
 }
-
 
 /* @layer base {
 
@@ -69,7 +73,7 @@
     h1, h2, h3, h4, h5, h6 {
         @apply text-title;
     }
-} */
+} 
 
 /* 
     .prose h1,

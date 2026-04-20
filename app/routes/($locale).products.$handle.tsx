@@ -22,6 +22,7 @@ import {RichText} from '@shopify/hydrogen';
 import ArrowSvg from '../assets/arrow.svg'; // adjust path as needed
 import {STYLE_MAP, STYLE_MAP_LENGTH} from '~/lib/styleMap';
 import {AnimatePresence, motion} from 'framer-motion';
+import {useTranslation} from '~/lib/useTranslation';
 
 export const meta: Route.MetaFunction = ({data}) => {
   return [
@@ -66,7 +67,9 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
         language: storefront.i18n.language,
       },
     })
-    .then((d) => (d.products?.nodes ?? []).filter((p: any) => p.id !== product.id))
+    .then((d) =>
+      (d.products?.nodes ?? []).filter((p: any) => p.id !== product.id),
+    )
     .catch(() => []);
 
   return {
@@ -80,6 +83,8 @@ function loadDeferredData({context, params}: Route.LoaderArgs) {
 }
 
 export default function Product() {
+  const {t} = useTranslation();
+
   const {product, recommendations} = useLoaderData<typeof loader>();
 
   const selectedVariant = useOptimisticVariant(
@@ -119,16 +124,16 @@ export default function Product() {
         {/* Back to shop */}
         <Link
           to="/pages/shop"
-          className="inline-flex items-center text-metalite gap-2 mb-6 transition-transform duration-200 group"
+          className="inline-flex items-center gap-2 mb-6 transition-transform duration-200 group"
         >
-           <img
-              src={ArrowSvg}
-              alt="arrow"
-              className="w-4 h-4 scale-x-[-1]
+          <img
+            src={ArrowSvg}
+            alt="arrow"
+            className="w-4 h-4 scale-x-[-1]
           transition-transform duration-200 ease-out
           group-hover:translate-x-[-5px]"
-            />
-          Back to shop
+          />
+          {t('product.backToShop')}
         </Link>
 
         <div className="grid grid-cols-6 lg:grid-cols-12 gap-4 h-auto lg:min-h-[80vh] lg:overflow-hidden">
@@ -159,7 +164,9 @@ export default function Product() {
           {/* Main Image Column */}
           <div className="row-start-1 col-span-6 md:col-span-4 md:col-start-2 lg:col-start-2 lg:col-span-5 aspect-[4/5] lg:aspect-auto lg:h-[80vh] min-h-0 relative">
             <div className="absolute inset-0 w-full h-full">
-              <div className={`w-full h-full overflow-hidden ${STYLE_MAP[currentStyle]} bg-[#f9f9f9] transition-[border-radius] duration-700 ease-in-out`}>
+              <div
+                className={`w-full h-full overflow-hidden ${STYLE_MAP[currentStyle]} bg-[#f9f9f9] transition-[border-radius] duration-700 ease-in-out`}
+              >
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={featuredImage?.url ?? 'empty'}
@@ -181,7 +188,7 @@ export default function Product() {
             <header className="mb-8">
               <h1 className="text-title">{title}</h1>
               <div
-                className="text-body"
+                className=""
                 dangerouslySetInnerHTML={{__html: descriptionHtml}}
               />
             </header>
@@ -209,10 +216,7 @@ export default function Product() {
                         title={panelTitle}
                         defaultOpen={false}
                       >
-                        <RichText
-                          className="prose prose-sm max-w-none"
-                          data={panelContent}
-                        />
+                        <RichText className="max-w-none" data={panelContent} />
                       </AccordionItem>
                     );
                   })}
@@ -222,63 +226,75 @@ export default function Product() {
 
             {/* "Complete your look" Section */}
             <footer className="mt-4">
-              <h3 className="text-metalite text-emphasis font-bold mb-4">
-                Complete your look
-              </h3>
-              <Suspense fallback={
-                <div className="grid grid-cols-4 gap-3">
-                  {[0, 1, 2, 3].map((i) => (
-                    <div key={i} className="aspect-square bg-gray-100 rounded-[30px] overflow-hidden">
-                      <div className="w-full h-full bg-[#dcdcdc] animate-pulse" />
-                    </div>
-                  ))}
-                </div>
-              }>
+              <h3 className="font-bold mb-4">Complete your look</h3>
+              <Suspense
+                fallback={
+                  <div className="grid grid-cols-4 gap-3">
+                    {[0, 1, 2, 3].map((i) => (
+                      <div
+                        key={i}
+                        className="aspect-square bg-gray-100 rounded-[30px] overflow-hidden"
+                      >
+                        <div className="w-full h-full bg-[#dcdcdc] animate-pulse" />
+                      </div>
+                    ))}
+                  </div>
+                }
+              >
                 <Await resolve={recommendations}>
                   {(recs: any[]) => {
                     const COLOR_NAMES = new Set(['color', 'couleur', 'colore']);
                     const BLACK_TERMS = new Set(['black', 'noir', 'nero']);
                     const WHITE_TERMS = new Set(['white', 'blanc', 'bianco']);
 
-                    const tiles = recs.slice(0, 8).map((rec: any, i: number) => {
-                      const variants = rec.variants?.nodes ?? [];
-                      let blackImg = null, whiteImg = null;
-                      for (const v of variants) {
-                        const colorOpt = v.selectedOptions?.find(
-                          (o: any) => COLOR_NAMES.has(o.name?.toLowerCase() ?? ''),
-                        );
-                        const colorVal = colorOpt?.value?.toLowerCase() ?? '';
-                        if (!blackImg && BLACK_TERMS.has(colorVal) && v.image) blackImg = v.image;
-                        if (!whiteImg && WHITE_TERMS.has(colorVal) && v.image) whiteImg = v.image;
-                      }
-                      // Alternate: even index prefers black, odd prefers white
-                      const img =
-                        (i % 2 === 0 ? blackImg ?? whiteImg : whiteImg ?? blackImg)
-                        ?? rec.featuredImage
-                        ?? variants[0]?.image
-                        ?? null;
-                      return {rec, img};
-                    }).filter(({img}: any) => img !== null).slice(0, 4);
+                    const tiles = recs
+                      .slice(0, 8)
+                      .map((rec: any, i: number) => {
+                        const variants = rec.variants?.nodes ?? [];
+                        let blackImg = null,
+                          whiteImg = null;
+                        for (const v of variants) {
+                          const colorOpt = v.selectedOptions?.find((o: any) =>
+                            COLOR_NAMES.has(o.name?.toLowerCase() ?? ''),
+                          );
+                          const colorVal = colorOpt?.value?.toLowerCase() ?? '';
+                          if (!blackImg && BLACK_TERMS.has(colorVal) && v.image)
+                            blackImg = v.image;
+                          if (!whiteImg && WHITE_TERMS.has(colorVal) && v.image)
+                            whiteImg = v.image;
+                        }
+                        // Alternate: even index prefers black, odd prefers white
+                        const img =
+                          (i % 2 === 0
+                            ? (blackImg ?? whiteImg)
+                            : (whiteImg ?? blackImg)) ??
+                          rec.featuredImage ??
+                          variants[0]?.image ??
+                          null;
+                        return {rec, img};
+                      })
+                      .filter(({img}: any) => img !== null)
+                      .slice(0, 4);
 
                     return tiles.length > 0 ? (
                       <div className="grid grid-cols-4 gap-3">
                         {tiles.map(({rec, img}: any) => (
-                            <Link
-                              key={rec.id}
-                              to={`/products/${rec.handle}`}
-                              prefetch="intent"
-                              className="aspect-square overflow-hidden rounded-[30px] bg-[#f9f9f9] block hover:opacity-80 transition-opacity"
-                            >
-                              {img && (
-                                <img
-                                  src={img.url}
-                                  alt={img.altText || rec.title}
-                                  className="w-full h-full object-cover"
-                                  loading="lazy"
-                                />
-                              )}
-                            </Link>
-                          ))}
+                          <Link
+                            key={rec.id}
+                            to={`/products/${rec.handle}`}
+                            prefetch="intent"
+                            className="aspect-square overflow-hidden rounded-[30px] bg-[#f9f9f9] block hover:opacity-80 transition-opacity"
+                          >
+                            {img && (
+                              <img
+                                src={img.url}
+                                alt={img.altText || rec.title}
+                                className="w-full h-full object-cover"
+                                loading="lazy"
+                              />
+                            )}
+                          </Link>
+                        ))}
                       </div>
                     ) : null;
                   }}
