@@ -30,11 +30,17 @@ function isColorOption(optionName: string): boolean {
 
 // ─── Shared classes ───────────────────────────────────────────────────────────
 
-function outerCls(selected: boolean, disabled = false) {
+function outerCls(optionName: string, selected: boolean, disabled = false) {
+  const isTextSwatch = !isColorOption(optionName);
+
   return [
-    'w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all duration-200 overflow-hidden shrink-0',
+    'relative w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all duration-200 overflow-hidden shrink-0',
     selected ? 'border-black scale-105' : 'border-gray-200 hover:border-gray-400',
-    disabled ? 'opacity-20 cursor-not-allowed' : '',
+    disabled
+      ? isTextSwatch
+        ? 'cursor-not-allowed bg-gray-50 border-gray-200'
+        : 'opacity-20 cursor-not-allowed'
+      : '',
   ]
     .filter(Boolean)
     .join(' ');
@@ -42,7 +48,15 @@ function outerCls(selected: boolean, disabled = false) {
 
 // ─── Inner visual ─────────────────────────────────────────────────────────────
 
-function SwatchInner({optionName, value}: {optionName: string; value: string}) {
+function SwatchInner({
+  optionName,
+  value,
+  disabled = false,
+}: {
+  optionName: string;
+  value: string;
+  disabled?: boolean;
+}) {
   const color = isColorOption(optionName) ? normalizeSwatchColor(value) : null;
 
   if (color) {
@@ -58,9 +72,23 @@ function SwatchInner({optionName, value}: {optionName: string; value: string}) {
   }
 
   return (
-    <span className="text-md text-metalite uppercase leading-none text-center">
-      {value}
-    </span>
+    <>
+      <span
+        className={[
+          'text-md uppercase leading-none text-center',
+          disabled ? 'text-gray-300' : 'text-metalite',
+        ].join(' ')}
+      >
+        {value}
+      </span>
+
+      {disabled && (
+        <span
+          aria-hidden
+          className="pointer-events-none absolute left-1/2 top-1/2 h-px w-[140%] -translate-x-1/2 -translate-y-1/2 rotate-[-35deg] bg-gray-400"
+        />
+      )}
+    </>
   );
 }
 
@@ -97,7 +125,7 @@ export type OptionSwatchProps =
 
 export function OptionSwatch(props: OptionSwatchProps) {
   const {optionName, value, selected = false, disabled = false} = props;
-  const cls = outerCls(selected, disabled);
+  const cls = outerCls(optionName, selected, disabled);
 
   if ('to' in props && props.to) {
     return (
@@ -108,7 +136,7 @@ export function OptionSwatch(props: OptionSwatchProps) {
         className={cls}
         aria-label={value}
       >
-        <SwatchInner optionName={optionName} value={value} />
+        <SwatchInner optionName={optionName} value={value} disabled={disabled} />
       </Link>
     );
   }
@@ -122,7 +150,7 @@ export function OptionSwatch(props: OptionSwatchProps) {
         className={cls}
         aria-label={value}
       >
-        <SwatchInner optionName={optionName} value={value} />
+        <SwatchInner optionName={optionName} value={value} disabled={disabled} />
       </button>
     );
   }
@@ -130,7 +158,7 @@ export function OptionSwatch(props: OptionSwatchProps) {
   // Display-only (e.g. cart line items showing selected options)
   return (
     <div className={cls} aria-label={value}>
-      <SwatchInner optionName={optionName} value={value} />
+      <SwatchInner optionName={optionName} value={value} disabled={disabled} />
     </div>
   );
 }

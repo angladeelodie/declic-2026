@@ -146,8 +146,12 @@ function renderOption(option: any, navigate: ReturnType<typeof useNavigate>) {
             variantUriQuery,
             selected,
             exists,
+            available,
+            availableForSale,
             isDifferentProduct,
           } = value;
+          const isDisabled =
+            !exists || available === false || availableForSale === false;
 
           if (isDifferentProduct) {
             return (
@@ -156,7 +160,7 @@ function renderOption(option: any, navigate: ReturnType<typeof useNavigate>) {
                 optionName={option.name}
                 value={name}
                 selected={selected}
-                disabled={!exists}
+                disabled={isDisabled}
                 to={`/products/${handle}?${variantUriQuery}`}
                 replace
                 preventScrollReset
@@ -170,9 +174,9 @@ function renderOption(option: any, navigate: ReturnType<typeof useNavigate>) {
               optionName={option.name}
               value={name}
               selected={selected}
-              disabled={!exists}
+              disabled={isDisabled}
               onClick={() => {
-                if (!selected) {
+                if (!selected && !isDisabled) {
                   void navigate(`?${variantUriQuery}`, {
                     replace: true,
                     preventScrollReset: true,

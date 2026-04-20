@@ -24,7 +24,10 @@
     "all": "All"
   },
   "configurator": {
-    "selectCategory": "Select a category to start customizing your outfit"
+    "selectCategory": "Select a category to start customizing your outfit",
+    "introTitle": "Create your outfit",
+    "introDescription": "Create your outfit, piece by piece, click by click. Choose your base top, sleeves, and bottom. Customize each piece with the color of your choice and see your creation come to life. Each click connects and reflects who you are.",
+    "startCreating": "Start creating"
   },
   "search": {
     "title": "SEARCH",

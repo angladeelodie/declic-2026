@@ -67,7 +67,10 @@ function resolveVariant(
         ([key, val]) => !COLOR_OPT_NAMES.has(key) && val === size,
       );
     const colorOk =
-      !color || opts['color'] === color || opts['couleur'] === color || opts['colore'] === color;
+      !color ||
+      opts['color'] === color ||
+      opts['couleur'] === color ||
+      opts['colore'] === color;
     return sizeOk && colorOk;
   });
 
@@ -102,13 +105,16 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
 
   // 'none' is the sentinel written to the URL when a user explicitly deselects a product.
   // Without it, the absence of a param would fall back to the first product.
-  const rawTop    = searchParams.get('top');
+  const rawTop = searchParams.get('top');
   const rawBottom = searchParams.get('bottom');
   const rawSleeve = searchParams.get('sleeve');
 
-  const selectedTopHandle    = rawTop    === 'none' ? null : (rawTop    ?? tops[0]?.handle    ?? null);
-  const selectedBottomHandle = rawBottom === 'none' ? null : (rawBottom ?? bottoms[0]?.handle ?? null);
-  const selectedSleeveHandle = rawSleeve === 'none' ? null : (rawSleeve ?? sleeves[0]?.handle ?? null);
+  const selectedTopHandle =
+    rawTop === 'none' ? null : (rawTop ?? tops[0]?.handle ?? null);
+  const selectedBottomHandle =
+    rawBottom === 'none' ? null : (rawBottom ?? bottoms[0]?.handle ?? null);
+  const selectedSleeveHandle =
+    rawSleeve === 'none' ? null : (rawSleeve ?? sleeves[0]?.handle ?? null);
 
   const [activeCategory, setActiveCategory] = useState<
     'tops' | 'bottoms' | 'sleeves' | null
@@ -120,7 +126,7 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
   const [allOptions, setAllOptions] = useState<
     Record<'tops' | 'bottoms' | 'sleeves', OptionSelection>
   >({
-    tops:    {size: 'XS', color: null},
+    tops: {size: 'XS', color: null},
     bottoms: {size: 'XS', color: null},
     sleeves: {size: 'XS', color: null},
   });
@@ -201,13 +207,17 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
   const sleeveModelUrl =
     selectedProducts.sleeves?.model?.reference?.sources[0]?.url ?? null;
 
-  const topColor    = normalizeSwatchColor(allOptions.tops.color    ?? '');
+  const topColor = normalizeSwatchColor(allOptions.tops.color ?? '');
   const bottomColor = normalizeSwatchColor(allOptions.bottoms.color ?? '');
   const sleeveColor = normalizeSwatchColor(allOptions.sleeves.color ?? '');
 
-  const active        = activeCategory ? categoryMap[activeCategory] : null;
-  const activeOptions = activeCategory ? allOptions[activeCategory] : {size: null, color: null};
-  const activeProduct = activeCategory ? selectedProducts[activeCategory] : null;
+  const active = activeCategory ? categoryMap[activeCategory] : null;
+  const activeOptions = activeCategory
+    ? allOptions[activeCategory]
+    : {size: null, color: null};
+  const activeProduct = activeCategory
+    ? selectedProducts[activeCategory]
+    : null;
 
   // Sizes = all option values that are NOT a color option (handles any option name)
   const sizes = (activeProduct?.options ?? [])
@@ -230,7 +240,7 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
   // Resolve a variant for every selected product across all three categories.
   const outfitVariants = (
     [
-      {product: selectedProducts.tops,    opts: allOptions.tops},
+      {product: selectedProducts.tops, opts: allOptions.tops},
       {product: selectedProducts.bottoms, opts: allOptions.bottoms},
       {product: selectedProducts.sleeves, opts: allOptions.sleeves},
     ] as const
@@ -300,7 +310,6 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
     );
   }
 
-
   // ── Welcome screen ───────────────────────────────────────────────
   function renderWelcome() {
     return (
@@ -317,8 +326,7 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
           onClick={handleStartCreating}
           className="bg-[#3eff9d] hover:bg-[#34e58b] text-black text-metalite py-2 px-12 rounded-full transition-all duration-200 mt-8 mb-8 lg:self-start"
         >
-          {(props as any).button_text?.value ??
-            'Start creating'}
+          {(props as any).button_text?.value ?? 'Start creating'}
         </button>
       </div>
     );
@@ -340,7 +348,9 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
             <button
               key={key}
               type="button"
-              onClick={() => setActiveCategory(activeCategory === key ? null : key)}
+              onClick={() =>
+                setActiveCategory(activeCategory === key ? null : key)
+              }
               className={`text-title transition-colors duration-150 cursor-pointer hover:text-black ${
                 activeCategory === key ? 'text-black' : 'text-gray-300'
               }`}
@@ -372,7 +382,10 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
               transition={{duration: 0.18, ease: 'easeOut'}}
               className="flex flex-col gap-4"
             >
-              <motion.div layout className="flex flex-col-reverse lg:flex-row gap-4">
+              <motion.div
+                layout
+                className="flex flex-col-reverse lg:flex-row gap-4"
+              >
                 <motion.div layout className="flex-1 overflow-x-auto">
                   {renderProductThumbnails()}
                 </motion.div>
@@ -391,7 +404,9 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
                         optionName="color"
                         values={colors}
                         selected={effectiveColor}
-                        onSelect={(color) => setActiveOptions((prev) => ({...prev, color}))}
+                        onSelect={(color) =>
+                          setActiveOptions((prev) => ({...prev, color}))
+                        }
                         orientation="row"
                       />
                     </motion.div>
@@ -413,7 +428,9 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
                       optionName="size"
                       values={sizes}
                       selected={activeOptions.size}
-                      onSelect={(size) => setActiveOptions((prev) => ({...prev, size}))}
+                      onSelect={(size) =>
+                        setActiveOptions((prev) => ({...prev, size}))
+                      }
                       className="justify-center lg:justify-start"
                     />
                     {activeVariant?.price && (
@@ -462,8 +479,8 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
                 {outfitCartLines.length === 0
                   ? 'Select a product'
                   : outfitAvailable
-                    ? 'Add to cart'
-                    : 'Sold out'}
+                    ? t('product.addToCart')
+                    : t('product.soldOut')}
               </span>
               <svg
                 width="18"
