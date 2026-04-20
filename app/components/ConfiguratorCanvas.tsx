@@ -102,8 +102,8 @@ export function ConfiguratorCanvas({
 
           // 1. Check the material name you set in Blender
           if (m.name === 'metal') {
-            m.color.set('#ff0000'); // Standard Silver
-            m.metalness = 0.5; // High metalness for reflections
+            m.color.set('#ffffff'); // Standard Silver
+            m.metalness = 0.8; // High metalness for reflections
             m.roughness = 0.1; // Smooth/Shiny
           } else {
             // 2. This is the fabric/configurable part
@@ -137,8 +137,8 @@ export function ConfiguratorCanvas({
 
             // Re-apply metal settings if the model was just reloaded or swapped
             if (m.name === 'metal') {
-              m.color.set('#ff0000'); // Your red placeholder
-              m.metalness = 0.5;
+              m.color.set('#ffffff'); // Your red placeholder
+              m.metalness = 0.8;
               m.roughness = 0.1;
             } else {
               // Keep fabric settings for the rest
