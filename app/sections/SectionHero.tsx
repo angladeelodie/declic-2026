@@ -27,10 +27,10 @@ export function SectionHero(props: SectionHeroFragment) {
         mediaImages.length > 1
           ? heading
             ? 'h-[90vh]'
-            : 'h-[70vh]'
+            : 'h-[80vh]'
           : heading
             ? 'h-[50vh] md:h-[90vh]'
-            : 'h-[50vh] md:h-[70vh]'
+            : 'h-[50vh] md:h-[80vh]'
       }`}
     >
       {/* ROW 1: Media Images (Stretches) */}
