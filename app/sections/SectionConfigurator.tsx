@@ -139,6 +139,9 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
   const rawTop = searchParams.get('top');
   const rawBottom = searchParams.get('bottom');
   const rawSleeve = searchParams.get('sleeve');
+  const rawTopColor = searchParams.get('topColor');
+  const rawBottomColor = searchParams.get('bottomColor');
+  const rawSleeveColor = searchParams.get('sleeveColor');
 
   const selectedTopHandle =
     rawTop === 'none' ? null : (rawTop ?? tops[0]?.handle ?? null);
@@ -157,9 +160,9 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
   const [allOptions, setAllOptions] = useState<
     Record<'tops' | 'bottoms' | 'sleeves', OptionSelection>
   >({
-    tops: {size: 'XS', color: null},
-    bottoms: {size: 'XS', color: null},
-    sleeves: {size: 'XS', color: null},
+    tops: {size: 'XS', color: rawTopColor && rawTopColor !== 'none' ? rawTopColor : null},
+    bottoms: {size: 'XS', color: rawBottomColor && rawBottomColor !== 'none' ? rawBottomColor : null},
+    sleeves: {size: 'XS', color: rawSleeveColor && rawSleeveColor !== 'none' ? rawSleeveColor : null},
   });
 
   // ── localStorage welcome check ──────────────────────────────────

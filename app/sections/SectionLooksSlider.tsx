@@ -8,7 +8,7 @@ import {getCurrentLocale} from '~/lib/i18n';
 
 // Import Swiper styles
 
-import type {SectionlooksFragment} from 'storefrontapi.generated';
+import type {SectionLooksSliderFragment} from 'storefrontapi.generated';
 
 export function SectionLooksSlider(props: SectionLooksSliderFragment) {
   const section = parseSection<
@@ -71,21 +71,45 @@ export function SectionLooksSlider(props: SectionLooksSliderFragment) {
             }}
           >
             {looks?.nodes.map((look) => {
-              const topHandle = (look as any).top?.handle;
-              const bottomHandle = (look as any).bottom?.handle;
-              const sleeveHandle = (look as any).sleeves?.handle;
+              // The variant is directly on the look object, not wrapped in .reference
+              const topVariant = (look as any).top;
+              const bottomVariant = (look as any).bottom;
+              const sleeveVariant = (look as any).sleeves;
+
+              const topHandle = topVariant?.product?.handle;
+              const bottomHandle = bottomVariant?.product?.handle;
+              const sleeveHandle = sleeveVariant?.product?.handle;
+
+              // Extract color from variant selectedOptions
+              const extractColor = (variant: any) => {
+                if (!variant?.selectedOptions) return null;
+                const colorOpt = variant.selectedOptions.find((opt: any) =>
+                  ['color', 'couleur', 'colore'].includes(opt?.name?.toLowerCase() ?? ''),
+                );
+                return colorOpt?.value ?? null;
+              };
+
+              const topColor = extractColor(topVariant);
+              const bottomColor = extractColor(bottomVariant);
+              const sleeveColor = extractColor(sleeveVariant);
 
               const hasAllProducts = topHandle && bottomHandle;
 
               const configuratorUrl = hasAllProducts
                 ? `${pathPrefix}/pages/configurator?top=${encodeURIComponent(
                     topHandle,
+                  )}&topColor=${encodeURIComponent(
+                    topColor ?? 'none',
                   )}&bottom=${encodeURIComponent(
                     bottomHandle,
-                  )}&sleeve=${encodeURIComponent(sleeveHandle ?? 'none')}`
+                  )}&bottomColor=${encodeURIComponent(
+                    bottomColor ?? 'none',
+                  )}&sleeve=${encodeURIComponent(sleeveHandle ?? 'none')}&sleeveColor=${encodeURIComponent(
+                    sleeveColor ?? 'none',
+                  )}`
                 : '#';
 
-              // console.log(look)
+              console.log(`Look ${look.handle}:`, {topHandle, bottomHandle, hasAllProducts, configuratorUrl});
 
               return (
                 <SwiperSlide key={look.id} className="custom-slide">
@@ -150,16 +174,16 @@ const LOOK_ITEM_FRAGMENT = `#graphql
     }
   }
 
-  fragment LookItemProduct on Product {
+  fragment LookItemVariant on ProductVariant {
     id
     title
-    handle
-    featuredImage {
+    selectedOptions {
+      name
+      value
+    }
+    product {
       id
-      url
-      altText
-      width
-      height
+      handle
     }
   }
 
@@ -183,24 +207,24 @@ const LOOK_ITEM_FRAGMENT = `#graphql
 
     top: field(key: "top") {
       reference {
-        ... on Product {
-          ...LookItemProduct
+        ... on ProductVariant {
+          ...LookItemVariant
         }
       }
     }
 
     bottom: field(key: "bottom") {
       reference {
-        ... on Product {
-          ...LookItemProduct
+        ... on ProductVariant {
+          ...LookItemVariant
         }
       }
     }
 
     sleeves: field(key: "sleeves") {
       reference {
-        ... on Product {
-          ...LookItemProduct
+        ... on ProductVariant {
+          ...LookItemVariant
         }
       }
     }

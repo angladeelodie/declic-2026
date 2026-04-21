@@ -6,12 +6,14 @@ import {parseSection} from '~/utils/parseSection';
 import {LinkButton} from '~/components/LinkButton';
 import {RichText} from '@shopify/hydrogen';
 import type {SectionBasicPageFragment} from 'storefrontapi.generated';
+import { useTranslation } from '~/lib/useTranslation';
 
 export function SectionBasicPage(props: SectionBasicPageFragment) {
   const section = parseSection<SectionBasicPageFragment, {}>(props);
 
   const {title, first_column_text, second_column_text} = section;
   // console.log('SectionBasicPage props:', props);
+  const {t} = useTranslation();
 
   return (
     <section
@@ -63,6 +65,11 @@ export function SectionBasicPage(props: SectionBasicPageFragment) {
                  [&_a]:underline"
           >
             <RichText data={props.second_column_text.value} />
+            <LinkButton
+              href='mailto:hello@declicworld.com'
+              text={t('footer.contactUs')}
+              className="text-emphasis !no-underline"
+            />
           </div>
         )}
       </div>

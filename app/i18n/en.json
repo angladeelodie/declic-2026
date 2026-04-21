@@ -50,7 +50,8 @@
     "pages": "Pages",
     "legal": "Legal",
     "findUs": "Find Us",
-    "contact": "Contact"
+    "contact": "Contact",
+    "contactUs": "Contact Us"
   },
   "errors": {
     "notFound": "Page not found",
