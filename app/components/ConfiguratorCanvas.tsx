@@ -15,8 +15,8 @@ const CAMERA_TARGETS: Record<
   {y: number; lookAtY: number; radius: number}
 > = {
   tops: {y: 1.5, lookAtY: 1.3, radius: 1.6},
-  sleeves: {y: 1.6, lookAtY: 1.4, radius: 2.2},
-  bottoms: {y: 0.6, lookAtY: 0.5, radius: 2.5},
+  sleeves: {y: 1.6, lookAtY: 1.2, radius: 2.2},
+  bottoms: {y: 1, lookAtY: .9, radius: 2.5},
 };
 
 // Full-body shot when no category is selected
