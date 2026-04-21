@@ -75,14 +75,14 @@ export function SectionLooksSlider(props: SectionLooksSliderFragment) {
               const bottomHandle = (look as any).bottom?.handle;
               const sleeveHandle = (look as any).sleeves?.handle;
 
-              const hasAllProducts = topHandle && bottomHandle && sleeveHandle;
+              const hasAllProducts = topHandle && bottomHandle;
 
               const configuratorUrl = hasAllProducts
                 ? `${pathPrefix}/pages/configurator?top=${encodeURIComponent(
                     topHandle,
                   )}&bottom=${encodeURIComponent(
                     bottomHandle,
-                  )}&sleeve=${encodeURIComponent(sleeveHandle)}`
+                  )}&sleeve=${encodeURIComponent(sleeveHandle ?? 'none')}`
                 : '#';
 
               // console.log(look)
