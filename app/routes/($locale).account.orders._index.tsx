@@ -3,6 +3,7 @@ import {
   useLoaderData,
   useNavigation,
   useSearchParams,
+  useLocation,
 } from 'react-router';
 import type {Route} from './+types/account.orders._index';
 import {useRef} from 'react';
@@ -23,6 +24,7 @@ import type {
   OrderItemFragment,
 } from 'customer-accountapi.generated';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
+import {getCurrentLocale} from '~/lib/i18n';
 
 type OrdersLoaderData = {
   customer: CustomerOrdersFragment;
@@ -61,11 +63,13 @@ export async function loader({request, context}: Route.LoaderArgs) {
 export default function Orders() {
   const {customer, filters} = useLoaderData<OrdersLoaderData>();
   const {orders} = customer;
+  const {pathname} = useLocation();
+  const {pathPrefix} = getCurrentLocale(pathname);
 
   return (
     <div className="orders">
       <OrderSearchForm currentFilters={filters} />
-      <OrdersTable orders={orders} filters={filters} />
+      <OrdersTable orders={orders} filters={filters} pathPrefix={pathPrefix} />
     </div>
   );
 }
@@ -73,9 +77,11 @@ export default function Orders() {
 function OrdersTable({
   orders,
   filters,
+  pathPrefix,
 }: {
   orders: CustomerOrdersFragment['orders'];
   filters: OrderFilterParams;
+  pathPrefix: string;
 }) {
   const hasFilters = !!(filters.name || filters.confirmationNumber);
 
@@ -86,13 +92,13 @@ function OrdersTable({
           {({node: order}) => <OrderItem key={order.id} order={order} />}
         </PaginatedResourceSection>
       ) : (
-        <EmptyOrders hasFilters={hasFilters} />
+        <EmptyOrders hasFilters={hasFilters} pathPrefix={pathPrefix} />
       )}
     </div>
   );
 }
 
-function EmptyOrders({hasFilters = false}: {hasFilters?: boolean}) {
+function EmptyOrders({hasFilters = false, pathPrefix}: {hasFilters?: boolean; pathPrefix: string}) {
   return (
     <div>
       {hasFilters ? (
@@ -100,7 +106,7 @@ function EmptyOrders({hasFilters = false}: {hasFilters?: boolean}) {
           <p>No orders found matching your search.</p>
           <br />
           <p>
-            <Link to="/account/orders">Clear filters →</Link>
+            <Link to={pathPrefix + '/account/orders'}>Clear filters →</Link>
           </p>
         </>
       ) : (
@@ -108,7 +114,7 @@ function EmptyOrders({hasFilters = false}: {hasFilters?: boolean}) {
           <p>You haven&apos;t placed any orders yet.</p>
           <br />
           <p>
-            <Link to="/collections">Start Shopping →</Link>
+            <Link to={pathPrefix + '/collections'}>Start Shopping →</Link>
           </p>
         </>
       )}

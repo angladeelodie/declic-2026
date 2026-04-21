@@ -1,6 +1,7 @@
-import {Link, useLoaderData} from 'react-router';
+import {Link, useLoaderData, useLocation} from 'react-router';
 import type {Route} from './+types/policies.$handle';
 import {type Shop} from '@shopify/hydrogen/storefront-api-types';
+import {getCurrentLocale} from '~/lib/i18n';
 
 type SelectedPolicies = keyof Pick<
   Shop,
@@ -43,6 +44,8 @@ export async function loader({params, context}: Route.LoaderArgs) {
 
 export default function Policy() {
   const {policy} = useLoaderData<typeof loader>();
+  const {pathname} = useLocation();
+  const {pathPrefix} = getCurrentLocale(pathname);
 
   return (
     <section className="w-full grid grid-cols-6 lg:grid-cols-12 gap-4 px-4 md:px-0 pt-12 pb-20 text-body">
@@ -50,7 +53,7 @@ export default function Policy() {
 
         {/* Back link */}
         <Link
-          to="/policies"
+          to={pathPrefix + '/policies'}
           className="inline-flex items-center gap-2 mb-10 group"
         >
           <svg

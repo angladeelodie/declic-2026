@@ -1,6 +1,7 @@
 import {Suspense} from 'react';
-import {Await, NavLink} from 'react-router';
+import {Await, NavLink, useLocation} from 'react-router';
 import type {FooterQuery, HeaderQuery} from 'storefrontapi.generated';
+import {getCurrentLocale} from '~/lib/i18n';
 
 type FooterMenus = {
   pages: FooterQuery['pages'] | null;
@@ -55,8 +56,20 @@ function FooterMenu({
   contactEmail: string | null;
   socialLinks: Array<{label: string; url: string}>;
 }) {
+  const {pathname} = useLocation();
+  const {pathPrefix} = getCurrentLocale(pathname);
   const pagesItems = pagesMenu?.items ?? FALLBACK_FOOTER_MENU.items;
   const legalItems = legalMenu?.items ?? [];
+
+  // Normalize internal URLs to use correct pathPrefix
+  const normalizeUrl = (url: string) => {
+    // Remove old locale prefixes like /fr/, /it/, /en/, /fr-ch/, /it-ch/, etc.
+    const normalized = url.replace(/^\/(fr|it|en)(-ch)?(\/.*)$|^\/(fr-ch|it-ch|en-ch)(\/.*)$/i, (match, lang1, ch1, path1, lang2, path2) => {
+      return path1 || path2 || '/';
+    });
+    // Prepend current pathPrefix
+    return pathPrefix + (normalized || '/');
+  };
   // console.log("socialLinks:", socialLinks);
   return (
     <nav
@@ -78,7 +91,7 @@ function FooterMenu({
               item.url.includes(publicStoreDomain) ||
               (primaryDomainUrl && item.url.includes(primaryDomainUrl));
 
-            const url = isInternal ? new URL(item.url).pathname : item.url;
+            const url = isInternal ? normalizeUrl(new URL(item.url).pathname) : item.url;
 
             return (
               <li key={item.id}>
@@ -109,7 +122,7 @@ function FooterMenu({
                 item.url.includes(publicStoreDomain) ||
                 (primaryDomainUrl && item.url.includes(primaryDomainUrl));
 
-              const url = isInternal ? new URL(item.url).pathname : item.url;
+              const url = isInternal ? normalizeUrl(new URL(item.url).pathname) : item.url;
 
               return (
                 <li key={item.id}>
@@ -130,7 +143,7 @@ function FooterMenu({
               <li>
                 <NavLink
                   className="hover:text-gray-500 capitalize"
-                  to="/policies/privacy-policy"
+                  to={pathPrefix + '/policies/privacy-policy'}
                 >
                   Privacy Policy
                 </NavLink>
@@ -138,7 +151,7 @@ function FooterMenu({
               <li>
                 <NavLink
                   className="hover:text-gray-500 capitalize"
-                  to="/policies/terms-of-service"
+                  to={pathPrefix + '/policies/terms-of-service'}
                 >
                   Terms of Service
                 </NavLink>
@@ -146,7 +159,7 @@ function FooterMenu({
               <li>
                 <NavLink
                   className="hover:text-gray-500"
-                  to="/policies/refund-policy"
+                  to={pathPrefix + '/policies/refund-policy'}
                 >
                   Refund Policy
                 </NavLink>

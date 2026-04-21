@@ -300,7 +300,7 @@ export function ErrorBoundary() {
       </p>
       <h1 className="text-title">Something went wrong</h1>
       <Link
-        to="/"
+        to={pathPrefix + '/'}
         className="text-[13px] font-black uppercase border-b-2 border-black pb-0.5 leading-none hover:opacity-50 transition-opacity"
       >
         Back to homepage →

@@ -1,6 +1,7 @@
-import {useLoaderData, Link} from 'react-router';
+import {useLoaderData, Link, useLocation} from 'react-router';
 import type {Route} from './+types/policies._index';
 import type {PoliciesQuery, PolicyItemFragment} from 'storefrontapi.generated';
+import {getCurrentLocale} from '~/lib/i18n';
 
 export async function loader({context}: Route.LoaderArgs) {
   const data: PoliciesQuery = await context.storefront.query(POLICIES_QUERY);
@@ -23,6 +24,8 @@ export async function loader({context}: Route.LoaderArgs) {
 
 export default function Policies() {
   const {policies} = useLoaderData<typeof loader>();
+  const {pathname} = useLocation();
+  const {pathPrefix} = getCurrentLocale(pathname);
 
   return (
     <section className="w-full grid grid-cols-6 lg:grid-cols-12 gap-4 px-4 md:px-0 pt-12 pb-20">
@@ -30,7 +33,7 @@ export default function Policies() {
 
         {/* Back to shop */}
         <Link
-          to="/"
+          to={pathPrefix + '/'}
           className="inline-flex items-center gap-2 mb-10 text-sm text-gray-400 hover:text-black transition-colors duration-200 group"
         >
           <svg
@@ -62,7 +65,7 @@ export default function Policies() {
             {policies.map((policy, i) => (
               <li key={policy.id}>
                 <Link
-                  to={`/policies/${policy.handle}`}
+                  to={pathPrefix + `/policies/${policy.handle}`}
                   className="group flex items-center justify-between py-5 gap-4 transition-all duration-200"
                 >
                   {/* Number + Title */}

@@ -4,9 +4,11 @@ import {
   NavLink,
   Outlet,
   useLoaderData,
+  useLocation,
 } from 'react-router';
 import type {Route} from './+types/account';
 import {CUSTOMER_DETAILS_QUERY} from '~/graphql/customer-account/CustomerDetailsQuery';
+import {getCurrentLocale} from '~/lib/i18n';
 
 export function shouldRevalidate() {
   return true;
@@ -56,6 +58,9 @@ export default function AccountLayout() {
 }
 
 function AccountMenu() {
+  const {pathname} = useLocation();
+  const {pathPrefix} = getCurrentLocale(pathname);
+
   function isActiveStyle({
     isActive,
     isPending,
@@ -71,26 +76,26 @@ function AccountMenu() {
 
   return (
     <nav role="navigation">
-      <NavLink to="/account/orders" style={isActiveStyle}>
+      <NavLink to={pathPrefix + '/account/orders'} style={isActiveStyle}>
         Orders &nbsp;
       </NavLink>
       &nbsp;|&nbsp;
-      <NavLink to="/account/profile" style={isActiveStyle}>
+      <NavLink to={pathPrefix + '/account/profile'} style={isActiveStyle}>
         &nbsp; Profile &nbsp;
       </NavLink>
       &nbsp;|&nbsp;
-      <NavLink to="/account/addresses" style={isActiveStyle}>
+      <NavLink to={pathPrefix + '/account/addresses'} style={isActiveStyle}>
         &nbsp; Addresses &nbsp;
       </NavLink>
       &nbsp;|&nbsp;
-      <Logout />
+      <Logout pathPrefix={pathPrefix} />
     </nav>
   );
 }
 
-function Logout() {
+function Logout({pathPrefix}: {pathPrefix: string}) {
   return (
-    <Form className="account-logout" method="POST" action="/account/logout">
+    <Form className="account-logout" method="POST" action={pathPrefix + '/account/logout'}>
       &nbsp;<button type="submit">Sign out</button>
     </Form>
   );
