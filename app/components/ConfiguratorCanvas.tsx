@@ -190,30 +190,37 @@ export function ConfiguratorCanvas({
     controls.rotateSpeed = 0.9;
 
     // --- LOAD HDRI ---
-    const hdriLoader = new RGBELoader();
-    hdriLoader.load('/studionul.hdr', (texture) => {
-      texture.mapping = THREE.EquirectangularReflectionMapping;
-      scene.environment = texture; // Use for lighting/reflections only
-    });
-    scene.environmentIntensity = .7; // Adjust HDRI strength (0 = off, 1 = default, higher = brighter)
-    scene.environmentRotation.y = HDRI_Z_ROTATION; // Rotate HDRI around Z-axis
+    // const hdriLoader = new RGBELoader();
+    // hdriLoader.load(
+    //   '/studionul.hdr',
+    //   (texture) => {
+    //     texture.mapping = THREE.EquirectangularReflectionMapping;
+    //     scene.environment = texture; // Use for lighting/reflections only
+    //   },
+    //   undefined,
+    //   (error) => {
+    //     console.error('Failed to load HDRI:', error);
+    //   }
+    // );
+    // scene.environmentIntensity = .7; // Adjust HDRI strength (0 = off, 1 = default, higher = brighter)
+    // scene.environmentRotation.y = HDRI_Z_ROTATION; // Rotate HDRI around Z-axis
     scene.background = new THREE.Color(0xf3f4f6); // Keep solid background
 
     // --- ENHANCED LIGHT SETUP (Studio Style) ---
-    // scene.add(new THREE.AmbientLight(0xffffff, 0.4)); // Soft overall light
+    scene.add(new THREE.AmbientLight(0xffffff, 1.5)); // Soft overall light
 
     // Key Light: Main source
-    const keyLight = new THREE.DirectionalLight(0xffffff, .5);
+    const keyLight = new THREE.DirectionalLight(0xffffff, 2.2);
     keyLight.position.set(5, 5, 5);
     // scene.add(keyLight);
 
     // Fill Light: Softens shadows from the other side
-    const fillLight = new THREE.DirectionalLight(0xffffff, .5);
+    const fillLight = new THREE.DirectionalLight(0xffffff, 2);
     fillLight.position.set(-5, 2, 2);
     scene.add(fillLight);
 
     // Back Light: Creates a "rim" effect to separate model from background
-    const rimLight = new THREE.DirectionalLight(0xffffff, 1.5);
+    const rimLight = new THREE.DirectionalLight(0xffffff, 2);
     rimLight.position.set(0, 5, -5);
     scene.add(rimLight);
 
