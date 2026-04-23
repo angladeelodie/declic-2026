@@ -103,7 +103,7 @@ export function ConfiguratorCanvas({
           // 1. Check the material name you set in Blender
           if (m.name === 'metal') {
             m.color.set('#ffffff'); // Standard Silver
-            m.metalness = .9; // High metalness for reflections
+            m.metalness = .75; // High metalness for reflections
             m.roughness = 0.05; // Smooth/Shiny
           } else {
             // 2. This is the fabric/configurable part
@@ -138,7 +138,7 @@ export function ConfiguratorCanvas({
             // Re-apply metal settings if the model was just reloaded or swapped
             if (m.name === 'metal') {
               m.color.set('#ffffff'); // Your red placeholder
-              m.metalness = .9;
+              m.metalness = .75;
               m.roughness = .05;
             } else {
               // Keep fabric settings for the rest
@@ -180,23 +180,26 @@ export function ConfiguratorCanvas({
     // Disable auto-rotate here because we will control the camera manually for the 180 swing
     controls.enablePan = false;
     controls.enableZoom = false;
+    // Lock orbit to prevent viewing between legs (restrict polar angle)
+    controls.minPolarAngle = Math.PI * 0.25; // ~63 degrees from top
+    controls.maxPolarAngle = Math.PI * 0.55; // ~135 degrees from top
     controls.rotateSpeed = 0.9;
 
     // --- ENHANCED LIGHT SETUP (Studio Style) ---
     scene.add(new THREE.AmbientLight(0xffffff, 0.4)); // Soft overall light
 
     // Key Light: Main source
-    const keyLight = new THREE.DirectionalLight(0xffffff, 2.2);
+    const keyLight = new THREE.DirectionalLight(0xffffff, 3);
     keyLight.position.set(5, 5, 5);
     scene.add(keyLight);
 
     // Fill Light: Softens shadows from the other side
-    const fillLight = new THREE.DirectionalLight(0xffffff, 1.6);
+    const fillLight = new THREE.DirectionalLight(0xffffff, 2);
     fillLight.position.set(-5, 2, 2);
     scene.add(fillLight);
 
     // Back Light: Creates a "rim" effect to separate model from background
-    const rimLight = new THREE.DirectionalLight(0xffffff, 2.0);
+    const rimLight = new THREE.DirectionalLight(0xffffff, 3.0);
     rimLight.position.set(0, 5, -5);
     scene.add(rimLight);
 
@@ -348,6 +351,21 @@ export function ConfiguratorCanvas({
         camera.position.y += (camYRef.current - camera.position.y) * 0.08;
 
         controls.target.y += (lookAtYRef.current - controls.target.y) * 0.08;
+
+        // Enforce polar angle constraints on manual camera positioning
+        const dx = camera.position.x - controls.target.x;
+        const dz = camera.position.z - controls.target.z;
+        const horizontalDist = Math.sqrt(dx * dx + dz * dz);
+        const verticalDist = camera.position.y - controls.target.y;
+        const currentPolarAngle = Math.atan2(horizontalDist, verticalDist);
+
+        if (currentPolarAngle < controls.minPolarAngle) {
+          const ratio = Math.tan(controls.minPolarAngle);
+          camera.position.y = controls.target.y + horizontalDist / ratio;
+        } else if (currentPolarAngle > controls.maxPolarAngle) {
+          const ratio = Math.tan(controls.maxPolarAngle);
+          camera.position.y = controls.target.y + horizontalDist / ratio;
+        }
       }
 
       controls.update();
