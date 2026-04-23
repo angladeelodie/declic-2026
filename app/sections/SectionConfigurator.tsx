@@ -392,7 +392,7 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
         <button
           type="button"
           onClick={handleStartCreating}
-          className="bg-[#3eff9d] hover:bg-[#34e58b] text-black text-metalite py-2 px-12 rounded-full transition-all duration-200 mt-8 mb-8 lg:self-start"
+          className="bg-[#3eff9d] hover:bg-[#34e58b] text-black py-2 px-12 rounded-full transition-all duration-200 mt-8 mb-8 lg:self-start"
         >
           {(props as any).button_text?.value ?? 'Start creating'}
         </button>
@@ -405,7 +405,7 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
     return (
       <div className="flex flex-col gap-5 h-full justify-start mt-4 lg:pt-16">
         {/* 2 — Category tabs */}
-        <div className="flex justify-between md:justify-around lg:justify-start gap-4 lg:gap-12">
+        <div className="flex justify-between md:justify-around lg:justify-start gap-4 lg:gap-12 lg:mb-4">
           {(
             [
               {key: 'tops', label: topsLabel},
@@ -510,7 +510,7 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
                             {activeProduct.title}
                           </div>
                         )}
-                        <div className="uppercase tabular-nums font-bold leading-tight">
+                        <div className="uppercase leading-tight">
                           {parseFloat(activeVariant.price.amount).toFixed(0)}{' '}
                           {activeVariant.price.currencyCode}
                         </div>
@@ -524,7 +524,7 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
         </AnimatePresence>
 
         {/* 4 — Bottom action bar */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pt-2 lg:mt-16">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pt-2 lg:mt-8">
           {/* Total price */}
           {/* {outfitTotalPrice > 0 && (
             <div className="flex flex-col items-center lg:items-start">

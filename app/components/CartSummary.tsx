@@ -18,11 +18,11 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
 
   return (
     <div aria-labelledby="cart-summary" className={className}>
-      <div className={`flex flex-col gap-4 bg-white ${layout === 'aside' ? 'max-w-md mx-auto' : ''}`}>
-        <h2 className="font-bold uppercase mb-2">{t('cart.summary')}</h2>
+      <div className={`flex flex-col gap-1 bg-white ${layout === 'aside' ? 'max-w-md mx-auto' : ''}`}>
+        <h2 className="uppercase mb-2">{t('cart.summary')}</h2>
 
         {/* 6-Column Grid for Totals */}
-        <div className="flex flex-col gap-3 border-b border-gray-100 pb-6">
+        <div className="flex flex-col gap-1 border-b border-gray-100 pb-6">
           {/* Subtotal */}
           <div className="grid grid-cols-6 items-center">
             <span className="col-span-3">{t('cart.subtotal')}</span>
@@ -36,7 +36,7 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
           </div>
 
           {/* Unified Minimalist Coupons & Gift Cards */}
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col">
             <CartDiscounts discountCodes={cart?.discountCodes} />
             <CartGiftCard giftCardCodes={cart?.appliedGiftCards} />
           </div>
@@ -44,7 +44,7 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
           {/* Total Row */}
           <div className="grid grid-cols-6 items-center mt-2 pt-4 border-t border-gray-100">
             <span className="col-span-3 text-metaline">{t('cart.total')}</span>
-            <span className="col-span-3 text-right font-bold">
+            <span className="col-span-3 text-right">
               {cart?.cost?.totalAmount ? (
                 <Money data={cart?.cost?.totalAmount} />
               ) : (
@@ -69,7 +69,7 @@ function CartCheckoutActions({checkoutUrl}: {checkoutUrl?: string}) {
       <a
         href={checkoutUrl}
         target="_self"
-        className=" bg-[var(--color-accent)] hover:bg-[#34e58b] text-black leading-none font-bold py-3 px-10 rounded-full flex items-center justify-center gap-3 transition-transform active:scale-95 text-base w-full md:w-auto min-w-[180px]"
+        className=" bg-[var(--color-accent)] hover:bg-[#34e58b] text-black leading-none py-3 px-10 rounded-full flex items-center justify-center gap-3 transition-transform active:scale-95 text-base w-full md:w-auto min-w-[180px]"
       >
         <span >{t('cart.order')}</span>
         <svg
@@ -124,7 +124,7 @@ function CartDiscounts({
           {codes.map((code) => (
             <div
               key={code}
-              className="flex items-center gap-1 text-[9px] font-bold uppercase text-gray-500"
+              className="flex items-center gap-1 text-[9px] uppercase text-gray-500"
             >
               <span>{code}</span>
               <UpdateDiscountForm

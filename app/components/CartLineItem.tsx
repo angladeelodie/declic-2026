@@ -53,7 +53,7 @@ export function CartLineItem({
         <Link
           prefetch="intent"
           to={lineItemUrl}
-          className="text-metalite font-bold hover:opacity-70 transition-opacity"
+          className="text-metalite hover:opacity-70 transition-opacity"
           onClick={() => layout === 'aside' && close()}
         >
           {product.title}
@@ -76,7 +76,7 @@ export function CartLineItem({
 
           {/* Quantity Toggle & Price Stack */}
           <CartLineQuantity line={line} />
-          <div className={`font-metalite font-bold ${layout === 'page' ? 'md:self-center' : ''}`}>
+          <div className={`font-metalite ${layout === 'page' ? 'md:self-center' : ''}`}>
             <ProductPrice price={line?.cost?.totalAmount} />
           </div>
         </div>
@@ -99,7 +99,7 @@ function CartLineQuantity({line}: {line: CartLine}) {
   const {id: lineId, quantity, isOptimistic} = line;
 
   return (
-    <div className="flex items-center gap-4 font-bold text-sm">
+    <div className="flex items-center gap-4">
       {quantity === 1 ? (
         <CartForm
           fetcherKey={getUpdateKey([lineId])}

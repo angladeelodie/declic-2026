@@ -75,7 +75,7 @@ function SwatchInner({
     <>
       <span
         className={[
-          'text-md uppercase leading-none text-center',
+          'uppercase leading-none text-center',
           disabled ? 'text-gray-300' : 'text-metalite',
         ].join(' ')}
       >

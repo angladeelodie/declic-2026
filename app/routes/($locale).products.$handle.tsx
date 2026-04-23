@@ -226,7 +226,7 @@ export default function Product() {
 
             {/* "Complete your look" Section */}
             <footer className="mt-4">
-              <h3 className="font-bold mb-4">Complete your look</h3>
+              <h3 className="mb-4">{t('product.completeYourLook')}</h3>
               <Suspense
                 fallback={
                   <div className="grid grid-cols-4 gap-3">

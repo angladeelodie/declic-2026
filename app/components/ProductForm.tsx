@@ -86,7 +86,7 @@ export function ProductForm({
           </div>
 
           {/* Total price: quantity × unit price */}
-          <div className="text-lg font-bold">
+          <div className="">
             {formattedTotalPrice}{' '}
             {selectedVariant?.price.currencyCode === 'CHF'
               ? 'chf.'
@@ -110,7 +110,7 @@ export function ProductForm({
               : []
           }
         >
-          <span className="font-bold">
+          <span className="">
             {selectedVariant?.availableForSale
               ? t('product.addToCart')
               : t('product.soldOut')}

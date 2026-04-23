@@ -50,7 +50,7 @@ export function SectionEditorial(props: SectionEditorialFragment) {
         )}
 
         {props.description?.value && (
-          <div className="mb-6 text-body">
+          <div className="mb-1 text-body">
             <RichText data={props.description.value} />
           </div>
         )}

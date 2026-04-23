@@ -106,7 +106,7 @@ export function Media({
           playsInline
           controls={false}
           poster={actualMediaData.previewImage?.url}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover object-top"
         >
           {actualMediaData.sources.map((source: any) => (
             <source key={source.url} src={source.url} type={source.mimeType} />

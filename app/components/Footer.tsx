@@ -81,7 +81,6 @@ function FooterMenu({
 
       {/* Col 3-4: Pages */}
       <div className="col-span-3 md:col-span-1 md:col-start-2 lg:col-start-3 lg:col-span-2 flex flex-col gap-2">
-        <h3 className="font-metalite">Pages</h3>
         <ul className="flex flex-col">
           {pagesItems.map((item) => {
             if (!item?.url) return null;
@@ -111,7 +110,6 @@ function FooterMenu({
 
       {/* Col 5-6: Legal */}
       <div className="col-span-3 md:col-span-1 lg:col-span-2 flex flex-col gap-2">
-        <h3 className="font-metalite">Legal</h3>
         <ul className="flex flex-col">
           {legalItems.length > 0 ? (
             legalItems.map((item) => {
@@ -171,7 +169,6 @@ function FooterMenu({
 
       {/* Col 7-8: Find Us from metaobjects */}
       <div className="col-span-3 md:col-span-1 lg:col-span-2 flex flex-col gap-2">
-        <h3 className="font-metalite">Find Us</h3>
         <ul className="flex flex-col">
           {socialLinks.map((link) => (
             <li key={link.label}>
@@ -189,7 +186,6 @@ function FooterMenu({
       </div>
       
       <div className="col-span-3 md:col-span-1 lg:col-span-2 flex flex-col gap-2">
-        <h3 className="font-metalite">Contact</h3>
         <address className="not-italic flex flex-col">
           {contactEmail && (
             <a

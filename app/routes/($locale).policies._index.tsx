@@ -56,7 +56,7 @@ export default function Policies() {
 
         {/* Header */}
         <div className="">
-          <h1 className="text-title font-bold">Policies</h1>
+          <h1 className="text-title">Policies</h1>
         </div>
 
         {/* Policy list */}
@@ -70,7 +70,7 @@ export default function Policies() {
                 >
                   {/* Number + Title */}
                   <div className="flex items-center gap-5">
-                    <span className="font-bold text-lg group-hover:translate-x-1 transition-transform duration-200 inline-block">
+                    <span className="text-lg group-hover:translate-x-1 transition-transform duration-200 inline-block">
                       {policy.title}
                     </span>
                   </div>

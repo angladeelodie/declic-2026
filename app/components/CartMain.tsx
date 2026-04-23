@@ -7,6 +7,7 @@ import {CartSummary} from './CartSummary';
 import {useTranslation} from '~/lib/useTranslation';
 import {getCurrentLocale} from '~/lib/i18n';
 import {LinkButton} from './LinkButton';
+import ArrowSvg from '../assets/arrow.svg';
 
 export type CartLayout = 'page' | 'aside';
 
@@ -23,6 +24,8 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
   const cart = useOptimisticCart(originalCart);
   const linesCount = Boolean(cart?.lines?.nodes?.length || 0);
   const cartHasItems = cart?.totalQuantity ? cart.totalQuantity > 0 : false;
+  const {close} = useAside();
+  const {t} = useTranslation();
 
   const lines = (cart?.lines?.nodes ?? []).map((line) => (
     <CartLineItem key={line.id} line={line} layout={layout} />
@@ -51,6 +54,21 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
   // ── Aside layout: stacked, summary pinned to bottom ─────────────
   return (
     <div className="flex flex-col h-full w-full overflow-hidden bg-white">
+      <button
+        type="button"
+        onClick={close}
+        className="inline-flex w-fit items-center gap-2 mb-6 group"
+      >
+        <img
+          src={ArrowSvg}
+          alt="arrow"
+          className="w-4 h-4 scale-x-[-1]"
+        />
+        <span className="transition-transform duration-200 ease-out group-hover:translate-x-1">
+          {t('cart.continueShopping')}
+        </span>
+      </button>
+
       <div className="flex-grow overflow-y-auto scrollbar-hide">
         <CartEmpty hidden={linesCount} layout={layout} />
         <div aria-labelledby="cart-lines">
