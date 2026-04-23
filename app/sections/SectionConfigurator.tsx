@@ -121,6 +121,35 @@ function hasAvailableVariant(
   });
 }
 
+// Check if a color variant exists (ignoring stock availability for colors)
+function hasColorVariant(
+  product: ProductNode | null | undefined,
+  size: string | null,
+  color: string | null,
+): boolean {
+  if (!product?.variants?.nodes?.length) return false;
+
+  return product.variants.nodes.some((variant) => {
+    const opts = Object.fromEntries(
+      variant.selectedOptions.map((o) => [o.name.toLowerCase(), o.value]),
+    );
+
+    const sizeOk =
+      !size ||
+      Object.entries(opts).some(
+        ([key, val]) => !COLOR_OPT_NAMES.has(key) && val === size,
+      );
+
+    const colorOk =
+      !color ||
+      opts['color'] === color ||
+      opts['couleur'] === color ||
+      opts['colore'] === color;
+
+    return sizeOk && colorOk;
+  });
+}
+
 // ─── Main Component ──────────────────────────────────────────────────────────
 export function SectionConfigurator(props: SectionConfiguratorFragment) {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -296,7 +325,7 @@ export function SectionConfigurator(props: SectionConfiguratorFragment) {
     (size) => !hasAvailableVariant(activeProduct, size, effectiveColor),
   );
   const disabledColors = colors.filter(
-    (color) => !hasAvailableVariant(activeProduct, activeOptions.size, color),
+    (color) => !hasColorVariant(activeProduct, activeOptions.size, color),
   );
 
   // ── Outfit-wide cart logic ────────────────────────────────────────

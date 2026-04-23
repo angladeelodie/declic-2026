@@ -1,6 +1,7 @@
 import {useEffect, useRef} from 'react';
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
+import {RGBELoader} from 'three/examples/jsm/loaders/RGBELoader.js';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
 
 type ActiveCategory = 'tops' | 'bottoms' | 'sleeves' | null;
@@ -24,6 +25,9 @@ const CAMERA_FULL_BODY = {y: 1.0, lookAtY: 0.9, radius: 3.2};
 
 // Easing speed for the camera transition (0 = instant, 1 = no movement)
 const CAMERA_LERP_SPEED = 0.04;
+
+// HDRI rotation around Z-axis (in radians, 0-2π)
+const HDRI_Z_ROTATION = Math.PI / 2 * 3;
 
 type ConfiguratorCanvasProps = {
   topModelUrl: string | null;
@@ -108,8 +112,8 @@ export function ConfiguratorCanvas({
           } else {
             // 2. This is the fabric/configurable part
             m.color.copy(color);
-            m.roughness = 0.7;
-            m.metalness = 0.1;
+            m.roughness = 0.9;
+            m.metalness = 0;
           }
         });
       }
@@ -142,8 +146,8 @@ export function ConfiguratorCanvas({
               m.roughness = .05;
             } else {
               // Keep fabric settings for the rest
-              m.roughness = 0.7;
-              m.metalness = 0.1;
+              m.roughness = 0.9;
+              m.metalness = 0;
             }
           });
         }
@@ -185,21 +189,31 @@ export function ConfiguratorCanvas({
     controls.maxPolarAngle = Math.PI * 0.55; // ~135 degrees from top
     controls.rotateSpeed = 0.9;
 
+    // --- LOAD HDRI ---
+    const hdriLoader = new RGBELoader();
+    hdriLoader.load('/studionul.hdr', (texture) => {
+      texture.mapping = THREE.EquirectangularReflectionMapping;
+      scene.environment = texture; // Use for lighting/reflections only
+    });
+    scene.environmentIntensity = .7; // Adjust HDRI strength (0 = off, 1 = default, higher = brighter)
+    scene.environmentRotation.y = HDRI_Z_ROTATION; // Rotate HDRI around Z-axis
+    scene.background = new THREE.Color(0xf3f4f6); // Keep solid background
+
     // --- ENHANCED LIGHT SETUP (Studio Style) ---
-    scene.add(new THREE.AmbientLight(0xffffff, 0.4)); // Soft overall light
+    // scene.add(new THREE.AmbientLight(0xffffff, 0.4)); // Soft overall light
 
     // Key Light: Main source
-    const keyLight = new THREE.DirectionalLight(0xffffff, 3);
+    const keyLight = new THREE.DirectionalLight(0xffffff, .5);
     keyLight.position.set(5, 5, 5);
-    scene.add(keyLight);
+    // scene.add(keyLight);
 
     // Fill Light: Softens shadows from the other side
-    const fillLight = new THREE.DirectionalLight(0xffffff, 2);
+    const fillLight = new THREE.DirectionalLight(0xffffff, .5);
     fillLight.position.set(-5, 2, 2);
     scene.add(fillLight);
 
     // Back Light: Creates a "rim" effect to separate model from background
-    const rimLight = new THREE.DirectionalLight(0xffffff, 3.0);
+    const rimLight = new THREE.DirectionalLight(0xffffff, 1.5);
     rimLight.position.set(0, 5, -5);
     scene.add(rimLight);
 
