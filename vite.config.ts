@@ -34,12 +34,6 @@ export default defineConfig({
     },
   },
   server: {
-    allowedHosts: [
-      'olympus.valeriomeschi.ch',
-      'olympus:3000',
-      'olympus',
-      '.tryhydrogen.dev',
-      'untrapped-callow-marisha.ngrok-free.dev',
-    ],
+    allowedHosts: true,
   },
 });

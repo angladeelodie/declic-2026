@@ -42,7 +42,7 @@ export function Header({
             <img
               src={shop.brand.logo.image.url}
               alt={shop.name}
-              className="h-8 w-auto"
+              className="h-5 lg:h-6 w-auto"
             />
           ) : (
             <strong className="text-xl font-black tracking-tighter text-black uppercase">

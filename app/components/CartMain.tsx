@@ -59,12 +59,8 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
         onClick={close}
         className="inline-flex w-fit items-center gap-2 mb-6 group"
       >
-        <img
-          src={ArrowSvg}
-          alt="arrow"
-          className="w-4 h-4 scale-x-[-1]"
-        />
-        <span className="transition-transform duration-200 ease-out group-hover:translate-x-1">
+        <img src={ArrowSvg} alt="arrow" className="w-4 h-auto scale-x-[-1]" />
+        <span className="leading-none transition-transform duration-200 ease-out group-hover:translate-x-1">
           {t('cart.continueShopping')}
         </span>
       </button>
@@ -98,7 +94,7 @@ function CartEmpty({
   return (
     <div hidden={hidden}>
       <br />
-      <p className='text-body leading-tight'>{t('cart.empty')}</p>
+      <p className="text-body leading-tight">{t('cart.empty')}</p>
       <br />
       <LinkButton
         onClick={close}

@@ -27,23 +27,26 @@ export function LinkButton({
       rel={target === '_blank' ? 'noreferrer' : undefined}
       prefetch="intent"
       onClick={onClick}
-      className={`
-        inline-flex items-center gap-2 pt-0 pb-8
-        group
-        ${className}
-      `}
+      className={`inline-flex items-center gap-2 pt-0 pb-8 group ${className}`}
     >
-      <h4 className="m-0 leading-none">{text}</h4>
+      {/* Wrap the text to control its line-box height precisely */}
+      <div className="flex items-center h-full">
+        <h4 className="m-0 leading-[1.1] flex items-center">{text}</h4>
+      </div>
 
       <img
         src={ArrowSvg}
         alt="arrow"
         loading={loading}
         className="
-          w-4 h-4
-          transition-transform duration-200 ease-out
-          group-hover:translate-x-1
-        "
+      block
+      w-5 h-auto
+      transition-transform duration-200 ease-out
+      group-hover:translate-x-1
+      /* Remove 'top-[1.5px]' and use a tiny vertical translate instead */
+      /* This nudge is usually subtler across engines */
+      translate-y-[0.5px]
+    "
       />
     </Link>
   );

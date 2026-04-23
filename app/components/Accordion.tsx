@@ -22,9 +22,9 @@ export function AccordionItem({
     onClick={() => setOpen((prev) => !prev)}
     className="group flex w-full items-center justify-between py-4 text-left"
   >
-    <span className="">{title}</span>
+    <span className="leading-none ">{title}</span>
     <span
-      className={`flex flex-col items-center justify-center w-4 h-4 transition-transform duration-200 ${
+      className={`leading-none  flex flex-col items-center justify-center w-4 h-4 transition-transform duration-200 ${
         /* Changed to -90 for opposite rotation. Use 180 if you want a flip */
         open ? '-rotate-90' : ''
       }`}
