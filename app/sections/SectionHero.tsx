@@ -29,7 +29,7 @@ export function SectionHero(props: SectionHeroFragment) {
             ? 'h-[90vh]'
             : 'h-[80vh]'
           : heading
-            ? 'h-[50vh] md:h-[90vh]'
+            ? 'h-[60vh] md:h-[90vh]'
             : 'h-[50vh] md:h-[80vh]'
       }`}
     >
@@ -42,7 +42,7 @@ export function SectionHero(props: SectionHeroFragment) {
     ${
       mediaImages.length > 1
         ? 'grid-cols-1 lg:grid-cols-2 col-span-full md:col-start-2 md:col-span-4 lg:col-span-10 lg:col-start-2'
-        : 'col-start-1 col-span-6 md:col-start-2 md:col-span-4 lg:col-start-4 lg:col-span-6'
+        : 'col-start-1 col-span-6 md:col-start-2 md:col-span-4 lg:col-start-5 lg:col-span-4'
     }
   `}
       >

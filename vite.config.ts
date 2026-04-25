@@ -13,6 +13,7 @@ export default defineConfig({
     reactRouter(),
     tsconfigPaths(),
   ],
+  assetsInclude: ['**/*.hdr'], // Ensure Vite processes .hdr files correctly
   build: {
     // Allow a strict Content-Security-Policy
     // withtout inlining assets as base64:

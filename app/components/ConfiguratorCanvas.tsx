@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
 import {RGBELoader} from 'three/examples/jsm/loaders/RGBELoader.js';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
+import studioHdri from '../assets/studio.hdr'; // Move file to src/assets
 
 type ActiveCategory = 'tops' | 'bottoms' | 'sleeves' | null;
 
@@ -112,7 +113,7 @@ export function ConfiguratorCanvas({
           } else {
             // 2. This is the fabric/configurable part
             m.color.copy(color);
-            m.roughness = 0.9;
+            m.roughness = 0.6;
             m.metalness = 0;
           }
         });
@@ -146,7 +147,7 @@ export function ConfiguratorCanvas({
               m.roughness = .05;
             } else {
               // Keep fabric settings for the rest
-              m.roughness = 0.9;
+              m.roughness = 0.6;
               m.metalness = 0;
             }
           });
@@ -190,32 +191,32 @@ export function ConfiguratorCanvas({
     controls.rotateSpeed = 0.9;
 
     // --- LOAD HDRI ---
-    // const hdriLoader = new RGBELoader();
-    // hdriLoader.load(
-    //   '/studionul.hdr',
-    //   (texture) => {
-    //     texture.mapping = THREE.EquirectangularReflectionMapping;
-    //     scene.environment = texture; // Use for lighting/reflections only
-    //   },
-    //   undefined,
-    //   (error) => {
-    //     console.error('Failed to load HDRI:', error);
-    //   }
-    // );
-    // scene.environmentIntensity = .7; // Adjust HDRI strength (0 = off, 1 = default, higher = brighter)
-    // scene.environmentRotation.y = HDRI_Z_ROTATION; // Rotate HDRI around Z-axis
-    scene.background = new THREE.Color(0xf3f4f6); // Keep solid background
+    const hdriLoader = new RGBELoader();
+    hdriLoader.load(
+      studioHdri,
+      (texture) => {
+        texture.mapping = THREE.EquirectangularReflectionMapping;
+        scene.environment = texture; // Use for lighting/reflections only
+      },
+      undefined,
+      (error) => {
+        console.error('Failed to load HDRI:', error);
+      }
+    );
+    scene.environmentIntensity = 0.4; // Adjust HDRI strength (0 = off, 1 = default, higher = brighter)
+    scene.environmentRotation.y = HDRI_Z_ROTATION; // Rotate HDRI around Z-axis
+    scene.background = new THREE.Color(0xefefef); // Keep solid background
 
     // --- ENHANCED LIGHT SETUP (Studio Style) ---
-    scene.add(new THREE.AmbientLight(0xffffff, 1.5)); // Soft overall light
+    scene.add(new THREE.AmbientLight(0xffffff, 0.3)); // Soft overall light
 
     // Key Light: Main source
-    const keyLight = new THREE.DirectionalLight(0xffffff, 2.2);
-    keyLight.position.set(5, 5, 5);
-    // scene.add(keyLight);
+    const keyLight = new THREE.DirectionalLight(0xffffff, 1.5);
+    keyLight.position.set(5, 0, 2);
+    scene.add(keyLight);
 
     // Fill Light: Softens shadows from the other side
-    const fillLight = new THREE.DirectionalLight(0xffffff, 2);
+    const fillLight = new THREE.DirectionalLight(0xffffff, .2);
     fillLight.position.set(-5, 2, 2);
     scene.add(fillLight);
 
