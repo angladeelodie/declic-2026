@@ -309,12 +309,72 @@ export function ConfiguratorCanvas({
       zoomOffsetRef.current = nextRadius - target.radius;
     };
 
+    const applyZoomDelta = (delta: number) => {
+      const target = activeCategoryRef.current
+        ? CAMERA_TARGETS[activeCategoryRef.current]
+        : CAMERA_FULL_BODY;
+      const nextRadius = THREE.MathUtils.clamp(
+        target.radius + zoomOffsetRef.current + delta,
+        CAMERA_MIN_RADIUS,
+        CAMERA_MAX_RADIUS,
+      );
+
+      zoomOffsetRef.current = nextRadius - target.radius;
+    };
+
     const handleWheel = (event: WheelEvent) => {
       event.preventDefault();
-      zoomActionRef.current?.(event.deltaY < 0 ? 'in' : 'out');
+      const pinchScale = event.ctrlKey ? 0.01 : 1;
+      applyZoomDelta((event.deltaY * pinchScale) / 600);
+    };
+
+    let pinchStartDistance = 0;
+
+    const getTouchDistance = (touches: TouchList) => {
+      if (touches.length < 2) return 0;
+      const [touchA, touchB] = [touches[0], touches[1]];
+      const dx = touchA.clientX - touchB.clientX;
+      const dy = touchA.clientY - touchB.clientY;
+      return Math.sqrt(dx * dx + dy * dy);
+    };
+
+    const handleTouchStart = (event: TouchEvent) => {
+      if (event.touches.length === 2) {
+        pinchStartDistance = getTouchDistance(event.touches);
+      }
+    };
+
+    const handleTouchMove = (event: TouchEvent) => {
+      if (event.touches.length !== 2 || pinchStartDistance === 0) return;
+
+      event.preventDefault();
+      const currentDistance = getTouchDistance(event.touches);
+      if (!currentDistance) return;
+
+      const scale = pinchStartDistance / currentDistance;
+      applyZoomDelta((scale - 1) * 1.2);
+      pinchStartDistance = currentDistance;
+    };
+
+    const handleTouchEnd = (event: TouchEvent) => {
+      if (event.touches.length < 2) {
+        pinchStartDistance = 0;
+      }
     };
 
     renderer.domElement.addEventListener('wheel', handleWheel, {passive: false});
+    renderer.domElement.addEventListener('touchstart', handleTouchStart, {
+      passive: true,
+    });
+    renderer.domElement.addEventListener('touchmove', handleTouchMove, {
+      passive: false,
+    });
+    renderer.domElement.addEventListener('touchend', handleTouchEnd, {
+      passive: true,
+    });
+    renderer.domElement.addEventListener('touchcancel', handleTouchEnd, {
+      passive: true,
+    });
 
     controls.addEventListener('start', () => {
       isUserDragging = true;
@@ -443,6 +503,10 @@ export function ConfiguratorCanvas({
       cancelAnimationFrame(frameId);
       window.removeEventListener('resize', handleResize);
       renderer.domElement.removeEventListener('wheel', handleWheel);
+      renderer.domElement.removeEventListener('touchstart', handleTouchStart);
+      renderer.domElement.removeEventListener('touchmove', handleTouchMove);
+      renderer.domElement.removeEventListener('touchend', handleTouchEnd);
+      renderer.domElement.removeEventListener('touchcancel', handleTouchEnd);
       zoomActionRef.current = null;
       controls.dispose();
       renderer.dispose();
