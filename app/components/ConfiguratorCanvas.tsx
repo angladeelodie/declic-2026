@@ -26,6 +26,9 @@ const CAMERA_FULL_BODY = {y: 1.0, lookAtY: 0.9, radius: 3.2};
 
 // Easing speed for the camera transition (0 = instant, 1 = no movement)
 const CAMERA_LERP_SPEED = 0.04;
+const CAMERA_ZOOM_STEP = 0.2;
+const CAMERA_MIN_RADIUS = 1.1;
+const CAMERA_MAX_RADIUS = 4.2;
 
 // HDRI rotation around Z-axis (in radians, 0-2π)
 const HDRI_Z_ROTATION = Math.PI / 2 * 3;
@@ -78,10 +81,19 @@ export function ConfiguratorCanvas({
   const activeCategoryRef = useRef<ActiveCategory>(activeCategory);
   activeCategoryRef.current = activeCategory;
 
+  // User zoom is applied as an offset on top of each category's base radius.
+  // It resets when the active category changes.
+  const zoomOffsetRef = useRef(0);
+  const zoomActionRef = useRef<((direction: 'in' | 'out') => void) | null>(null);
+
   // Live camera state — lerped toward the target each frame (start at full-body)
   const camYRef = useRef(CAMERA_FULL_BODY.y);
   const lookAtYRef = useRef(CAMERA_FULL_BODY.lookAtY);
   const radiusRef = useRef(CAMERA_FULL_BODY.radius);
+
+  useEffect(() => {
+    zoomOffsetRef.current = 0;
+  }, [activeCategory]);
 
   // Called on first load — sets color immediately (no lerp from wrong color)
   function initGarmentColor(
@@ -283,6 +295,27 @@ export function ConfiguratorCanvas({
       angle = Math.asin(normalized);
     };
 
+    zoomActionRef.current = (direction) => {
+      const delta = direction === 'in' ? -CAMERA_ZOOM_STEP : CAMERA_ZOOM_STEP;
+      const target = activeCategoryRef.current
+        ? CAMERA_TARGETS[activeCategoryRef.current]
+        : CAMERA_FULL_BODY;
+      const nextRadius = THREE.MathUtils.clamp(
+        target.radius + zoomOffsetRef.current + delta,
+        CAMERA_MIN_RADIUS,
+        CAMERA_MAX_RADIUS,
+      );
+
+      zoomOffsetRef.current = nextRadius - target.radius;
+    };
+
+    const handleWheel = (event: WheelEvent) => {
+      event.preventDefault();
+      zoomActionRef.current?.(event.deltaY < 0 ? 'in' : 'out');
+    };
+
+    renderer.domElement.addEventListener('wheel', handleWheel, {passive: false});
+
     controls.addEventListener('start', () => {
       isUserDragging = true;
       syncAutoOrbitFromCamera();
@@ -359,8 +392,12 @@ export function ConfiguratorCanvas({
       camYRef.current += (target.y - camYRef.current) * CAMERA_LERP_SPEED;
       lookAtYRef.current +=
         (target.lookAtY - lookAtYRef.current) * CAMERA_LERP_SPEED;
-      radiusRef.current +=
-        (target.radius - radiusRef.current) * CAMERA_LERP_SPEED;
+      const targetRadius = THREE.MathUtils.clamp(
+        target.radius + zoomOffsetRef.current,
+        CAMERA_MIN_RADIUS,
+        CAMERA_MAX_RADIUS,
+      );
+      radiusRef.current += (targetRadius - radiusRef.current) * CAMERA_LERP_SPEED;
 
       if (!isUserDragging) {
         // --- CAMERA SWING (auto) ---
@@ -405,6 +442,8 @@ export function ConfiguratorCanvas({
     return () => {
       cancelAnimationFrame(frameId);
       window.removeEventListener('resize', handleResize);
+      renderer.domElement.removeEventListener('wheel', handleWheel);
+      zoomActionRef.current = null;
       controls.dispose();
       renderer.dispose();
       if (container.contains(renderer.domElement))
