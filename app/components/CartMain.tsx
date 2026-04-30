@@ -95,13 +95,7 @@ function CartEmpty({
     <div hidden={hidden}>
       <br />
       <p className="text-body leading-tight">{t('cart.empty')}</p>
-      <br />
-      <LinkButton
-        onClick={close}
-        href={pathPrefix + '/pages/shop'}
-        text={t('cart.continueShopping')}
-        className="text-emphasis"
-      />
+ 
     </div>
   );
 }

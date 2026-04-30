@@ -63,11 +63,16 @@ function FooterMenu({
 
   // Normalize internal URLs to use correct pathPrefix
   const normalizeUrl = (url: string) => {
-    // Remove old locale prefixes like /fr/, /it/, /en/, /fr-ch/, /it-ch/, etc.
-    const normalized = url.replace(/^\/(fr|it|en)(-ch)?(\/.*)$|^\/(fr-ch|it-ch|en-ch)(\/.*)$/i, (match, lang1, ch1, path1, lang2, path2) => {
-      return path1 || path2 || '/';
-    });
-    // Prepend current pathPrefix
+    // Remove leading locale prefixes like /fr, /fr/, /fr-ch, /FR-CH/, etc.
+    // Cases:
+    // - "/fr" or "/fr/" -> treat as "/"
+    // - "/fr/other/path" -> "/other/path"
+    // - leave non-locale paths unchanged
+    const normalized = url.replace(
+      /^\/(?:(?:fr|it|en)(?:-ch)?)(?:\/(.*))?$/i,
+      (_match, rest) => (rest ? '/' + rest : '/'),
+    );
+
     return pathPrefix + (normalized || '/');
   };
   // console.log("socialLinks:", socialLinks);

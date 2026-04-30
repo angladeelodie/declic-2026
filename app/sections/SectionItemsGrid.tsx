@@ -4,7 +4,9 @@ import {motion, AnimatePresence} from 'framer-motion';
 import {Link} from 'react-router';
 import type {SectionItemsGridFragment} from 'storefrontapi.generated';
 import {useMemo, useState} from 'react';
+import {useLocation} from 'react-router';
 import {useTranslation} from '~/lib/useTranslation';
+import {getCurrentLocale} from '~/lib/i18n';
 
 type ItemCategory = 'tops' | 'bottoms' | 'sleeves';
 type CategoryFilter = 'all' | ItemCategory;
@@ -16,6 +18,8 @@ const COLOR_OPTION_NAMES = new Set(['color', 'couleur', 'colore']);
 export function SectionItemsGrid(props: SectionItemsGridFragment) {
   const section = parseSection<SectionItemsGridFragment, {}>(props);
   const {t} = useTranslation();
+  const {pathname} = useLocation();
+  const {pathPrefix} = getCurrentLocale(pathname);
 
   const topsCollection = section.topsCollection;
   const bottomsCollection = section.bottomsCollection;
@@ -152,11 +156,14 @@ export function SectionItemsGrid(props: SectionItemsGridFragment) {
                 (opt) => COLOR_OPTION_NAMES.has(opt?.name?.toLowerCase() ?? ''),
               );
 
+              // Use the option's actual name as the query key so localized
+              // option names returned by the storefront are preserved.
+              const optionKey = colorOption?.name ?? 'color';
               const variantUrl = colorOption
-                ? `/products/${product.handle}?color=${encodeURIComponent(
-                    colorOption.value,
-                  )}`
-                : `/products/${product.handle}`;
+                ? `${pathPrefix}/products/${product.handle}?${encodeURIComponent(
+                    optionKey,
+                  )}=${encodeURIComponent(colorOption.value)}`
+                : `${pathPrefix}/products/${product.handle}`;
 
               return (
                 <motion.div

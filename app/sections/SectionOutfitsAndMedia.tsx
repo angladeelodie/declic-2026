@@ -4,7 +4,8 @@ import {parseSection} from '~/utils/parseSection';
 
 import {Image} from '@shopify/hydrogen';
 
-import {Link} from 'react-router';
+import {Link, useLocation} from 'react-router';
+import {getCurrentLocale} from '~/lib/i18n';
 
 import type {SectionOutfitsAndMediaFragment} from 'storefrontapi.generated';
 
@@ -28,6 +29,9 @@ export function SectionOutfitsAndMedia(props: SectionOutfitsAndMediaFragment) {
   const {collection} = section;
 
   const products = collection?.products?.nodes ?? [];
+
+  const {pathname} = useLocation();
+  const {pathPrefix} = getCurrentLocale(pathname);
 
   type Product = (typeof products)[number];
 
@@ -69,19 +73,36 @@ export function SectionOutfitsAndMedia(props: SectionOutfitsAndMediaFragment) {
   }
 
   // Shuffle and take up to 3 of each color
+  const shuffledBlackAll = shuffleArray(blackTiles);
+  const shuffledWhiteAll = shuffleArray(whiteTiles);
 
-  const shuffledBlack = shuffleArray(blackTiles).slice(0, 3);
+  // Select up to `maxPerColor` tiles per color but ensure no product
+  // (by `product.id`) is present more than once across both selections.
+  const maxPerColor = 3;
+  const selectedWhite: Tile[] = [];
+  const selectedBlack: Tile[] = [];
+  const seenProducts = new Set<string>();
 
-  const shuffledWhite = shuffleArray(whiteTiles).slice(0, 3);
+  function pickUnique(target: Tile[], source: Tile[], max: number) {
+    for (const tile of source) {
+      if (target.length >= max) break;
+      const pid = String(tile.product.id);
+      if (!seenProducts.has(pid)) {
+        target.push(tile);
+        seenProducts.add(pid);
+      }
+    }
+  }
 
-  // Interleave: white, black, white, black, white, black
+  pickUnique(selectedWhite, shuffledWhiteAll, maxPerColor);
+  pickUnique(selectedBlack, shuffledBlackAll, maxPerColor);
 
+  // Interleave the two selected lists while preserving order
   const orderedTiles: Tile[] = [];
-
-  for (let i = 0; i < 3; i++) {
-    if (shuffledWhite[i]) orderedTiles.push(shuffledWhite[i]);
-
-    if (shuffledBlack[i]) orderedTiles.push(shuffledBlack[i]);
+  const maxLen = Math.max(selectedWhite.length, selectedBlack.length);
+  for (let i = 0; i < maxLen; i++) {
+    if (selectedWhite[i]) orderedTiles.push(selectedWhite[i]);
+    if (selectedBlack[i]) orderedTiles.push(selectedBlack[i]);
   }
 
   return (
@@ -119,11 +140,12 @@ export function SectionOutfitsAndMedia(props: SectionOutfitsAndMediaFragment) {
                 ),
               );
 
+              const optionKey = colorOption?.name ?? 'color';
               const variantUrl = colorOption
-                ? `/products/${product.handle}?color=${encodeURIComponent(
-                    colorOption.value,
-                  )}`
-                : `/products/${product.handle}`;
+                ? `${pathPrefix}/products/${product.handle}?${encodeURIComponent(
+                    optionKey,
+                  )}=${encodeURIComponent(colorOption.value)}`
+                : `${pathPrefix}/products/${product.handle}`;
 
               return (
                 <Link

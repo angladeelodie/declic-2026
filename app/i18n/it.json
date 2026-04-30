@@ -47,7 +47,9 @@
     "pages": "Pagine",
     "legal": "Legale",
     "findUs": "Trovaci",
-    "contact": "Contatto"
+    "contact": "Contatto",
+    "contactUs": "Contatto"
+
   },
   "errors": {
     "notFound": "Pagina non trovata",

@@ -150,8 +150,16 @@ function renderOption(option: any, navigate: ReturnType<typeof useNavigate>) {
             availableForSale,
             isDifferentProduct,
           } = value;
+          const isColorOption =
+            typeof option.name === 'string' &&
+            ['color', 'colour', 'couleur', 'colore'].includes(
+              option.name.toLowerCase(),
+            );
+
+          // Colors should never be disabled so users can view the product
+          // in the correct color even if that variant is out of stock.
           const isDisabled =
-            !exists || available === false || availableForSale === false;
+            !isColorOption && (!exists || available === false || availableForSale === false);
 
           if (isDifferentProduct) {
             return (
@@ -161,30 +169,32 @@ function renderOption(option: any, navigate: ReturnType<typeof useNavigate>) {
                 value={name}
                 selected={selected}
                 disabled={isDisabled}
-                to={`/products/${handle}?${variantUriQuery}`}
+                to={`${isColorOption ? `/products/${handle}?${variantUriQuery}` : `/products/${handle}?${variantUriQuery}`}`}
                 replace
                 preventScrollReset
               />
             );
           }
 
-          return (
-            <OptionSwatch
-              key={option.name + name}
-              optionName={option.name}
-              value={name}
-              selected={selected}
-              disabled={isDisabled}
-              onClick={() => {
-                if (!selected && !isDisabled) {
-                  void navigate(`?${variantUriQuery}`, {
-                    replace: true,
-                    preventScrollReset: true,
-                  });
-                }
-              }}
-            />
-          );
+            return (
+              <OptionSwatch
+                key={option.name + name}
+                optionName={option.name}
+                value={name}
+                selected={selected}
+                disabled={isDisabled}
+                onClick={() => {
+                  // Allow selecting colors even when the variant is not available
+                  // so users can view the product in that color.
+                  if (!selected && (!isDisabled || isColorOption)) {
+                    void navigate(`?${variantUriQuery}`, {
+                      replace: true,
+                      preventScrollReset: true,
+                    });
+                  }
+                }}
+              />
+            );
         })}
       </div>
     </div>

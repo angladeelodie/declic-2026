@@ -47,7 +47,9 @@
     "pages": "Pages",
     "legal": "Légal",
     "findUs": "Nous trouver",
-    "contact": "Contact"
+    "contact": "Contact",
+    "contactUs": "Contact"
+
   },
   "errors": {
     "notFound": "Page introuvable",
