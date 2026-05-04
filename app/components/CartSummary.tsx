@@ -18,7 +18,9 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
 
   return (
     <div aria-labelledby="cart-summary" className={className}>
-      <div className={`flex flex-col gap-1 bg-white ${layout === 'aside' ? 'max-w-md mx-auto' : ''}`}>
+      <div
+        className={`flex flex-col gap-1 bg-white ${layout === 'aside' ? 'max-w-md mx-auto' : ''}`}
+      >
         <h2 className="uppercase mb-2">{t('cart.summary')}</h2>
 
         {/* 6-Column Grid for Totals */}
@@ -64,6 +66,19 @@ function CartCheckoutActions({checkoutUrl}: {checkoutUrl?: string}) {
   const {t} = useTranslation();
   if (!checkoutUrl) return null;
 
+  let fixedUrl = checkoutUrl;
+
+  try {
+    const url = new URL(checkoutUrl);
+    // Force the Online Store domain for checkout
+    url.host = 'ujserr-ic.myshopify.com'; // Your shop's myshopify domain
+    fixedUrl = url.toString();
+  } catch {
+    // If checkoutUrl were ever relative
+    fixedUrl = `https://ujserr-ic.myshopify.com${checkoutUrl}`;
+  }
+
+  console.log('Fixed checkout URL:', fixedUrl);
   return (
     <div className="mt-2 flex justify-center">
       <a
@@ -71,7 +86,7 @@ function CartCheckoutActions({checkoutUrl}: {checkoutUrl?: string}) {
         target="_self"
         className=" bg-[var(--color-accent)] hover:bg-[#34e58b] text-black leading-none py-3 px-10 rounded-full flex items-center justify-center gap-3 transition-transform active:scale-95 text-base w-full md:w-auto min-w-[180px]"
       >
-        <span >{t('cart.order')}</span>
+        <span>{t('cart.order')}</span>
         <svg
           width="20"
           height="20"
