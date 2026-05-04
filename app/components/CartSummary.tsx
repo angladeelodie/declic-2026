@@ -66,23 +66,23 @@ function CartCheckoutActions({checkoutUrl}: {checkoutUrl?: string}) {
   const {t} = useTranslation();
   if (!checkoutUrl) return null;
 
-  let fixedUrl = checkoutUrl;
+  const ONLINE_STORE_DOMAIN = 'ujserr-ic.myshopify.com';
+  let normalizedUrl = checkoutUrl;
 
   try {
     const url = new URL(checkoutUrl);
-    // Force the Online Store domain for checkout
-    url.host = 'ujserr-ic.myshopify.com'; // Your shop's myshopify domain
-    fixedUrl = url.toString();
+    // Force checkout to happen on the Online Store domain
+    url.host = ONLINE_STORE_DOMAIN;
+    normalizedUrl = url.toString();
   } catch {
-    // If checkoutUrl were ever relative
-    fixedUrl = `https://ujserr-ic.myshopify.com${checkoutUrl}`;
+    // If checkoutUrl is ever relative (unlikely), build an absolute URL
+    normalizedUrl = `https://${ONLINE_STORE_DOMAIN}${checkoutUrl}`;
   }
 
-  console.log('Fixed checkout URL:', fixedUrl);
   return (
     <div className="mt-2 flex justify-center">
       <a
-        href={checkoutUrl}
+        href={normalizedUrl}
         target="_self"
         className=" bg-[var(--color-accent)] hover:bg-[#34e58b] text-black leading-none py-3 px-10 rounded-full flex items-center justify-center gap-3 transition-transform active:scale-95 text-base w-full md:w-auto min-w-[180px]"
       >
