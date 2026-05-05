@@ -62,7 +62,7 @@ export function Aside({
 
       {/* Slide-in Panel */}
       <aside
-        className={`fixed right-0 top-0 h-screen bg-white shadow-xl transition-transform duration-300 ease-in-out w-[min(var(--aside-width),100vw)] ${
+        className={`fixed right-0 top-0 h-[100svh] bg-white shadow-xl transition-transform duration-300 ease-in-out w-[min(var(--aside-width),100vw)] ${
           expanded ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
@@ -76,7 +76,7 @@ export function Aside({
             &times;
           </button>
         </header>
-        <main className="p-5 overflow-y-auto h-[calc(100vh-var(--header-height))]">
+        <main className="p-5 overflow-y-auto h-[calc(100svh-var(--header-height))]">
           {children}
         </main>
       </aside>

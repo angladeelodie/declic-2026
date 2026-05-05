@@ -53,7 +53,13 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
 
   // ── Aside layout: stacked, summary pinned to bottom ─────────────
   return (
-    <div className="flex flex-col h-full w-full overflow-hidden bg-white">
+    <div
+      className="flex flex-col w-full overflow-hidden bg-white"
+      style={{
+        maxHeight: 'calc(100dvh - 64px - env(safe-area-inset-bottom, 0px))',
+        minHeight: '-webkit-fill-available',
+      }}
+    >
       <button
         type="button"
         onClick={close}
@@ -65,7 +71,14 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
         </span>
       </button>
 
-      <div className="flex-grow overflow-y-auto scrollbar-hide">
+      <div
+        className="flex-grow overflow-y-scroll scrollbar-hide pb-28"
+        style={{
+          paddingBottom: 'calc(env(safe-area-inset-bottom, 16px) + 1rem)',
+          WebkitOverflowScrolling: 'touch',
+          overscrollBehavior: 'contain',
+        }}
+      >
         <CartEmpty hidden={linesCount} layout={layout} />
         <div aria-labelledby="cart-lines">
           <ul>{lines}</ul>
@@ -73,7 +86,7 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
       </div>
 
       {cartHasItems && (
-        <div>
+        <div style={{paddingBottom: 'env(safe-area-inset-bottom, 16px)'}}>
           <CartSummary cart={cart} layout={layout} />
         </div>
       )}
