@@ -90,12 +90,23 @@ function FooterMenu({
           {pagesItems.map((item) => {
             if (!item?.url) return null;
 
+            let pathname: string;
+            try {
+              // Try to parse as URL first (handles absolute URLs with any domain)
+              const parsedUrl = new URL(item.url);
+              pathname = parsedUrl.pathname;
+            } catch {
+              // If it's not a valid URL, use it as-is (relative path)
+              pathname = item.url;
+            }
+
             const isInternal =
               item.url.includes('myshopify.com') ||
               item.url.includes(publicStoreDomain) ||
-              (primaryDomainUrl && item.url.includes(primaryDomainUrl));
+              (primaryDomainUrl && item.url.includes(primaryDomainUrl)) ||
+              pathname.startsWith('/');
 
-            const url = isInternal ? normalizeUrl(new URL(item.url).pathname) : item.url;
+            const url = isInternal ? normalizeUrl(pathname) : pathname;
 
             return (
               <li key={item.id}>
@@ -120,12 +131,23 @@ function FooterMenu({
             legalItems.map((item) => {
               if (!item?.url) return null;
 
+              let pathname: string;
+              try {
+                // Try to parse as URL first (handles absolute URLs with any domain)
+                const parsedUrl = new URL(item.url);
+                pathname = parsedUrl.pathname;
+              } catch {
+                // If it's not a valid URL, use it as-is (relative path)
+                pathname = item.url;
+              }
+
               const isInternal =
                 item.url.includes('myshopify.com') ||
                 item.url.includes(publicStoreDomain) ||
-                (primaryDomainUrl && item.url.includes(primaryDomainUrl));
+                (primaryDomainUrl && item.url.includes(primaryDomainUrl)) ||
+                pathname.startsWith('/');
 
-              const url = isInternal ? normalizeUrl(new URL(item.url).pathname) : item.url;
+              const url = isInternal ? normalizeUrl(pathname) : pathname;
 
               return (
                 <li key={item.id}>

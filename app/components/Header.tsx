@@ -112,12 +112,15 @@ export function HeaderMenu({
         //   );
         // }
 
-        const rawPath =
-          item.url.includes('myshopify.com') ||
-          item.url.includes(publicStoreDomain) ||
-          item.url.includes(primaryDomainUrl)
-            ? new URL(item.url).pathname
-            : item.url;
+        let rawPath: string;
+        try {
+          // Try to parse as URL first (handles absolute URLs with any domain)
+          const url = new URL(item.url);
+          rawPath = url.pathname;
+        } catch {
+          // If it's not a valid URL, use it as-is (relative path)
+          rawPath = item.url;
+        }
 
         // Shopify may return paths with its own locale prefix (e.g. /fr/pages/shop).
         // Strip it, then prepend our locale's pathPrefix so links stay locale-aware.
