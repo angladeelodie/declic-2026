@@ -10,12 +10,21 @@ export const meta: Route.MetaFunction = ({data}) => {
   return [{title}];
 };
 
-export async function loader({context}: Route.LoaderArgs) {
+export async function loader({context, params}: Route.LoaderArgs) {
   try {
+    // Prefer language/country from the URL locale param when available
+    // params.locale is the ($locale) dynamic segment (e.g. "FR-CH").
+    const [languageFromParam, countryFromParam] = (
+      params.locale ?? ''
+    ).toUpperCase().split('-');
+
+    const language = languageFromParam || context.storefront.i18n.language;
+    const country = countryFromParam || context.storefront.i18n.country;
+
     const data = await context.storefront.query(HOME_QUERY, {
       variables: {
-        country: context.storefront.i18n.country,
-        language: context.storefront.i18n.language,
+        country,
+        language,
       },
     });
 

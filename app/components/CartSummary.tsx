@@ -2,9 +2,10 @@ import type {CartApiQueryFragment} from 'storefrontapi.generated';
 import type {CartLayout} from '~/components/CartMain';
 import {CartForm, Money, type OptimisticCart} from '@shopify/hydrogen';
 import {useEffect, useRef} from 'react';
-import {useFetcher} from 'react-router';
+import {useFetcher, useLocation} from 'react-router';
 import type {FetcherWithComponents} from 'react-router';
 import {useTranslation} from '~/lib/useTranslation';
+import {getCurrentLocale} from '~/lib/i18n';
 
 type CartSummaryProps = {
   cart: OptimisticCart<CartApiQueryFragment | null>;
@@ -64,20 +65,37 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
 
 function CartCheckoutActions({checkoutUrl}: {checkoutUrl?: string}) {
   const {t} = useTranslation();
+  const {pathname} = useLocation();
+  const {language} = getCurrentLocale(pathname);
   if (!checkoutUrl) return null;
 
-  const ONLINE_STORE_DOMAIN = 'ujserr-ic.myshopify.com';
+  const STORE_DOMAIN = 'declic-8904.myshopify.com'; // or 'declic-8904.myshopify.com'
   let normalizedUrl = checkoutUrl;
 
   try {
     const url = new URL(checkoutUrl);
-    // Force checkout to happen on the Online Store domain
-    url.host = ONLINE_STORE_DOMAIN;
+    // Force checkout to happen on your Online Store domain
+    // so `/cart/c/...` is resolved by the Online Store, not by Hydrogen
+    url.host = STORE_DOMAIN;
+
+    // Some localized URLs can become `/fr/cart/...` or `/fr-CH/checkouts/...`.
+    // Shopify checkout/cart endpoints should not be locale-prefixed on this domain.
+    url.pathname = url.pathname.replace(
+      /^\/[a-z]{2}(?:-[a-z]{2})?\/(?=(cart|checkouts)\b)/i,
+      '/',
+    );
+
+    // Hint checkout UI language explicitly (fr, it, en, ...).
+    url.searchParams.set('locale', language.toLowerCase());
+
     normalizedUrl = url.toString();
   } catch {
-    // If checkoutUrl is ever relative (unlikely), build an absolute URL
-    normalizedUrl = `https://${ONLINE_STORE_DOMAIN}${checkoutUrl}`;
+    // Fallback if checkoutUrl is ever relative (unlikely)
+    normalizedUrl = `https://${STORE_DOMAIN}${checkoutUrl}`;
   }
+
+
+
 
   return (
     <div className="mt-2 flex justify-center">

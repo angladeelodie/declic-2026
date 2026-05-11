@@ -1,4 +1,4 @@
-import {redirect, useLoaderData, Link, Await} from 'react-router';
+import {redirect, useLoaderData, Link, Await, useLocation} from 'react-router';
 import type {Route} from './+types/products.$handle';
 import {
   getSelectedProductOptions,
@@ -23,6 +23,7 @@ import ArrowSvg from '../assets/arrow.svg'; // adjust path as needed
 import {STYLE_MAP, STYLE_MAP_LENGTH} from '~/lib/styleMap';
 import {AnimatePresence, motion} from 'framer-motion';
 import {useTranslation} from '~/lib/useTranslation';
+import {getCurrentLocale} from '~/lib/i18n';
 
 export const meta: Route.MetaFunction = ({data}) => {
   return [
@@ -84,6 +85,8 @@ function loadDeferredData({context, params}: Route.LoaderArgs) {
 
 export default function Product() {
   const {t} = useTranslation();
+  const {pathname} = useLocation();
+  const {pathPrefix} = getCurrentLocale(pathname);
 
   const {product, recommendations} = useLoaderData<typeof loader>();
 
@@ -123,7 +126,7 @@ export default function Product() {
       <div className="w-full h-full p-4">
         {/* Back to shop */}
         <Link
-          to="/pages/shop"
+          to={pathPrefix + '/pages/shop'}
           className="inline-flex items-center gap-2 mb-6 transition-transform duration-200 group"
         >
           <img
