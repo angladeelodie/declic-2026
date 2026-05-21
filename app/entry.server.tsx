@@ -31,6 +31,7 @@ export default async function handleRequest(
     mediaSrc: [
       "'self'",
       'https://cdn.shopify.com',
+      'https://*.myshopify.com',
       `https://${context.env.PUBLIC_STORE_DOMAIN}`,
       'https://declicworld.com',
     ],

@@ -20,6 +20,7 @@
     "resolveJsonModule": true,
     "module": "ES2022",
     "target": "ES2022",
+    "ignoreDeprecations": "5.0",
     "strict": true,
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,

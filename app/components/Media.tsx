@@ -25,6 +25,17 @@ export function Media({
   const [currentStyle, setCurrentStyle] = useState(initialStyle);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const actualMediaData = media?.media?.reference;
+
+  const startVideoPlayback = () => {
+    if (!videoRef.current) return;
+
+    videoRef.current.muted = true;
+    videoRef.current.defaultMuted = true;
+    videoRef.current.play().catch((error) => {
+      console.warn('Autoplay was prevented by the browser:', error);
+    });
+  };
 
   useEffect(() => {
     const triggerRandomChange = () => {
@@ -46,15 +57,8 @@ export function Media({
   }, []);
 
   useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.muted = true;
-      videoRef.current.play().catch((error) => {
-        console.warn("Autoplay was prevented by the browser:", error);
-      });
-    }
-  }, [media]);
-
-  const actualMediaData = media?.media?.reference;
+    startVideoPlayback();
+  }, [actualMediaData]);
   if (!actualMediaData) return null;
 
   const isImage = actualMediaData?.__typename === 'MediaImage';
@@ -68,7 +72,7 @@ export function Media({
   `.trim();
 
   const containerStyle = {
-    aspectRatio: aspectRatio,
+    aspectRatio,
   };
 
   // ZOOM SETTING: scale-[1.02] provides a 2% zoom. 
@@ -99,9 +103,11 @@ export function Media({
           autoPlay
           loop
           playsInline
+          preload="auto"
           controls={false}
           poster={actualMediaData.previewImage?.url}
           className={`${mediaClasses} object-top`}
+          onCanPlay={startVideoPlayback}
         >
           {actualMediaData.sources.map((source: any) => (
             <source key={source.url} src={source.url} type={source.mimeType} />
